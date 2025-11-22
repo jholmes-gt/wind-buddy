@@ -4396,10 +4396,27 @@ function setActiveShortCutButton(cat){
 }
 
 
-
 /* ==========================================================
    TOOLS FUNCTIONALITY
    ========================================================== */
+const infoBtn = document.getElementById("tools-info-btn");
+const infoModal = document.getElementById("tools-info-modal");
+const infoClose = document.getElementById("tools-info-close");
+
+infoBtn.addEventListener("click", () => {
+    infoModal.style.display = "flex";
+});
+
+infoClose.addEventListener("click", () => {
+    infoModal.style.display = "none";
+});
+
+infoModal.addEventListener("click", (e) => {
+    // Click outside the box to close
+    if (e.target === infoModal) {
+        infoModal.style.display = "none";
+    }
+});
 
 /* ---------- 1. Endbringer School ---------- */
   const ebsToggleBtn = document.getElementById('btn_endbringer');
