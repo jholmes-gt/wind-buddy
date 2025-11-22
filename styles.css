@@ -356,6 +356,7 @@
 		border: 1px solid #0a3d62;
 		cursor: pointer;
 		user-select: none;
+		margin-bottom: 4px;
 	}
 	.info-icon-spcr {
 		display: inline-flex;
@@ -802,6 +803,7 @@ footer {}
 .hidden {
     display: none;
 }
+
 
 
 
