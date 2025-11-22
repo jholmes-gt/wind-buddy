@@ -64,12 +64,13 @@
       </div>
 	  
 		
-		<!-- TOOL PANEL -->
       <div id="left-mid-panel" class="toolsPanel">
-        <h4>Tools 
-		  <span id="tools-info-btn" class="info-icon">i</span>
+        <h4>
+		  <span id="tools-info-spcr1" class="info-icon-spcr">     </span>
+		  Tools            
+		  <span id="tools-info-spcr2" class="info-icon-spcr">     </span>
+		  <span id="tools-info-btn" class="info-icon">     i</span>
 		</h4>
-
 		<div class="panel">
           <button id="btn_endbringer" class="btn">Endbringer School</button>
           <button id="btn_tourn1" class="btn">Tournament 1 Notes</button>
@@ -192,6 +193,26 @@
 	<footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer>
   </div>
 
+	<div id="tools-info-modal">
+		<div id="tools-info-box">
+			<div id="tools-info-close">✖</div>
+
+			<h2 style="margin-top: 0;">Tools Information</h2>
+
+			<p><strong>Endbringer School</strong><br>
+			Automatically selects the Endbringer, sets elevation to 20%, focuses the wind input box, and displays the extended 5%–140% ring adjustment table. Updates live when wind or elevation changes. The app will toggle through your saved club information and select the level for the first instance of the Endbringer that you have saved.  If the app is unable to detrmine a level using this method, it will default to level 5.</p>
+
+			<p><strong>Tournament Notes</strong><br>
+			Opens simple note-taking pages for front/back 9. Notes are saved locally and auto-restored the next time you open them.</p>
+
+			<p><strong>CPC Mode / Reset</strong><br>
+			Clears all selected clubs and levels, returns the interface to a clean state, and removes active ring calculations. This can be utilized before starting a Checkpoint Challenge match.</p>
+
+			<p style="font-style: italic; margin-top: 18px;">
+				More tools are planned for future versions of Wind-Buddy.
+			</p>
+		</div>
+	</div>
 
 <script src="WindBuddy.js"></script>
 </body>
