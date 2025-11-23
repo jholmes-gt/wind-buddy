@@ -1,3 +1,33 @@
+
+
+// Import the functions you need from the SDKs you need
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
+  authDomain: "windbuddy-7560a.firebaseapp.com",
+  projectId: "windbuddy-7560a",
+  storageBucket: "windbuddy-7560a.firebasestorage.app",
+  messagingSenderId: "685091043542",
+  appId: "1:685091043542:web:d710463180ed82fb0b7177"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+
+
+// ------------------------------
+// FIREBASE INITIALIZATION
+// ------------------------------
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
 const this_ball_power = document.getElementById("ballPower")
 this_ball_power.value = 'option6'
 let endbringerMode = false;
@@ -4704,3 +4734,84 @@ function resetClubs() {
   setRingsDisplay('--','--','--','--','--','--','--','--');
   
 })();
+
+
+
+
+
+// Elements
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginModal = document.getElementById("loginModal");
+const loginClose = document.getElementById("loginClose");
+
+const emailLoginBtn = document.getElementById("emailLoginBtn");
+const emailSignupBtn = document.getElementById("emailSignupBtn");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+
+const emailField = document.getElementById("loginEmail");
+const passwordField = document.getElementById("loginPassword");
+
+// Show modal
+loginBtn.onclick = () => {
+    loginModal.classList.remove("hidden");
+};
+
+// Hide modal
+loginClose.onclick = () => {
+    loginModal.classList.add("hidden");
+};
+
+// Email Login
+emailLoginBtn.onclick = () => {
+    auth.signInWithEmailAndPassword(emailField.value, passwordField.value)
+        .then(() => {
+            loginModal.classList.add("hidden");
+            showToast("Signed in successfully!", 2500);
+        })
+        .catch(err => showToast(err.message, 4000));
+};
+
+// Email Create Account
+emailSignupBtn.onclick = () => {
+    auth.createUserWithEmailAndPassword(emailField.value, passwordField.value)
+        .then(() => {
+            loginModal.classList.add("hidden");
+            showToast("Account created!", 2500);
+        })
+        .catch(err => showToast(err.message, 4000));
+};
+
+// Google Login
+googleLoginBtn.onclick = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    auth.signInWithPopup(provider)
+        .then(() => {
+            loginModal.classList.add("hidden");
+            showToast("Signed in with Google!", 2500);
+        })
+        .catch(err => showToast(err.message, 4000));
+};
+
+// Logout
+logoutBtn.onclick = () => {
+    auth.signOut().then(() => {
+        showToast("Signed out", 2000);
+    });
+};
+
+// Auth state listener
+auth.onAuthStateChanged(user => {
+    if (user) {
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+
+        console.log("Logged in as:", user.email || user.displayName);
+    } else {
+        logoutBtn.classList.add("hidden");
+        loginBtn.classList.remove("hidden");
+    }
+});
+

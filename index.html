@@ -20,6 +20,37 @@
      <img src="logo_dark.png" alt="Wind Buddy Logo">
 	</div>
 
+	<!-- LOGIN AREA (Header Buttons) -->
+	<div id="authBar">
+		<button id="loginBtn" class="auth-btn">Sign In</button>
+		<button id="logoutBtn" class="auth-btn hidden">Sign Out</button>
+	</div>
+
+	<!-- LOGIN MODAL -->
+	<div id="loginModal" class="modal hidden">
+		<div class="modal-content">
+			<span id="loginClose" class="close">&times;</span>
+			<h2>Sign in to Wind-Buddy</h2>
+
+			<label>Email</label>
+			<input type="email" id="loginEmail" class="auth-input">
+
+			<label>Password</label>
+			<input type="password" id="loginPassword" class="auth-input">
+
+			<button id="emailLoginBtn" class="auth-action">Sign In</button>
+			<button id="emailSignupBtn" class="auth-action">Create New Account</button>
+
+			<div class="divider"><span>OR</span></div>
+
+			<button id="googleLoginBtn" class="google-btn">
+				<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+				Sign In with Google
+			</button>
+		</div>
+	</div>
+
+
 			<!-- CATEGORY/SHOW CLUBS TOGGLE WRAPPER -->
     <div class="clubs-wrap">
       <div class="clubs-top">
@@ -155,8 +186,8 @@
 
   <!-- SHORTCUT BUTTONS -->
   <div class="shortcut-bar" id="shortcutBar">
-    <span id="sc-info-btn" class="info-icon">i</span>
-    <div class="shortcutbarInfo">Current Club Selections:</div>
+    <span id="sc-info-btn" class="info-icon" style="margin-top:7px; margin-right:-4px; padding-top:5px">i</span>
+    <div class="shortcutbarInfo" style="font-size:16px">Current Club Selections:</div>
   </div>
 
 
@@ -262,6 +293,14 @@
 		</div>
 	</div>
 
+<!-- Firebase App (core) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+
+<!-- Firebase Auth (for login) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<!-- Firebase Firestore (for saving bags/notes) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script src="WindBuddy.js"></script>
 </body>
 </html>
