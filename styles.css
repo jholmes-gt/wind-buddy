@@ -337,44 +337,6 @@
 		color:var(--card);
 		border-radius:8px;
 	}
-	
-	/* --- Info Icon --- */
-	.info-icon {
-		display: inline-flex;
-		justify-content: center;
-		align-self: start;
-		align-items: center;
-		width: 18px;
-		height: 18px;
-		margin-left: 6px;
-		font-size: 12px;
-		font-weight: bold;
-		text-transform:lowercase;
-		border-radius: 50%;
-		background-color: #fff;
-		color: #0a3d62;
-		border: 1px solid #0a3d62;
-		cursor: pointer;
-		user-select: none;
-		margin-bottom: 4px;
-	}
-	.info-icon-spcr {
-		display: inline-flex;
-		justify-content: center;
-		align-self: end;
-		width: 18px;
-		height: 18px;
-		margin-left: 6px;
-		font-size: 12px;
-		font-weight: bold;
-		text-transform:lowercase;
-		border-radius: 50%;
-		background-color: var(--gradientTopColor);
-		color: #0a3d62;
-		border: 1px solid #0a3d62;
-		cursor: none;
-		user-select: none;
-	}
 
 	/* --- Modal Wrapper --- */
 	#tools-info-modal {
@@ -561,6 +523,63 @@
 		font-size:14px;
 		padding:0px
 	}
+		
+	/* wrapper must be positioned so tooltip can be absolutely positioned relative to it */
+	.tooltip-wrapper {
+	  position: relative;
+	  display: inline-block; /* or block per layout */
+	}
+
+	/* style the input as you already have */
+	#windInput {
+	  padding: 6px 8px;
+	  border-radius: 6px;
+	  border: 1px solid var(--border);
+	  min-width: 64px;
+	}
+
+	/* tooltip box (hidden by default) */
+	.input-tooltip {
+	  position: absolute;
+	  left: 0;
+	  bottom: calc(100% + 8px); /* place above the input */
+	  transform-origin: bottom left;
+	  white-space: nowrap;
+	  background: #222;
+	  color: #fff;
+	  padding: 8px 10px;
+	  border-radius: 6px;
+	  font-size: 12px;
+	  line-height: 1.2;
+	  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+	  opacity: 0;
+	  pointer-events: none;
+	  transition: opacity .18s ease, transform .18s ease;
+	  transform: translateY(6px);
+	  z-index: 30;
+	}
+
+	/* small arrow */
+	.input-tooltip::after {
+	  content: "";
+	  position: absolute;
+	  left: 12px;
+	  top: 100%;
+	  width: 0;
+	  height: 0;
+	  border-left: 6px solid transparent;
+	  border-right: 6px solid transparent;
+	  border-top: 6px solid #222;
+	  display: block;
+	}
+
+	/* show tooltip on hover OR when input is focused (keyboard accessible) */
+	.tooltip-wrapper:hover .input-tooltip {
+	  opacity: 1;
+	  transform: translateY(0);
+	  pointer-events: auto;
+	}
+	
 
   /* hide number spinners */
   input[type=number]::-webkit-inner-spin-button,
@@ -657,6 +676,41 @@
 		color:#fff;
 		border-color: #f3f4f6;
 		padding: 6px;
+	}
+
+	/* --- Modal Wrapper --- */
+	#sc-info-modal {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.55);
+		display: none;
+		justify-content: center;
+		align-items: center;
+		z-index: 9999;
+	}
+
+	/* --- Modal Content --- */
+	#sc-info-box {
+		background: #ffffff;
+		width: 90%;
+		max-width: 520px;
+		padding: 20px;
+		border-radius: 12px;
+		box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+		font-size: 15px;
+		line-height: 1.45;
+		color: #003f66;
+		position: relative;
+	}
+
+	/* Close Button */
+	#sc-info-close {
+		position: absolute;
+		right: 10px;
+		top: 8px;
+		font-size: 20px;
+		cursor: pointer;
+		color: #555;
 	}
 
 
@@ -804,3 +858,40 @@ footer {}
     display: none;
 }
 
+	/* --- Info Icon --- */
+	.info-icon {
+		display: inline-flex;
+		justify-content: center;
+		align-self: start;
+		align-items: center;
+		width: 18px;
+		height: 18px;
+		margin-left: 6px;
+		font-size: 12px;
+		font-weight: bold;
+		text-transform:lowercase;
+		border-radius: 50%;
+		background-color: #fff;
+		color: #0a3d62;
+		border: 1px solid #0a3d62;
+		cursor: pointer;
+		user-select: none;
+		margin-bottom: 4px;
+	}
+	.info-icon-spcr {
+		display: inline-flex;
+		justify-content: center;
+		align-self: end;
+		width: 18px;
+		height: 18px;
+		margin-left: 6px;
+		font-size: 12px;
+		font-weight: bold;
+		text-transform:lowercase;
+		border-radius: 50%;
+		background-color: var(--gradientTopColor);
+		color: #0a3d62;
+		border: 1px solid #0a3d62;
+		cursor: none;
+		user-select: none;
+	}
