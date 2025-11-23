@@ -1,4 +1,5 @@
 <!-- To do:  -->
+<!-- 1. create and place logo -->
 <!-- 2. sign in functionality -->
 <!-- 3. information boxes -->
 <!-- 4. about, contact, ect pages -->
@@ -99,20 +100,34 @@
 	  
 			<!-- SHOT ADJUSTMENTS PANEL -->
       <div id="shot_adj_panel" class="shotAdjPanel">
-	    <h4>Shot Adjustments</h4>
-	    <div class="sa_row">
-          <label for="windInput">Wind (mph)</label>
-          <input id="windInput" type="number" step="0.1" value="0.0">
+        <h4>Shot Adjustments</h4>
+		
+		<div class="sa_row">
+			<label for="windInput">Wind (mph)</label>
+			<div class="tooltip-wrapper">
+			<input id="windInput" type="number" step="0.1" value="0.0">
+			<div class="input-tooltip" role="status" aria-hidden="true">
+				It is not necessary to type the decimal (dot) key. You can type the digits only.
+			</div>
+			</div>
 		</div>
+		
 		<div class="sa_row">
           <label for="ballPower">Ball Power</label>
           <select id="ballPower"><option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option slected value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select>
 		</div>
+		
 		<div class="sa_row">
           <label for="clubDistance" style="margin-left:5px">Club Distance (%)</label>
+		  <div class="tooltip-wrapper">
           <input id="clubDistance" type="range" min="1" max="100" value="100">
-          <input id="clubDistanceVal" type="number" step="1" value="100" style="margin-right:5px">
-        </div>
+		  <div class="input-tooltip" role="status" aria-hidden="true">
+				You can set club distance by using the slider or entering a value between 0 - 100 in the input box beside the slider.
+		  </div>
+		  </div>
+          <input id="clubDistanceVal" type="number" step="1" value="100" style="margin-right:2px">
+		</div>
+		
 		<div class="sa_row">
 		  <label for="elevation">Elevation (%)</label>
           <input list="elevList" id="elevation" type="number" value="10" step="5" style="width:82px">
@@ -140,6 +155,7 @@
 
   <!-- SHORTCUT BUTTONS -->
   <div class="shortcut-bar" id="shortcutBar">
+    <span id="sc-info-btn" class="info-icon">i</span>
     <div class="shortcutbarInfo">Current Club Selections:</div>
   </div>
 
@@ -189,10 +205,19 @@
 		  </div>
 	    </div>
 	  </div>
-		
+
+
+
+	<div id='toast-container'></div>
+	
 	       <!-- FOOTER -->
 	<footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer>
   </div>
+
+
+<!-- ______________________________________________________________________________________ -->
+			<!-- Tools Info panel (hidden initially) -->
+<!--_______________________________________________________________________________			 -->
 
 	<div id="tools-info-modal">
 		<div id="tools-info-box">
@@ -201,7 +226,7 @@
 			<h2 style="margin-top: 0;">Tools Information</h2>
 
 			<p><strong>Endbringer School</strong><br>
-			Automatically selects the Endbringer club at the level it was last saved at within your golf bags. It also sets the elevation to 20%, puts keyboard focus on the wind input box, and displays the extended 5%–140% ring adjustment table. The extended ring adjustment table updates in real time if any input (wind, ball power, or elevation) impacting the ring adjustment calculation is changed. If the app is unable to determine the level of your Endbringer club it will default to 5.</p>
+			Automatically selects the Endbringer club at the level it was last saved at within your golf bags. It also sets the elevation to 20%, puts keyboard focus on the wind input box, and displays the extended 5%–140% ring adjustment table. The extended ring adjustment table updates in real time if any input (wind, ball power, or elevation) impacting the ring adjustment calculation is changed. If the app is unable to determine the level of your Endbringer club it will default to level 5.</p>
 
 			<p><strong>Tournament Notes</strong><br>
 			Opens simple note-taking pages for front/back 9. Notes are saved locally and auto-restored the next time you open them.</p>
@@ -212,6 +237,28 @@
 			<p style="font-style: italic; margin-top: 18px;">
 				More tools are planned for future versions of Wind-Buddy.
 			</p>
+		</div>
+	</div>
+
+	
+	
+	
+<!-- ______________________________________________________________________________________ -->
+			<!-- Shortcut Buttons Info panel (hidden initially) -->
+<!--_______________________________________________________________________________			 -->
+	<div id="sc-info-modal">
+		<div id="sc-info-box">
+			<div id="sc-info-close">✖</div>
+
+			<h3 style="margin-top: 0;">Current Club Selections</h3>
+
+			<p>
+			These shortcut buttons are only enabled if a club and level is currently selected for the corresponding club type (Driver, Wood, etc.).  The idea behind these buttons is to have an easy way to quickly switch between clubs without having to use the the club and level buttons at the top of the page.  When you click one of the buttons (after it has been enabled), the button's appearance will change to indicate that this is the active club and that the ring calculations being displayed are related to this club. 
+			</p>
+			<p>
+			Also, when you click on a shortcut button, the keyboard focus will automatically go to the wind input field in the Shot Adjustments panel so that the new wind value can be quickly entered for your upcoming shot. Also note that when you select a previously saved golf bag, the driver for that bag is automatically selected and the driver shortcut button is automatically clicked, resulting in keyboard focus once again going to the wind input field in the Shot Adjustmets panel. The idea is to reduce the need for repetitive actions with the mouse in an effort to reduce the time required to set up the shot.
+			</p>
+
 		</div>
 	</div>
 
