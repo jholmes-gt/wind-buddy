@@ -4280,6 +4280,11 @@ distanceVal.addEventListener('input', (e)=> {
   
 });
 
+distanceVal.addEventListener('focus', (e)=> {
+     // Select all the text in the input
+     distanceVal.select();
+});
+
 // wind input rule: while user is still typing (input), convert integers to tenths (7 -> 0.7)
 // goal is for user to never have to type a decimal
 windInput.addEventListener('input', () => {
@@ -4320,6 +4325,12 @@ windInput.addEventListener('input', () => {
     triggerCalcIfReady(cat);
   }  
 });
+
+windInput.addEventListener('focus', () => {
+     // Select all the text in the input
+     windInput.select();
+});
+
 
 [ballPowerEl, elevationEl].forEach(el => el.addEventListener('input', ()=> {
   const cat = state.activeCategory
@@ -4383,6 +4394,26 @@ Object.keys(clubCats).forEach(cat=>{
 	document.getElementById('windInput').select();
   });
   shortcutBar.appendChild(btn);
+});
+
+
+const scinfoBtn = document.getElementById("sc-info-btn");
+const scinfoModal = document.getElementById("sc-info-modal");
+const scinfoClose = document.getElementById("sc-info-close");
+
+scinfoBtn.addEventListener("click", () => {
+    scinfoModal.style.display = "flex";
+});
+
+scinfoClose.addEventListener("click", () => {
+    scinfoModal.style.display = "none";
+});
+
+scinfoModal.addEventListener("click", (e) => {
+    // Click outside the box to close
+    if (e.target === scinfoModal) {
+        scinfoModal.style.display = "none";
+    }
 });
 
 
