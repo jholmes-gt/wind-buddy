@@ -44,7 +44,7 @@
 
 	.wb-header img {
 		/* filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25)); */
-		width: 220px;       /* adjust size as needed */
+		width: 190px;       /* adjust size as needed */
 		height: auto;
 		pointer-events: none;
 		user-select: none;
@@ -433,22 +433,24 @@
 		border-radius:8px;
 		border:1px solid var(--border);
 	}
-	.toolsPanel h4{
-		/* display:flex; */
-		/* flex-direction:row; */
+	
+	.toolsPanel h4 {
+		/* display: flex; */
+		/* flex-direction: row; */
 		align-items: center;
 		justify-self: center;
-		font-size:16px;
-		margin-bottom:0px;
-		margin-top:0px;
-		text-align:center;
-		text-transform:uppercase;
-		background:var(--gradientTopColor);
-		color:var(--card);
-		border-radius:8px;
-	}
+		font-size: 16px;
+		margin-bottom: 0px;
+		margin-top: 0px;
+		/* text-align: center; */
+		text-align: end;
+		text-transform: uppercase;
+		background: var(--gradientTopColor);
+		color: var(--card);
+		border-radius: 8px;
+	}	
 
-	/* --- Modal Wrapper --- */
+/* --- Modal Wrapper --- */
 	#tools-info-modal {
 		position: fixed;
 		inset: 0;
@@ -976,20 +978,19 @@ footer {}
 		align-items: center;
 		width: 18px;
 		height: 18px;
-		padding-top: 3px;
-		margin-left: 6px;
+		padding-top: 8px;
+		margin-right: 12px;
 		font-family: Javanese Text;
 		font-size: 15px;
 		font-weight: bold;
-		text-transform:lowercase;
+		text-transform: lowercase;
 		border-radius: 50%;
 		background-color: #fff;
 		color: #0a3d62;
 		border: 1px solid #0a3d62;
 		cursor: pointer;
 		user-select: none;
-		margin-bottom: 4px;
-	}
+	}	
 	.info-icon-spcr {
 		display: inline-flex;
 		justify-content: center;

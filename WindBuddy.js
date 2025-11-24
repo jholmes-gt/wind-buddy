@@ -28,12 +28,9 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 
-const this_ball_power = document.getElementById("ballPower")
-this_ball_power.value = 'option6'
-let endbringerMode = false;
-let clubsShowing = true;
-let clubsShowingB4EBMode;
-
+// ------------------------------
+// GAME DATA
+// ------------------------------
 const clubCats = {
   Drivers: ["Rocket","Extra_Mile","Big_Topper","Quarterback","Rock","Thors_Hammer","Apocalypse"],
   Woods: ["Horizon","Viper","Big_Dawg","Hammerhead","Guardian","Sniper","Cataclysm"],
@@ -3731,7 +3728,35 @@ const clubStats = {
 };  
 
 const epics = new Set(["Big_Topper","Thors_Hammer","Apocalypse","Horizon","Hammerhead","Cataclysm","Grim_Reaper","B52","Tsunami","Kingfisher","Falcon","FireFly","Boomerang","Endbringer","Junglist","Off_Roader","Amazon","Castaway","Sahara","Spitfire"]);
+
 const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Grizzly","Apache","Thorn","Hornet","Down_In_One","Rapier","Roughcutter","Razor","Nirvana","Malibu","Houdini"]);
+
+
+
+
+
+/* ----------------------------
+   UI elements & helpers
+   ---------------------------- */
+const windInput = document.getElementById('windInput');
+const ballPowerEl = document.getElementById('ballPower');
+const distanceEl = document.getElementById('clubDistance');
+const distanceVal = document.getElementById('clubDistanceVal');
+const elevationEl = document.getElementById('elevation');
+
+const ringsMain = document.getElementById('ringsMain');
+const r_max = document.getElementById('r_max');
+const r_mid = document.getElementById('r_mid');
+const r_min = document.getElementById('r_min');
+const r_25 = document.getElementById('r_25');
+const r_75 = document.getElementById('r_75');
+
+
+let endbringerMode = false;
+let clubsShowing = true;
+let clubsShowingB4EBMode;
+
+
 
 /* ----------------------------
    State
@@ -3739,6 +3764,8 @@ const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Griz
 let state = {selected:{},activeCategory:null};
 const shortcutBar=document.getElementById('shortcutBar');
 const activeClubLabel=document.getElementById('active_club');
+
+
 
 /* ----------------------------
    Build UI: club grid + bags + datalist
@@ -3790,6 +3817,43 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
 
   clubGrid.appendChild(panel);
 }
+
+
+
+
+// ------------------------------
+// lOAD USER DATA
+// ------------------------------
+
+firebase.auth().onAuthStateChanged(async user => {
+    if (user) {
+        await loadUserSettings(user.uid);
+    } else {
+        // User signed out → reset to default
+        setBallPower(0);
+    }
+});
+
+async function loadUserSettings(uid) {
+    try {
+        const shotDocRef = doc(db, "users", uid, "settings", "shot");
+        const shotSnap = await getDoc(shotDocRef);
+
+        if (shotSnap.exists()) {
+            const data = shotSnap.data();
+            const savedBP = data.ballPower ?? 0;
+            setBallPower(savedBP);
+        } else {
+            setBallPower(0);
+        }
+    } catch (err) {
+        console.error("Error loading user settings:", err);
+        setBallPower(0);
+    }
+}
+
+
+
 
 
 
@@ -3846,8 +3910,6 @@ function selectLevel(cat,level){
   triggerCalcIfReady(cat);
   setActiveShortCutButton(cat);
 }
-
-
 function updateShortcut(cat){
   const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
   const sel=state.selected[cat];
@@ -3990,23 +4052,9 @@ for (let i = 0; i < bagCount; i++) {
 // Initial button state
 updateSaveButtons();
 
-/* ----------------------------
-   UI elements & helpers
-   ---------------------------- */
-const windInput = document.getElementById('windInput');
-const ballPowerEl = document.getElementById('ballPower');
-const distanceEl = document.getElementById('clubDistance');
-const distanceVal = document.getElementById('clubDistanceVal');
-const elevationEl = document.getElementById('elevation');
 
-const ringsMain = document.getElementById('ringsMain');
-const r_max = document.getElementById('r_max');
-const r_mid = document.getElementById('r_mid');
-const r_min = document.getElementById('r_min');
-const r_25 = document.getElementById('r_25');
-const r_75 = document.getElementById('r_75');
 
-function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
 
 /* update active club label and club info placeholders */
 function updateClubInfoTable(){
@@ -4193,6 +4241,7 @@ function triggerCalcIfReady(category){
 	  return
 }
 
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 
 /* Calculation logic translated from AHK */
 function calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring }) {
@@ -4284,8 +4333,39 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
   }
 }
 
+function setBallPower(bp) {
+    const el = document.getElementById("ballPower");
 
-/* wire events */
+    // force number into valid range
+    bp = Math.max(0, Math.min(10, parseInt(bp)));
+
+    el.value = String(bp);
+
+    // dispatch change so your app reacts
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+
+
+// ----------------------------
+// 			WIRE EVENTS
+// ----------------------------
+
+ballPowerEl.addEventListener("change", async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const bp = parseInt(ballPowerEl.value);
+
+    try {
+        await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
+            ballPower: bp
+        }, { merge: true });
+    } catch (err) {
+        console.error("Failed to save ball power:", err);
+    }
+});
+
 distanceEl.addEventListener('input', (e)=> {
   distanceVal.value = e.target.value;
   if (distanceEl.value !== 0)
@@ -4299,15 +4379,22 @@ distanceEl.addEventListener('input', (e)=> {
 });
 
 distanceVal.addEventListener('input', (e)=> {
-  distanceEl.value = e.target.value;
-  if (distanceEl.value !== 0)
-	 triggerCalcIfReady(state.activeCategory);
-  else{
-	const minRings = r_min.textContent;
-     ringsMain.textContent = minRings;
-  }
-  // recalc all ready categories
+  if (e.target.value <= 0){
+	  distanceVal.value = 0;
+	  distanceEl.value = 0;
+	  const minRings = r_min.textContent;
+      ringsMain.textContent = minRings;
+	  return;
+  };
+  if (e.target.value > 100){
+	  distanceVal.value = 100;
+	  distanceEl.value = 100;
+	  triggerCalcIfReady(state.activeCategory);
+	  return;
+  };
   
+  distanceEl.value = e.target.value;
+  triggerCalcIfReady(state.activeCategory);
 });
 
 distanceVal.addEventListener('focus', (e)=> {
@@ -4318,10 +4405,16 @@ distanceVal.addEventListener('focus', (e)=> {
 // wind input rule: while user is still typing (input), convert integers to tenths (7 -> 0.7)
 // goal is for user to never have to type a decimal
 windInput.addEventListener('input', () => {
+  const cat = state.activeCategory;
   const v = windInput.value;
   if (v === '') return;
   const vLength = v.length;
-  if (vLength === 1) return;
+  
+  if (vLength === 1) {
+	triggerCalcIfReady(cat);
+	return;
+  };
+  
   if (!v.includes('.')) {
     const n = parseFloat(v);
     if (isNaN(n)) return 
@@ -4350,7 +4443,6 @@ windInput.addEventListener('input', () => {
 	  }
   }
   // recalc
-  const cat = state.activeCategory;
   if (cat && state.selected[cat] && state.selected[cat].club && state.selected[cat].level) {
     triggerCalcIfReady(cat);
   }  
@@ -4514,7 +4606,6 @@ infoModal.addEventListener("click", (e) => {
     }
   });
 
-
 function enableEndbringerSchool() {
   const category = "Wedges";
   const club = "Endbringer";
@@ -4537,6 +4628,8 @@ function enableEndbringerSchool() {
 
   return
 }
+
+
 
 /* ---------- 2. Tournament Notes (Local Storage) ---------- */
 const tournNotesBtn1 = document.getElementById("btn_tourn1")
@@ -4658,6 +4751,8 @@ function saveTournamentName(id, name) {
   localStorage.setItem(`tourn${id}_name`, name);
 }
 
+
+
 /* ---------- 3. CPC Mode / Reset Clubs ---------- */
 const resetButton = document.getElementById("btn_reset")
 resetButton.addEventListener('click', resetClubs);
@@ -4696,34 +4791,39 @@ function resetClubs() {
 }
 
 
-<!-- function showToast(message, duration = 3000) { -->
-    <!-- const toastContainer = document.getElementById('toast-container'); -->
-    <!-- if (!toastContainer) { -->
-        <!-- console.error("Toast container not found. Please add <div id='toast-container'></div> to your HTML."); -->
-        <!-- return; -->
-    <!-- } -->
 
-    <!-- const toastElement = document.createElement('div'); -->
-    <!-- toastElement.classList.add('toast'); -->
 
-    <!-- // Allow HTML inside messages (for bold titles, <br>, etc.) -->
-    <!-- toastElement.innerHTML = message; -->
+/* ----------------------------
+   SHOW A TOAST MESSAGE
+   ---------------------------- */
+function showToast(message, duration = 3000) {
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        console.error("Toast container not found. Please add <div id='toast-container'></div> to your HTML.");
+        return;
+    }
 
-    <!-- toastContainer.appendChild(toastElement); -->
+    const toastElement = document.createElement('div');
+    toastElement.classList.add('toast');
 
-    <!-- // Show the toast -->
-    <!-- setTimeout(() => { -->
-        <!-- toastElement.classList.add('show'); -->
-    <!-- }, 10); -->
+    // Allow HTML inside messages (for bold titles, <br>, etc.)
+    toastElement.innerHTML = message;
 
-    <!-- // Hide and remove the toast after the duration -->
-    <!-- setTimeout(() => { -->
-        <!-- toastElement.classList.remove('show'); -->
-        <!-- setTimeout(() => { -->
-            <!-- toastContainer.removeChild(toastElement); -->
-        <!-- }, 500); -->
-    <!-- }, duration); -->
-<!-- } -->
+    toastContainer.appendChild(toastElement);
+
+    // Show the toast
+    setTimeout(() => {
+        toastElement.classList.add('show');
+    }, 10);
+
+    // Hide and remove the toast after the duration
+    setTimeout(() => {
+        toastElement.classList.remove('show');
+        setTimeout(() => {
+            toastContainer.removeChild(toastElement);
+        }, 500);
+    }, duration);
+}
 
 
 /* init */
