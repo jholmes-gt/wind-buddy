@@ -1,7 +1,9 @@
 <!-- To do:  -->
-<!-- 1. sign in functionality -->
-<!-- 2. about, contact, ect pages -->
-<!-- 3. Endbringer mode needs to scan through saved bags to determine the user's level (default to level 5 if not found) -->
+<!-- 1. create and place logo -->
+<!-- 2. sign in functionality -->
+<!-- 3. information boxes -->
+<!-- 4. about, contact, ect pages -->
+
 
 <!doctype html>
 <html lang="en">
@@ -100,7 +102,7 @@
 		  <span id="tools-info-spcr1" class="info-icon-spcr">     </span>
 		  Tools            
 		  <span id="tools-info-spcr2" class="info-icon-spcr">     </span>
-		  <span id="tools-info-btn" class="info-icon" style="margin-bottom:0px; margin-top:0px;">i</span>
+		  <span id="tools-info-btn" class="info-icon">     i</span>
 		</h4>
 		<div class="panel">
           <button id="btn_endbringer" class="btn">Endbringer School</button>
@@ -136,14 +138,14 @@
 			<div class="tooltip-wrapper">
 			<input id="windInput" type="number" step="0.1" value="0.0">
 			<div class="input-tooltip" role="status" aria-hidden="true">
-				It is not necessary to type the decimal (dot) key. (example: type 125 for 12.5)
+				It is not necessary to type the decimal (dot) key. You can type the digits only.
 			</div>
 			</div>
 		</div>
 		
 		<div class="sa_row">
           <label for="ballPower">Ball Power</label>
-          <select id="ballPower"><option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select>
+          <select id="ballPower"><option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option slected value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select>
 		</div>
 		
 		<div class="sa_row">
@@ -166,9 +168,7 @@
 		</div>
      </div>
 
-      
-	  
-	  <!-- RIGHT: Rings card -->
+      <!-- RIGHT: Rings card -->
       <div class="panel ring-card" style="min-width:220px;">
 	    <h4>Rings to Adjust</h4>
         <div class="rings-main" id="ringsMain">--</div>
@@ -186,7 +186,7 @@
 
   <!-- SHORTCUT BUTTONS -->
   <div class="shortcut-bar" id="shortcutBar">
-    <span id="sc-info-btn" class="info-icon" style="margin-top:5px; margin-bottom:3px; margin-right:-4px; padding-top:5px">i</span>
+    <span id="sc-info-btn" class="info-icon" style="margin-top:7px; margin-right:-4px; padding-top:5px">i</span>
     <div class="shortcutbarInfo" style="font-size:16px">Current Club Selections:</div>
   </div>
 
@@ -284,20 +284,14 @@
 			<h3 style="margin-top: 0;">Current Club Selections</h3>
 
 			<p>
-			These 'shortcut' buttons are only enabled if both a club and level is currently selected for the corresponding club type (Driver, Wood, etc). If no club or no level is selected the buttons are disabled. The idea behind these buttons is for the user to have a quick and easy way to switch clubs after club selections have been made or saved golf bags have been loaded.  When a shortcut button is enabled, clicking it makes that club the active club and the ring adjustment values being displayed are based on that club. The active club's shortcut button will also change colors to provide a visual confirmation that it is the active club. 
+			These shortcut buttons are only enabled if a club and level is currently selected for the corresponding club type (Driver, Wood, etc.).  The idea behind these buttons is to have an easy way to quickly switch between clubs without having to use the the club and level buttons at the top of the page.  When you click one of the buttons (after it has been enabled), the button's appearance will change to indicate that this is the active club and that the ring calculations being displayed are related to this club. 
 			</p>
 			<p>
-			In addition to making that club active and recalculating the ring adjustment, clicking on a club shortcut button also sets the keyboard focus to the wind input field in the Shot Adjustments panel. This happens automatically and should assist the user in getting the new wind value in to the app quickly by eliminating the need for repetitive mouse activity. The current contents of the wind input field will be selected (as if the user had clicked in the field and then pressed CTRL-A on the keyboard), so that the user can type in the new wind value and remove the old value simultaineously.  
-			</p>
-			<p>
-			Also note that when you select a saved golf bag by clicking on a golf bag button, the driver for that bag is automatically selected and becomes the active club.  All of the shortcut buttons will update to reflect the clubs and levels that were saved for that bag number. The driver shortcut button will change colors to reflect that it is now the active club, and keyboard focus will go to the wind input field as if the user had actually clicked on the driver shortcut button.
+			Also, when you click on a shortcut button, the keyboard focus will automatically go to the wind input field in the Shot Adjustments panel so that the new wind value can be quickly entered for your upcoming shot. Also note that when you select a previously saved golf bag, the driver for that bag is automatically selected and the driver shortcut button is automatically clicked, resulting in keyboard focus once again going to the wind input field in the Shot Adjustmets panel. The idea is to reduce the need for repetitive actions with the mouse in an effort to reduce the time required to set up the shot.
 			</p>
 
 		</div>
 	</div>
-
-
-
 
 <!-- Firebase App (core) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -307,201 +301,6 @@
 
 <!-- Firebase Firestore (for saving bags/notes) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { 
-        getFirestore, doc, getDoc, setDoc 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { 
-        getAuth, onAuthStateChanged, signInWithEmailAndPassword, 
-        createUserWithEmailAndPassword, GoogleAuthProvider, 
-        signInWithPopup, signOut 
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    
-    // 🔥 Your Firebase config belongs right here:
-    const firebaseConfig = {
-      apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
-      authDomain: "windbuddy-7560a.firebaseapp.com",
-      projectId: "windbuddy-7560a",
-      storageBucket: "windbuddy-7560a.firebasestorage.app",
-      messagingSenderId: "685091043542",
-      appId: "1:685091043542:web:d710463180ed82fb0b7177"
-    };
-
-    // initialize
-    const app = initializeApp(firebaseConfig);
-
-    // expose globals
-    window.db = getFirestore(app);
-    window.doc = doc;
-    window.getDoc = getDoc;
-    window.setDoc = setDoc;
-
-    window.auth = getAuth(app);
-    window.onAuthStateChanged = onAuthStateChanged;
-    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-    window.GoogleAuthProvider = GoogleAuthProvider;
-    window.signInWithPopup = signInWithPopup;
-    window.signOut = signOut;
-</script>
-
-<script type="module">
-
-/* -------------------------------
-   Firebase imports (v10+ modular)
---------------------------------*/
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { 
-    getAuth,
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-/* -------------------------------
-   Import app-level functions
---------------------------------*/
-import { 
-    setupBallPowerSaving,
-    setBallPower,
-    showToast 
-} from "./WindBuddy.js";
-
-/* -------------------------------
-   Firebase Config
---------------------------------*/
-const firebaseConfig = {
-    apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
-    authDomain: "windbuddy-7560a.firebaseapp.com",
-    projectId: "windbuddy-7560a",
-    storageBucket: "windbuddy-7560a.firebasestorage.app",
-    messagingSenderId: "685091043542",
-    appId: "1:685091043542:web:d710463180ed82fb0b7177"
-};
-
-/* -------------------------------
-   Initialize Firebase
---------------------------------*/
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-/* -------------------------------
-   UI Elements
---------------------------------*/
-const loginBtn       = document.getElementById("loginBtn");
-const logoutBtn      = document.getElementById("logoutBtn");
-const loginModal     = document.getElementById("loginModal");
-const loginClose     = document.getElementById("loginClose");
-
-const emailLoginBtn  = document.getElementById("emailLoginBtn");
-const emailSignupBtn = document.getElementById("emailSignupBtn");
-const googleLoginBtn = document.getElementById("googleLoginBtn");
-
-const emailField     = document.getElementById("loginEmail");
-const passwordField  = document.getElementById("loginPassword");
-
-/* -------------------------------
-   UI Behavior
---------------------------------*/
-loginBtn.onclick  = () => loginModal.classList.remove("hidden");
-loginClose.onclick = () => loginModal.classList.add("hidden");
-
-emailLoginBtn.onclick = async () => {
-    try {
-        await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
-        loginModal.classList.add("hidden");
-        showToast("Signed in!", 2000);
-    } catch (err) {
-        showToast(err.message, 4000);
-    }
-};
-
-emailSignupBtn.onclick = async () => {
-    try {
-        await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
-        loginModal.classList.add("hidden");
-        showToast("Account created!", 2000);
-    } catch (err) {
-        showToast(err.message, 4000);
-    }
-};
-
-googleLoginBtn.onclick = async () => {
-    try {
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: "select_account" });
-
-        await signInWithPopup(auth, provider);
-        loginModal.classList.add("hidden");
-        showToast("Signed in with Google!", 2000);
-    } catch (err) {
-        showToast(err.message, 4000);
-    }
-};
-
-logoutBtn.onclick = async () => {
-    await signOut(auth);
-    showToast("Signed out", 2000);
-};
-
-/* -------------------------------
-   Load user settings (ball power)
---------------------------------*/
-async function loadUserSettings(uid) {
-    try {
-        const settingsRef  = doc(db, "users", uid, "settings", "shot");
-        const settingsSnap = await getDoc(settingsRef);
-
-        if (settingsSnap.exists()) {
-            const data = settingsSnap.data();
-            setBallPower(data.ballPower ?? 0);
-        } else {
-            setBallPower(0);
-        }
-    } catch (err) {
-        console.error("Error loading user settings:", err);
-        setBallPower(0);
-    }
-}
-
-/* -------------------------------
-   Auth State Listener
---------------------------------*/
-onAuthStateChanged(auth, async user => {
-    if (user) {
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-
-        // load saved settings
-        loadUserSettings(user.uid);
-
-        // start saving ball power changes
-        setupBallPowerSaving(db, user.uid);
-    } 
-    else {
-        logoutBtn.classList.add("hidden");
-        loginBtn.classList.remove("hidden");
-
-        // default ball power
-        setBallPower(0);
-    }
-});
-
-</script>
-
 <script src="WindBuddy.js"></script>
 </body>
 </html>
