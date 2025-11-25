@@ -29,6 +29,7 @@ const db = firebase.firestore();
 
 
 const this_ball_power = document.getElementById("ballPower")
+this_ball_power.value = 'option6'
 let endbringerMode = false;
 let clubsShowing = true;
 let clubsShowingB4EBMode;
