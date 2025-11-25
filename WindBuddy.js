@@ -268,7 +268,7 @@ const windData = {
 };
 
 
-<!-- club stats info -->
+<!-- club stats info 
 const clubStats = {
   "Drivers": {
     "Apocalypse": {
@@ -4181,8 +4181,8 @@ function loadBag(bagIndex) {
     const lvlBtn = document.querySelector(
       `[data-cat="${cat}"][data-level="${level}"]`
     );
-	<!-- console.log(clubBtn) -->
-	<!-- console.log(lvlBtn) -->
+	<!-- console.log(clubBtn) 
+	<!-- console.log(lvlBtn) 
     if (clubBtn) clubBtn.click();
     if (lvlBtn) lvlBtn.click();
   });
@@ -4198,7 +4198,7 @@ function loadBag(bagIndex) {
   // Recalculate and refresh displays
   updateSaveButtons();
   triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
-  <!-- updateActiveLabel(); -->
+  <!-- updateActiveLabel(); 
   updateClubInfoTable();
 }
 
@@ -4217,8 +4217,8 @@ for (let i = 0; i < bagCount; i++) {
 //Club Info Panel
 //-----------------------------------------
 function updateClubInfoTable(){
-<!-- if (endbringerMode) -->
-	<!-- alert("db3 starting infotable"); -->
+<!-- if (endbringerMode) 
+	<!-- alert("db3 starting infotable"); 
 
   const info_grid = document.getElementById('club_info_table');
   if (!info_grid) return;
@@ -4245,7 +4245,7 @@ function updateClubInfoTable(){
 		 // Update each stat row and Club Info Hdr
 		  document.getElementById('active_club_info_hdr').textContent = `${clubName} (Lv. ${s.level})`;;
 		  
-		  <!-- alert(stats.power.toString().length) -->
+		  <!-- alert(stats.power.toString().length) 
 		  
 		  let sp = 5
 		  const pLength = stats.power.toString().length
@@ -4368,7 +4368,7 @@ function triggerCalcIfReady(category){
 		   wind_per_ring: wind_per_ring 
 		 });
 		 const ebsRings = document.getElementById("ebs" + pct);
-		 <!-- ebsRings.textContent = tcrAsNumber; -->
+		 <!-- ebsRings.textContent = tcrAsNumber; 
 		 ebsRings.textContent = `${result.true_club_rings}`;
 	    }
 		
@@ -4400,14 +4400,14 @@ function calculateRings_JS({ wind, elevation, ballPower, club_distance, category
   else	
     min_rings = round(((wind/arr[2]) * multiplier),1);
 	
-  <!-- used to have 25p = (min+mid)/2 -->
+  <!-- used to have 25p = (min+mid)/2 
   const rings25p = round(min_rings + ((max_rings - min_rings) * 0.25),1);
   const rings75p = round(min_rings + ((max_rings - min_rings) * 0.75),1);
     
-  <!-- const max_min_diff = max_rings - min_rings; -->
-  <!-- const true_club_rings = round(min_rings + (max_min_diff * (club_distance/100)), 1); -->
+  <!-- const max_min_diff = max_rings - min_rings; 
+  <!-- const true_club_rings = round(min_rings + (max_min_diff * (club_distance/100)), 1); 
   const true_club_rings = round(min_rings + ((max_rings - min_rings) * (club_distance/100)), 1);
-  <!-- const true_club_rings = min_rings + ((max_rings - min_rings) * (club_distance/100)); -->
+  <!-- const true_club_rings = min_rings + ((max_rings - min_rings) * (club_distance/100)); 
   return { true_club_rings, max_rings, mid_rings, min_rings, rings25p, rings75p };
 }
 
@@ -4628,7 +4628,7 @@ windInput.addEventListener('focus', () => {
 
 /* toggle hide/show clubs (toggle button remains visible) */
 const toggleClubsLink = document.getElementById('toggleClubs');
-<!-- const clubsWrap = document.querySelector('.clubs-wrap'); -->
+<!-- const clubsWrap = document.querySelector('.clubs-wrap'); 
 toggleClubsLink.addEventListener('click', ()=>{
   if (clubGrid.style.display === 'none') {
     clubGrid.style.display = 'flex';
@@ -4643,7 +4643,7 @@ toggleClubsLink.addEventListener('click', ()=>{
 
 
 let elevationDefaultValue = elevationEl.value;
-	<!-- Event Listeners to show all elevation options when user interacts with the input field -->
+	<!-- Event Listeners to show all elevation options when user interacts with the input field 
 
   // Save the default value to a placeholder on focus
   elevationEl.addEventListener('focus', () => {
@@ -4767,7 +4767,7 @@ infoModal.addEventListener("click", (e) => {
 function enableEndbringerSchool() {
   const category = "Wedges";
   const club = "Endbringer";
-  const level = 7; // placeholder — can be dynamic later ----> we can search the saved bags later for a level
+  const level = 7; // placeholder — can be dynamic later -- we can search the saved bags later for a level
 
   state.activeCategory = category;
   state.selected[category] = { club, level };
