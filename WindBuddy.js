@@ -1,35 +1,71 @@
+/* ============================================================
+   WindBuddy.js — UI / App Logic Only
+   (Firebase handled in HTML module script)
+============================================================ */
 
+/* -------------------------------
+   Toast System (exported)
+--------------------------------*/
+export function showToast(message, duration = 3000) {
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) return;
 
-// Import the functions you need from the SDKs you need
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    const toastElement = document.createElement('div');
+    toastElement.classList.add('toast');
+    toastElement.innerText = message;
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
-  authDomain: "windbuddy-7560a.firebaseapp.com",
-  projectId: "windbuddy-7560a",
-  storageBucket: "windbuddy-7560a.firebasestorage.app",
-  messagingSenderId: "685091043542",
-  appId: "1:685091043542:web:d710463180ed82fb0b7177"
-};
+    toastContainer.appendChild(toastElement);
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+    setTimeout(() => toastElement.classList.add('show'), 20);
+
+    setTimeout(() => {
+        toastElement.classList.remove('show');
+        setTimeout(() => toastElement.remove(), 500);
+    }, duration);
+}
+
+/* -------------------------------
+   Ball Power Setter (exported)
+--------------------------------*/
+export function setBallPower(bp) {
+    const el = document.getElementById("ballPower");
+
+    bp = parseInt(bp);
+    if (isNaN(bp)) bp = 0;
+    bp = Math.max(0, Math.min(10, bp));
+
+    el.value = String(bp);
+
+    // trigger app logic
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+/* -------------------------------
+   Automatically Save Changes
+   (exported)
+--------------------------------*/
+export function setupBallPowerSaving(db, uid) {
+    const el = document.getElementById("ballPower");
+
+    el.addEventListener("change", async () => {
+        try {
+            const value = parseInt(el.value) || 0;
+            const settingsRef = doc(db, "users", uid, "settings", "shot");
+
+            await setDoc(settingsRef, { ballPower: value }, { merge: true });
+
+        } catch (err) {
+            console.error("Failed to save ball power:", err);
+        }
+    });
+}
+// Initial button state
+// updateSaveButtons();
 
 
 
 // ------------------------------
-// FIREBASE INITIALIZATION
-// ------------------------------
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-
-// ------------------------------
-// GAME DATA
+// GAME DATA (clubs, courses, etc)
 // ------------------------------
 const clubCats = {
   Drivers: ["Rocket","Extra_Mile","Big_Topper","Quarterback","Rock","Thors_Hammer","Apocalypse"],
@@ -3751,7 +3787,6 @@ const r_min = document.getElementById('r_min');
 const r_25 = document.getElementById('r_25');
 const r_75 = document.getElementById('r_75');
 
-
 let endbringerMode = false;
 let clubsShowing = true;
 let clubsShowingB4EBMode;
@@ -3821,42 +3856,12 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
 
 
 
-// ------------------------------
-// lOAD USER DATA
-// ------------------------------
-
-firebase.auth().onAuthStateChanged(async user => {
-    if (user) {
-        await loadUserSettings(user.uid);
-    } else {
-        // User signed out → reset to default
-        setBallPower(0);
-    }
-});
-
-async function loadUserSettings(uid) {
-    try {
-        const shotDocRef = doc(db, "users", uid, "settings", "shot");
-        const shotSnap = await getDoc(shotDocRef);
-
-        if (shotSnap.exists()) {
-            const data = shotSnap.data();
-            const savedBP = data.ballPower ?? 0;
-            setBallPower(savedBP);
-        } else {
-            setBallPower(0);
-        }
-    } catch (err) {
-        console.error("Error loading user settings:", err);
-        setBallPower(0);
-    }
-}
 
 
 
-
-
-
+//-----------------------------------------
+//Clubs and Levels selection/implementation
+//-----------------------------------------
 function selectClub(cat,club){
   state.selected[cat]=state.selected[cat]||{};
   state.selected[cat].club=club;
@@ -3922,10 +3927,41 @@ function updateShortcut(cat){
     btn.classList.remove('enabled');
   }
 }
+function refreshLevelButtons(cat){
+  const sel = state.selected[cat] && state.selected[cat].club ? state.selected[cat].club : null;
+  document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ b.classList.remove('disabled'); });
+  if (!sel) return;
+  if (epics.has(sel)){
+    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 9) b.classList.add('disabled'); });
+    if (state.selected[cat].level && state.selected[cat].level > 8){
+      delete state.selected[cat].level;
+      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
+	  updateClubInfoTable();
+	  updateShortcut(cat);
+    }
+  } else if (rares.has(sel)){
+    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 10) b.classList.add('disabled'); });
+    if (state.selected[cat].level && state.selected[cat].level > 9){
+      delete state.selected[cat].level;
+      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
+	  updateClubInfoTable();
+	  updateShortcut(cat);
+    }
+  }
+}
+function setActiveShortCutButton(cat){
+  document.querySelectorAll('.shortcut-btn').forEach(x=>x.classList.remove('active'));
+  const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
+  if(btn)btn.classList.add('active');
+  state.activeCategory=cat;
+}
+
+
+
 
 
 //------------------------------------------------------
-// Golf Bags Panel Logic
+// Golf Bags Panel functions
 //------------------------------------------------------
 
 const bagCount = 5;
@@ -4049,14 +4085,14 @@ for (let i = 0; i < bagCount; i++) {
   saveButtons[i]?.addEventListener('click', () => saveBag(i + 1));
 }
 
-// Initial button state
-updateSaveButtons();
 
 
 
 
 
-/* update active club label and club info placeholders */
+//-----------------------------------------
+//Club Info Panel
+//-----------------------------------------
 function updateClubInfoTable(){
 <!-- if (endbringerMode) -->
 	<!-- alert("db3 starting infotable"); -->
@@ -4163,31 +4199,10 @@ function updateClubInfoTable(){
 }
 
 
-/* enable/disable level buttons depending on epic/rare/common */
-function refreshLevelButtons(cat){
-  const sel = state.selected[cat] && state.selected[cat].club ? state.selected[cat].club : null;
-  document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ b.classList.remove('disabled'); });
-  if (!sel) return;
-  if (epics.has(sel)){
-    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 9) b.classList.add('disabled'); });
-    if (state.selected[cat].level && state.selected[cat].level > 8){
-      delete state.selected[cat].level;
-      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
-	  updateClubInfoTable();
-	  updateShortcut(cat);
-    }
-  } else if (rares.has(sel)){
-    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 10) b.classList.add('disabled'); });
-    if (state.selected[cat].level && state.selected[cat].level > 9){
-      delete state.selected[cat].level;
-      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
-	  updateClubInfoTable();
-	  updateShortcut(cat);
-    }
-  }
-}
 
-
+//-----------------------------------------
+//Ring Calculation/Displaying functions
+//-----------------------------------------
 /* run calc if both club and level are present */
 function triggerCalcIfReady(category){
   const sel = state.selected[category];
@@ -4333,18 +4348,46 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
   }
 }
 
-function setBallPower(bp) {
-    const el = document.getElementById("ballPower");
+
+
+
+
+//-----------------------------------------
+//Ball Power functions (saving and setting)
+//-----------------------------------------
+// function setBallPower(bp) {
+    // const el = document.getElementById("ballPower");
 
     // force number into valid range
-    bp = Math.max(0, Math.min(10, parseInt(bp)));
+    // bp = Math.max(0, Math.min(10, parseInt(bp)));
 
-    el.value = String(bp);
+    // el.value = String(bp);
 
     // dispatch change so your app reacts
-    el.dispatchEvent(new Event("change", { bubbles: true }));
-}
+    // el.dispatchEvent(new Event("change", { bubbles: true }));
+// }
 
+// function setupBallPowerSaving() {
+    // const el = document.getElementById("ballPower");
+
+    // el.addEventListener("change", async () => {
+        // const user = auth.currentUser;
+        // if (!user) return; // not logged in → don't save
+
+        // try {
+            // await db.collection("users")
+                // .doc(user.uid)
+                // .collection("settings")
+                // .doc("shot")
+                // .set({ ballPower: parseInt(el.value) });
+
+        // } catch (err) {
+            // console.error("Failed to save ball power:", err);
+        // }
+    // });
+// }
+
+// setupBallPowerSaving();
 
 
 // ----------------------------
@@ -4539,14 +4582,6 @@ scinfoModal.addEventListener("click", (e) => {
 });
 
 
-
-/* ---- Active Category ---- */
-function setActiveShortCutButton(cat){
-  document.querySelectorAll('.shortcut-btn').forEach(x=>x.classList.remove('active'));
-  const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
-  if(btn)btn.classList.add('active');
-  state.activeCategory=cat;
-}
 
 
 
@@ -4836,82 +4871,4 @@ function showToast(message, duration = 3000) {
 })();
 
 
-
-
-
-// Elements
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const loginModal = document.getElementById("loginModal");
-const loginClose = document.getElementById("loginClose");
-
-const emailLoginBtn = document.getElementById("emailLoginBtn");
-const emailSignupBtn = document.getElementById("emailSignupBtn");
-const googleLoginBtn = document.getElementById("googleLoginBtn");
-
-const emailField = document.getElementById("loginEmail");
-const passwordField = document.getElementById("loginPassword");
-
-// Show modal
-loginBtn.onclick = () => {
-    loginModal.classList.remove("hidden");
-};
-
-// Hide modal
-loginClose.onclick = () => {
-    loginModal.classList.add("hidden");
-};
-
-// Email Login
-emailLoginBtn.onclick = () => {
-    auth.signInWithEmailAndPassword(emailField.value, passwordField.value)
-        .then(() => {
-            loginModal.classList.add("hidden");
-            showToast("Signed in successfully!", 2500);
-        })
-        .catch(err => showToast(err.message, 4000));
-};
-
-// Email Create Account
-emailSignupBtn.onclick = () => {
-    auth.createUserWithEmailAndPassword(emailField.value, passwordField.value)
-        .then(() => {
-            loginModal.classList.add("hidden");
-            showToast("Account created!", 2500);
-        })
-        .catch(err => showToast(err.message, 4000));
-};
-
-// Google Login
-googleLoginBtn.onclick = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-
-    auth.signInWithPopup(provider)
-        .then(() => {
-            loginModal.classList.add("hidden");
-            showToast("Signed in with Google!", 2500);
-        })
-        .catch(err => showToast(err.message, 4000));
-};
-
-// Logout
-logoutBtn.onclick = () => {
-    auth.signOut().then(() => {
-        showToast("Signed out", 2000);
-    });
-};
-
-// Auth state listener
-auth.onAuthStateChanged(user => {
-    if (user) {
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-
-        console.log("Logged in as:", user.email || user.displayName);
-    } else {
-        logoutBtn.classList.add("hidden");
-        loginBtn.classList.remove("hidden");
-    }
-});
 

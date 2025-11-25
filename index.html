@@ -1,9 +1,7 @@
 <!-- To do:  -->
-<!-- 1. create and place logo -->
-<!-- 2. sign in functionality -->
-<!-- 3. information boxes -->
-<!-- 4. about, contact, ect pages -->
-
+<!-- 1. sign in functionality -->
+<!-- 2. about, contact, ect pages -->
+<!-- 3. Endbringer mode needs to scan through saved bags to determine the user's level (default to level 5 if not found) -->
 
 <!doctype html>
 <html lang="en">
@@ -298,6 +296,9 @@
 		</div>
 	</div>
 
+
+
+
 <!-- Firebase App (core) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 
@@ -306,6 +307,201 @@
 
 <!-- Firebase Firestore (for saving bags/notes) -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+        getFirestore, doc, getDoc, setDoc 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { 
+        getAuth, onAuthStateChanged, signInWithEmailAndPassword, 
+        createUserWithEmailAndPassword, GoogleAuthProvider, 
+        signInWithPopup, signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    
+    // 🔥 Your Firebase config belongs right here:
+    const firebaseConfig = {
+      apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
+      authDomain: "windbuddy-7560a.firebaseapp.com",
+      projectId: "windbuddy-7560a",
+      storageBucket: "windbuddy-7560a.firebasestorage.app",
+      messagingSenderId: "685091043542",
+      appId: "1:685091043542:web:d710463180ed82fb0b7177"
+    };
+
+    // initialize
+    const app = initializeApp(firebaseConfig);
+
+    // expose globals
+    window.db = getFirestore(app);
+    window.doc = doc;
+    window.getDoc = getDoc;
+    window.setDoc = setDoc;
+
+    window.auth = getAuth(app);
+    window.onAuthStateChanged = onAuthStateChanged;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.GoogleAuthProvider = GoogleAuthProvider;
+    window.signInWithPopup = signInWithPopup;
+    window.signOut = signOut;
+</script>
+
+<script type="module">
+
+/* -------------------------------
+   Firebase imports (v10+ modular)
+--------------------------------*/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { 
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* -------------------------------
+   Import app-level functions
+--------------------------------*/
+import { 
+    setupBallPowerSaving,
+    setBallPower,
+    showToast 
+} from "./WindBuddy.js";
+
+/* -------------------------------
+   Firebase Config
+--------------------------------*/
+const firebaseConfig = {
+    apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
+    authDomain: "windbuddy-7560a.firebaseapp.com",
+    projectId: "windbuddy-7560a",
+    storageBucket: "windbuddy-7560a.firebasestorage.app",
+    messagingSenderId: "685091043542",
+    appId: "1:685091043542:web:d710463180ed82fb0b7177"
+};
+
+/* -------------------------------
+   Initialize Firebase
+--------------------------------*/
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* -------------------------------
+   UI Elements
+--------------------------------*/
+const loginBtn       = document.getElementById("loginBtn");
+const logoutBtn      = document.getElementById("logoutBtn");
+const loginModal     = document.getElementById("loginModal");
+const loginClose     = document.getElementById("loginClose");
+
+const emailLoginBtn  = document.getElementById("emailLoginBtn");
+const emailSignupBtn = document.getElementById("emailSignupBtn");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+
+const emailField     = document.getElementById("loginEmail");
+const passwordField  = document.getElementById("loginPassword");
+
+/* -------------------------------
+   UI Behavior
+--------------------------------*/
+loginBtn.onclick  = () => loginModal.classList.remove("hidden");
+loginClose.onclick = () => loginModal.classList.add("hidden");
+
+emailLoginBtn.onclick = async () => {
+    try {
+        await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
+        loginModal.classList.add("hidden");
+        showToast("Signed in!", 2000);
+    } catch (err) {
+        showToast(err.message, 4000);
+    }
+};
+
+emailSignupBtn.onclick = async () => {
+    try {
+        await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
+        loginModal.classList.add("hidden");
+        showToast("Account created!", 2000);
+    } catch (err) {
+        showToast(err.message, 4000);
+    }
+};
+
+googleLoginBtn.onclick = async () => {
+    try {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+
+        await signInWithPopup(auth, provider);
+        loginModal.classList.add("hidden");
+        showToast("Signed in with Google!", 2000);
+    } catch (err) {
+        showToast(err.message, 4000);
+    }
+};
+
+logoutBtn.onclick = async () => {
+    await signOut(auth);
+    showToast("Signed out", 2000);
+};
+
+/* -------------------------------
+   Load user settings (ball power)
+--------------------------------*/
+async function loadUserSettings(uid) {
+    try {
+        const settingsRef  = doc(db, "users", uid, "settings", "shot");
+        const settingsSnap = await getDoc(settingsRef);
+
+        if (settingsSnap.exists()) {
+            const data = settingsSnap.data();
+            setBallPower(data.ballPower ?? 0);
+        } else {
+            setBallPower(0);
+        }
+    } catch (err) {
+        console.error("Error loading user settings:", err);
+        setBallPower(0);
+    }
+}
+
+/* -------------------------------
+   Auth State Listener
+--------------------------------*/
+onAuthStateChanged(auth, async user => {
+    if (user) {
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+
+        // load saved settings
+        loadUserSettings(user.uid);
+
+        // start saving ball power changes
+        setupBallPowerSaving(db, user.uid);
+    } 
+    else {
+        logoutBtn.classList.add("hidden");
+        loginBtn.classList.remove("hidden");
+
+        // default ball power
+        setBallPower(0);
+    }
+});
+
+</script>
+
 <script src="WindBuddy.js"></script>
 </body>
 </html>
