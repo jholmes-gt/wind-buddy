@@ -1,93 +1,99 @@
+// ----------------------------------------
 // firebase-auth.js
-import { auth } from "./firebase-init.js";
+// Handles all login UI + authentication events
+// ----------------------------------------
+
 import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    auth,
+    googleProvider,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+} from "./firebase-init.js";
 
-/**
- * initAuth(onUserChange)
- * - wires UI buttons already present in your HTML (loginBtn, loginModal, etc)
- * - calls onUserChange(user) whenever auth state changes
- */
-export function initAuth(onUserChange) {
-  // elements (must exist in DOM)
-  const loginBtn       = document.getElementById("loginBtn");
-  const logoutBtn      = document.getElementById("logoutBtn");
-  const loginModal     = document.getElementById("loginModal");
-  const loginClose     = document.getElementById("loginClose");
-  const emailLoginBtn  = document.getElementById("emailLoginBtn");
-  const emailSignupBtn = document.getElementById("emailSignupBtn");
-  const googleLoginBtn = document.getElementById("googleLoginBtn");
-  const emailField     = document.getElementById("loginEmail");
-  const passwordField  = document.getElementById("loginPassword");
+// UI elements
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginModal = document.getElementById("loginModal");
+const loginClose = document.getElementById("loginClose");
 
-  // defensive checks
-  if (!loginBtn || !logoutBtn || !loginModal || !emailLoginBtn) {
-    console.warn("Auth UI elements missing. Make sure your HTML includes the login modal and buttons.");
-  }
+const emailLoginBtn = document.getElementById("emailLoginBtn");
+const emailSignupBtn = document.getElementById("emailSignupBtn");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
 
-  // show/hide modal
-  loginBtn?.addEventListener("click", () => loginModal.classList.remove("hidden"));
-  loginClose?.addEventListener("click", () => loginModal.classList.add("hidden"));
+const emailField = document.getElementById("loginEmail");
+const passwordField = document.getElementById("loginPassword");
 
-  // email sign-in
-  emailLoginBtn?.addEventListener("click", async () => {
+// ----------------------------------------
+// Modal show/hide
+// ----------------------------------------
+
+loginBtn.onclick = () => loginModal.classList.remove("hidden");
+loginClose.onclick = () => loginModal.classList.add("hidden");
+
+// ----------------------------------------
+// Email Login
+// ----------------------------------------
+
+emailLoginBtn.onclick = async () => {
     try {
-      await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
-      loginModal.classList.add("hidden");
+        await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
+        loginModal.classList.add("hidden");
+        showToast("Signed in!", 2500);
     } catch (err) {
-      console.error("Email sign-in error:", err);
-      alert(err.message || "Sign-in failed");
+        showToast(err.message, 4000);
     }
-  });
+};
 
-  // email signup
-  emailSignupBtn?.addEventListener("click", async () => {
+// ----------------------------------------
+// Email Signup
+// ----------------------------------------
+
+emailSignupBtn.onclick = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
-      loginModal.classList.add("hidden");
+        await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
+        loginModal.classList.add("hidden");
+        showToast("Account created!", 2500);
     } catch (err) {
-      console.error("Create account error:", err);
-      alert(err.message || "Create account failed");
+        showToast(err.message, 4000);
     }
-  });
+};
 
-  // google signin
-  googleLoginBtn?.addEventListener("click", async () => {
+// ----------------------------------------
+// Google Login
+// ----------------------------------------
+
+googleLoginBtn.onclick = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
-      await signInWithPopup(auth, provider);
-      loginModal.classList.add("hidden");
+        await signInWithPopup(auth, googleProvider);
+        loginModal.classList.add("hidden");
+        showToast("Signed in with Google!", 2500);
     } catch (err) {
-      console.error("Google sign-in error:", err);
-      alert(err.message || "Google sign-in failed");
+        showToast(err.message, 4000);
     }
-  });
+};
 
-  // sign out
-  logoutBtn?.addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error("Sign out error:", err);
-    }
-  });
+// ----------------------------------------
+// Logout
+// ----------------------------------------
 
-  // auth state changes
-  onAuthStateChanged(auth, user => {
+logoutBtn.onclick = async () => {
+    await signOut(auth);
+    showToast("Signed out", 2000);
+};
+
+// ----------------------------------------
+// Auth State Listener
+// ----------------------------------------
+
+onAuthStateChanged(auth, (user) => {
     if (user) {
-      loginBtn?.classList?.add("hidden");
-      logoutBtn?.classList?.remove("hidden");
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
     } else {
-      logoutBtn?.classList?.add("hidden");
-      loginBtn?.classList?.remove("hidden");
+        logoutBtn.classList.add("hidden");
+        loginBtn.classList.remove("hidden");
     }
-    if (typeof onUserChange === "function") onUserChange(user || null);
-  });
-}
+});

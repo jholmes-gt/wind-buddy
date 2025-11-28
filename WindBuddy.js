@@ -1,38 +1,98 @@
+// ----------------------------------------
+// WindBuddy.js  (Firebase-related section)
+// ----------------------------------------
+
+import {
+    auth,
+    db,
+    doc,
+    getDoc,
+    setDoc,
+    onAuthStateChanged
+} from "./firebase-init.js";
+
+// Select element for ball power
+const ballPowerSelect = document.getElementById("ballPower");
+
+// ----------------------------------------
+// Save ball power to Firestore
+// ----------------------------------------
+
+async function saveBallPower(uid, value) {
+    try {
+        const ref = doc(db, "users", uid, "settings", "shot");
+        await setDoc(ref, { ballPower: value }, { merge: true });
+    } catch (err) {
+        console.error("Error saving ball power:", err);
+    }
+}
+
+// ----------------------------------------
+// Load existing ball power
+// ----------------------------------------
+
+async function loadBallPower(uid) {
+    try {
+        const ref = doc(db, "users", uid, "settings", "shot");
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            const value = snap.data().ballPower ?? 0;
+            setBallPower(value);
+        } else {
+            setBallPower(0);
+        }
+    } catch (err) {
+        console.error("Error loading ballPower:", err);
+        setBallPower(0);
+    }
+}
+
+// ----------------------------------------
+// Helper: update UI + bubble event
+// ----------------------------------------
+
+function setBallPower(value) {
+    value = Math.max(0, Math.min(10, Number(value)));
+    ballPowerSelect.value = String(value);
+    ballPowerSelect.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+// ----------------------------------------
+// Save whenever user changes dropdown
+// ----------------------------------------
+
+ballPowerSelect.addEventListener("change", () => {
+    const value = Number(ballPowerSelect.value);
+    const user = auth.currentUser;
+
+    if (user) {
+        saveBallPower(user.uid, value);
+    }
+});
+
+// ----------------------------------------
+// Auth state: load saved settings
+// ----------------------------------------
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loadBallPower(user.uid);
+    } else {
+        // Not logged in → use 0
+        setBallPower(0);
+    }
+});
 
 
-// Import the functions you need from the SDKs you need
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyABJDtHSjWRkxQYbBkyrPfbMcMqbq0whaw",
-  authDomain: "windbuddy-7560a.firebaseapp.com",
-  projectId: "windbuddy-7560a",
-  storageBucket: "windbuddy-7560a.firebasestorage.app",
-  messagingSenderId: "685091043542",
-  appId: "1:685091043542:web:d710463180ed82fb0b7177"
-};
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
 
 
 
 // ------------------------------
-// FIREBASE INITIALIZATION
+// GAME DATA (clubs, courses, etc)
 // ------------------------------
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-
-const this_ball_power = document.getElementById("ballPower")
-let endbringerMode = false;
-let clubsShowing = true;
-let clubsShowingB4EBMode;
-
 const clubCats = {
   Drivers: ["Rocket","Extra_Mile","Big_Topper","Quarterback","Rock","Thors_Hammer","Apocalypse"],
   Woods: ["Horizon","Viper","Big_Dawg","Hammerhead","Guardian","Sniper","Cataclysm"],
@@ -111,7 +171,7 @@ const windData = {
 };
 
 
-<!-- club stats info -->
+// club stats info 
 const clubStats = {
   "Drivers": {
     "Apocalypse": {
@@ -3730,7 +3790,34 @@ const clubStats = {
 };  
 
 const epics = new Set(["Big_Topper","Thors_Hammer","Apocalypse","Horizon","Hammerhead","Cataclysm","Grim_Reaper","B52","Tsunami","Kingfisher","Falcon","FireFly","Boomerang","Endbringer","Junglist","Off_Roader","Amazon","Castaway","Sahara","Spitfire"]);
+
 const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Grizzly","Apache","Thorn","Hornet","Down_In_One","Rapier","Roughcutter","Razor","Nirvana","Malibu","Houdini"]);
+
+
+
+
+
+/* ----------------------------
+   UI elements & helpers
+   ---------------------------- */
+const windInput = document.getElementById('windInput');
+const ballPowerEl = document.getElementById('ballPower');
+const distanceEl = document.getElementById('clubDistance');
+const distanceVal = document.getElementById('clubDistanceVal');
+const elevationEl = document.getElementById('elevation');
+
+const ringsMain = document.getElementById('ringsMain');
+const r_max = document.getElementById('r_max');
+const r_mid = document.getElementById('r_mid');
+const r_min = document.getElementById('r_min');
+const r_25 = document.getElementById('r_25');
+const r_75 = document.getElementById('r_75');
+
+let endbringerMode = false;
+let clubsShowing = true;
+let clubsShowingB4EBMode;
+
+
 
 /* ----------------------------
    State
@@ -3738,6 +3825,8 @@ const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Griz
 let state = {selected:{},activeCategory:null};
 const shortcutBar=document.getElementById('shortcutBar');
 const activeClubLabel=document.getElementById('active_club');
+
+
 
 /* ----------------------------
    Build UI: club grid + bags + datalist
@@ -3792,6 +3881,13 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
 
 
 
+
+
+
+
+//-----------------------------------------
+//Clubs and Levels selection/implementation
+//-----------------------------------------
 function selectClub(cat,club){
   state.selected[cat]=state.selected[cat]||{};
   state.selected[cat].club=club;
@@ -3845,8 +3941,6 @@ function selectLevel(cat,level){
   triggerCalcIfReady(cat);
   setActiveShortCutButton(cat);
 }
-
-
 function updateShortcut(cat){
   const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
   const sel=state.selected[cat];
@@ -3859,10 +3953,41 @@ function updateShortcut(cat){
     btn.classList.remove('enabled');
   }
 }
+function refreshLevelButtons(cat){
+  const sel = state.selected[cat] && state.selected[cat].club ? state.selected[cat].club : null;
+  document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ b.classList.remove('disabled'); });
+  if (!sel) return;
+  if (epics.has(sel)){
+    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 9) b.classList.add('disabled'); });
+    if (state.selected[cat].level && state.selected[cat].level > 8){
+      delete state.selected[cat].level;
+      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
+	  updateClubInfoTable();
+	  updateShortcut(cat);
+    }
+  } else if (rares.has(sel)){
+    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 10) b.classList.add('disabled'); });
+    if (state.selected[cat].level && state.selected[cat].level > 9){
+      delete state.selected[cat].level;
+      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
+	  updateClubInfoTable();
+	  updateShortcut(cat);
+    }
+  }
+}
+function setActiveShortCutButton(cat){
+  document.querySelectorAll('.shortcut-btn').forEach(x=>x.classList.remove('active'));
+  const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
+  if(btn)btn.classList.add('active');
+  state.activeCategory=cat;
+}
+
+
+
 
 
 //------------------------------------------------------
-// Golf Bags Panel Logic
+// Golf Bags Panel functions
 //------------------------------------------------------
 
 const bagCount = 5;
@@ -3959,8 +4084,8 @@ function loadBag(bagIndex) {
     const lvlBtn = document.querySelector(
       `[data-cat="${cat}"][data-level="${level}"]`
     );
-	<!-- console.log(clubBtn) -->
-	<!-- console.log(lvlBtn) -->
+	// console.log(clubBtn) 
+	// console.log(lvlBtn) 
     if (clubBtn) clubBtn.click();
     if (lvlBtn) lvlBtn.click();
   });
@@ -3976,7 +4101,7 @@ function loadBag(bagIndex) {
   // Recalculate and refresh displays
   updateSaveButtons();
   triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
-  <!-- updateActiveLabel(); -->
+  // updateActiveLabel(); 
   updateClubInfoTable();
 }
 
@@ -3986,31 +4111,17 @@ for (let i = 0; i < bagCount; i++) {
   saveButtons[i]?.addEventListener('click', () => saveBag(i + 1));
 }
 
-// Initial button state
-updateSaveButtons();
 
-/* ----------------------------
-   UI elements & helpers
-   ---------------------------- */
-const windInput = document.getElementById('windInput');
-const ballPowerEl = document.getElementById('ballPower');
-const distanceEl = document.getElementById('clubDistance');
-const distanceVal = document.getElementById('clubDistanceVal');
-const elevationEl = document.getElementById('elevation');
 
-const ringsMain = document.getElementById('ringsMain');
-const r_max = document.getElementById('r_max');
-const r_mid = document.getElementById('r_mid');
-const r_min = document.getElementById('r_min');
-const r_25 = document.getElementById('r_25');
-const r_75 = document.getElementById('r_75');
 
-function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 
-/* update active club label and club info placeholders */
+
+//-----------------------------------------
+//Club Info Panel
+//-----------------------------------------
 function updateClubInfoTable(){
-<!-- if (endbringerMode) -->
-	<!-- alert("db3 starting infotable"); -->
+// if (endbringerMode) 
+	// alert("db3 starting infotable"); 
 
   const info_grid = document.getElementById('club_info_table');
   if (!info_grid) return;
@@ -4037,7 +4148,7 @@ function updateClubInfoTable(){
 		 // Update each stat row and Club Info Hdr
 		  document.getElementById('active_club_info_hdr').textContent = `${clubName} (Lv. ${s.level})`;;
 		  
-		  <!-- alert(stats.power.toString().length) -->
+		  // alert(stats.power.toString().length) 
 		  
 		  let sp = 5
 		  const pLength = stats.power.toString().length
@@ -4114,39 +4225,17 @@ function updateClubInfoTable(){
 }
 
 
-/* enable/disable level buttons depending on epic/rare/common */
-function refreshLevelButtons(cat){
-  const sel = state.selected[cat] && state.selected[cat].club ? state.selected[cat].club : null;
-  document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ b.classList.remove('disabled'); });
-  if (!sel) return;
-  if (epics.has(sel)){
-    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 9) b.classList.add('disabled'); });
-    if (state.selected[cat].level && state.selected[cat].level > 8){
-      delete state.selected[cat].level;
-      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
-	  updateClubInfoTable();
-	  updateShortcut(cat);
-    }
-  } else if (rares.has(sel)){
-    document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>{ if (+b.dataset.level >= 10) b.classList.add('disabled'); });
-    if (state.selected[cat].level && state.selected[cat].level > 9){
-      delete state.selected[cat].level;
-      document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(x=>x.classList.remove('selected'));
-	  updateClubInfoTable();
-	  updateShortcut(cat);
-    }
-  }
-}
 
-
+//-----------------------------------------
+//Ring Calculation/Displaying functions
+//-----------------------------------------
 /* run calc if both club and level are present */
 function triggerCalcIfReady(category){
   const sel = state.selected[category];
   if (!sel || !sel.club || !sel.level) return;
   const wind = parseFloat(windInput.value) || 0;
   const elevation = parseFloat(elevationEl.value) || 0;
-  // const ballPower = parseInt(ballPowerEl.value) || 6;
-  const ballPower = ballPowerEl.value;
+  const ballPower = parseInt(ballPowerEl.value) || 6;
   const club_distance = parseFloat(distanceEl.value) || 100;
   const catData = windData[category];
   const club = sel.club
@@ -4182,7 +4271,7 @@ function triggerCalcIfReady(category){
 		   wind_per_ring: wind_per_ring 
 		 });
 		 const ebsRings = document.getElementById("ebs" + pct);
-		 <!-- ebsRings.textContent = tcrAsNumber; -->
+		 // ebsRings.textContent = tcrAsNumber; 
 		 ebsRings.textContent = `${result.true_club_rings}`;
 	    }
 		
@@ -4193,21 +4282,15 @@ function triggerCalcIfReady(category){
 	  return
 }
 
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 
 /* Calculation logic translated from AHK */
 function calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring }) {
   let adj;
-  if (ballPower < 1) adj = 0.9286;
-  else{ 
-	if (ballPower < 6) adj = 1 - (0.0119 * (6 - ballPower));
-	else{ 
-		if (ballPower === 6) adj = 1;
-        else{
-			adj = 1 + (0.0119 * (ballPower - 6))
-			}
-		}
-	  };
-  
+  if (ballPower < 6) adj = 1 - (0.0119 * (6 - ballPower));
+  else if (ballPower === 6) adj = 1;
+       else adj = 1 + (0.0119 * (ballPower - 6));
+
   const arr = wind_per_ring.split('|').map(parseFloat); // arr[0]=max, arr[1]=mid, arr[2]=min
   const multiplier = (1 + elevation/100) * adj;
 
@@ -4220,14 +4303,14 @@ function calculateRings_JS({ wind, elevation, ballPower, club_distance, category
   else	
     min_rings = round(((wind/arr[2]) * multiplier),1);
 	
-  <!-- used to have 25p = (min+mid)/2 -->
+  // used to have 25p = (min+mid)/2 
   const rings25p = round(min_rings + ((max_rings - min_rings) * 0.25),1);
   const rings75p = round(min_rings + ((max_rings - min_rings) * 0.75),1);
     
-  <!-- const max_min_diff = max_rings - min_rings; -->
-  <!-- const true_club_rings = round(min_rings + (max_min_diff * (club_distance/100)), 1); -->
+  // const max_min_diff = max_rings - min_rings; 
+  // const true_club_rings = round(min_rings + (max_min_diff * (club_distance/100)), 1); 
   const true_club_rings = round(min_rings + ((max_rings - min_rings) * (club_distance/100)), 1);
-  <!-- const true_club_rings = min_rings + ((max_rings - min_rings) * (club_distance/100)); -->
+  // const true_club_rings = min_rings + ((max_rings - min_rings) * (club_distance/100)); 
   return { true_club_rings, max_rings, mid_rings, min_rings, rings25p, rings75p };
 }
 
@@ -4292,7 +4375,66 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
 }
 
 
-/* wire events */
+
+
+
+//-----------------------------------------
+//Ball Power functions (saving and setting)
+//-----------------------------------------
+// function setBallPower(bp) {
+    // const el = document.getElementById("ballPower");
+
+    // force number into valid range
+    // bp = Math.max(0, Math.min(10, parseInt(bp)));
+
+    // el.value = String(bp);
+
+    // dispatch change so your app reacts
+    // el.dispatchEvent(new Event("change", { bubbles: true }));
+// }
+
+// function setupBallPowerSaving() {
+    // const el = document.getElementById("ballPower");
+
+    // el.addEventListener("change", async () => {
+        // const user = auth.currentUser;
+        // if (!user) return; // not logged in → don't save
+
+        // try {
+            // await db.collection("users")
+                // .doc(user.uid)
+                // .collection("settings")
+                // .doc("shot")
+                // .set({ ballPower: parseInt(el.value) });
+
+        // } catch (err) {
+            // console.error("Failed to save ball power:", err);
+        // }
+    // });
+// }
+
+// setupBallPowerSaving();
+
+
+// ----------------------------
+// 			WIRE EVENTS
+// ----------------------------
+
+ballPowerEl.addEventListener("change", async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const bp = parseInt(ballPowerEl.value);
+
+    try {
+        await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
+            ballPower: bp
+        }, { merge: true });
+    } catch (err) {
+        console.error("Failed to save ball power:", err);
+    }
+});
+
 distanceEl.addEventListener('input', (e)=> {
   distanceVal.value = e.target.value;
   if (distanceEl.value !== 0)
@@ -4306,15 +4448,22 @@ distanceEl.addEventListener('input', (e)=> {
 });
 
 distanceVal.addEventListener('input', (e)=> {
-  distanceEl.value = e.target.value;
-  if (distanceEl.value !== 0)
-	 triggerCalcIfReady(state.activeCategory);
-  else{
-	const minRings = r_min.textContent;
-     ringsMain.textContent = minRings;
-  }
-  // recalc all ready categories
+  if (e.target.value <= 0){
+	  distanceVal.value = 0;
+	  distanceEl.value = 0;
+	  const minRings = r_min.textContent;
+      ringsMain.textContent = minRings;
+	  return;
+  };
+  if (e.target.value > 100){
+	  distanceVal.value = 100;
+	  distanceEl.value = 100;
+	  triggerCalcIfReady(state.activeCategory);
+	  return;
+  };
   
+  distanceEl.value = e.target.value;
+  triggerCalcIfReady(state.activeCategory);
 });
 
 distanceVal.addEventListener('focus', (e)=> {
@@ -4325,10 +4474,16 @@ distanceVal.addEventListener('focus', (e)=> {
 // wind input rule: while user is still typing (input), convert integers to tenths (7 -> 0.7)
 // goal is for user to never have to type a decimal
 windInput.addEventListener('input', () => {
+  const cat = state.activeCategory;
   const v = windInput.value;
   if (v === '') return;
   const vLength = v.length;
-  if (vLength === 1) return;
+  
+  if (vLength === 1) {
+	triggerCalcIfReady(cat);
+	return;
+  };
+  
   if (!v.includes('.')) {
     const n = parseFloat(v);
     if (isNaN(n)) return 
@@ -4357,7 +4512,6 @@ windInput.addEventListener('input', () => {
 	  }
   }
   // recalc
-  const cat = state.activeCategory;
   if (cat && state.selected[cat] && state.selected[cat].club && state.selected[cat].level) {
     triggerCalcIfReady(cat);
   }  
@@ -4377,7 +4531,7 @@ windInput.addEventListener('focus', () => {
 
 /* toggle hide/show clubs (toggle button remains visible) */
 const toggleClubsLink = document.getElementById('toggleClubs');
-<!-- const clubsWrap = document.querySelector('.clubs-wrap'); -->
+// const clubsWrap = document.querySelector('.clubs-wrap'); 
 toggleClubsLink.addEventListener('click', ()=>{
   if (clubGrid.style.display === 'none') {
     clubGrid.style.display = 'flex';
@@ -4392,7 +4546,7 @@ toggleClubsLink.addEventListener('click', ()=>{
 
 
 let elevationDefaultValue = elevationEl.value;
-	<!-- Event Listeners to show all elevation options when user interacts with the input field -->
+	// Event Listeners to show all elevation options when user interacts with the input field 
 
   // Save the default value to a placeholder on focus
   elevationEl.addEventListener('focus', () => {
@@ -4455,14 +4609,6 @@ scinfoModal.addEventListener("click", (e) => {
 
 
 
-/* ---- Active Category ---- */
-function setActiveShortCutButton(cat){
-  document.querySelectorAll('.shortcut-btn').forEach(x=>x.classList.remove('active'));
-  const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
-  if(btn)btn.classList.add('active');
-  state.activeCategory=cat;
-}
-
 
 
 /* ==========================================================
@@ -4521,11 +4667,10 @@ infoModal.addEventListener("click", (e) => {
     }
   });
 
-
 function enableEndbringerSchool() {
   const category = "Wedges";
   const club = "Endbringer";
-  const level = 7; // placeholder — can be dynamic later ----> we can search the saved bags later for a level
+  const level = 7; // placeholder — can be dynamic later -- we can search the saved bags later for a level
 
   state.activeCategory = category;
   state.selected[category] = { club, level };
@@ -4544,6 +4689,8 @@ function enableEndbringerSchool() {
 
   return
 }
+
+
 
 /* ---------- 2. Tournament Notes (Local Storage) ---------- */
 const tournNotesBtn1 = document.getElementById("btn_tourn1")
@@ -4665,6 +4812,8 @@ function saveTournamentName(id, name) {
   localStorage.setItem(`tourn${id}_name`, name);
 }
 
+
+
 /* ---------- 3. CPC Mode / Reset Clubs ---------- */
 const resetButton = document.getElementById("btn_reset")
 resetButton.addEventListener('click', resetClubs);
@@ -4703,34 +4852,39 @@ function resetClubs() {
 }
 
 
- function showToast(message, duration = 3000) { 
-     const toastContainer = document.getElementById('toast-container'); 
-     if (!toastContainer) { 
-         console.error("Toast container not found. Please add <div id='toast-container'></div> to your HTML."); 
-         return; 
-     } 
 
-     const toastElement = document.createElement('div'); 
-     toastElement.classList.add('toast'); 
 
-     // Allow HTML inside messages (for bold titles, <br>, etc.) 
-     toastElement.innerHTML = message; 
+// /* ----------------------------
+   // SHOW A TOAST MESSAGE
+   // ---------------------------- */
+// function showToast(message, duration = 3000) {
+    // const toastContainer = document.getElementById('toast-container');
+    // if (!toastContainer) {
+        // console.error("Toast container not found. Please add <div id='toast-container'></div> to your HTML.");
+        // return;
+    // }
 
-     toastContainer.appendChild(toastElement); 
+    // const toastElement = document.createElement('div');
+    // toastElement.classList.add('toast');
 
-     // Show the toast 
-     setTimeout(() => { 
-         toastElement.classList.add('show'); 
-     }, 10); 
+    // Allow HTML inside messages (for bold titles, <br>, etc.)
+    // toastElement.innerHTML = message;
 
-     // Hide and remove the toast after the duration 
-     setTimeout(() => { 
-         toastElement.classList.remove('show'); 
-         setTimeout(() => { 
-             toastContainer.removeChild(toastElement); 
-         }, 500); 
-     }, duration); 
- } 
+    // toastContainer.appendChild(toastElement);
+
+    // Show the toast
+    // setTimeout(() => {
+        // toastElement.classList.add('show');
+    // }, 10);
+
+    // Hide and remove the toast after the duration
+    // setTimeout(() => {
+        // toastElement.classList.remove('show');
+        // setTimeout(() => {
+            // toastContainer.removeChild(toastElement);
+        // }, 500);
+    // }, duration);
+// }
 
 
 /* init */
@@ -4744,81 +4898,4 @@ function resetClubs() {
 
 
 
-
-
-// Elements
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const loginModal = document.getElementById("loginModal");
-const loginClose = document.getElementById("loginClose");
-
-const emailLoginBtn = document.getElementById("emailLoginBtn");
-const emailSignupBtn = document.getElementById("emailSignupBtn");
-const googleLoginBtn = document.getElementById("googleLoginBtn");
-
-const emailField = document.getElementById("loginEmail");
-const passwordField = document.getElementById("loginPassword");
-
-// Show modal
-loginBtn.onclick = () => {
-    loginModal.classList.remove("hidden");
-};
-
-// Hide modal
-loginClose.onclick = () => {
-    loginModal.classList.add("hidden");
-};
-
-// Email Login
-emailLoginBtn.onclick = () => {
-    auth.signInWithEmailAndPassword(emailField.value, passwordField.value)
-        .then(() => {
-            loginModal.classList.add("hidden");
-            showToast("Signed in successfully!", 2500);
-        })
-        .catch(err => showToast(err.message, 4000));
-};
-
-// Email Create Account
-emailSignupBtn.onclick = () => {
-    auth.createUserWithEmailAndPassword(emailField.value, passwordField.value)
-        .then(() => {
-            loginModal.classList.add("hidden");
-            showToast("Account created!", 2500);
-        })
-        .catch(err => showToast(err.message, 4000));
-};
-
-// Google Login
-googleLoginBtn.onclick = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-
-    auth.signInWithPopup(provider)
-        .then(() => {
-            loginModal.classList.add("hidden");
-            showToast("Signed in with Google!", 2500);
-        })
-        .catch(err => showToast(err.message, 4000));
-};
-
-// Logout
-logoutBtn.onclick = () => {
-    auth.signOut().then(() => {
-        showToast("Signed out", 2000);
-    });
-};
-
-// Auth state listener
-auth.onAuthStateChanged(user => {
-    if (user) {
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-
-        console.log("Logged in as:", user.email || user.displayName);
-    } else {
-        logoutBtn.classList.add("hidden");
-        loginBtn.classList.remove("hidden");
-    }
-});
 
