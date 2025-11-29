@@ -52,6 +52,21 @@ async function loadBallPower(uid) {
     }
 }
 
+async function loadLastBag(uid) {
+    try {
+        const ref = doc(db, "users", uid);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            const value = snap.data().lastBag ?? 0;
+            if (value !== 0);
+              loadBag(value);
+        }
+    } catch (err) {
+        console.error("Error loading last bag:", err);
+    }
+}
+
 // ----------------------------------------
 // Helper: update UI + bubble event
 // ----------------------------------------
@@ -75,6 +90,74 @@ ballPowerSelect.addEventListener("change", () => {
     }
 });
 
+
+
+
+
+
+
+ // ----------------------------------------
+// Save Last Golf Bag to Firestore
+// ----------------------------------------
+
+async function saveLastBagIndex(uid, bagIndex) {
+    try {
+        const ref = doc(db, "users", uid);
+        await setDoc(ref, { lastBag: bagIndex }, { merge: true });
+    } catch (err) {
+        console.error("Error saving last bag number:", err);
+    }
+}
+
+/*
+// ----------------------------------------
+// Load existing ball power
+// ----------------------------------------
+
+async function loadBallPower(uid) {
+    try {
+        const ref = doc(db, "users", uid, "settings", "shot");
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            const value = snap.data().ballPower ?? 0;
+            setBallPower(value);
+        } else {
+            setBallPower(0);
+        }
+    } catch (err) {
+        console.error("Error loading ballPower:", err);
+        setBallPower(0);
+    }
+}
+
+/*
+// ----------------------------------------
+// Helper: update UI + bubble event
+// ----------------------------------------
+
+function setBallPower(value) {
+    value = Math.max(0, Math.min(10, Number(value)));
+    ballPowerSelect.value = String(value);
+    ballPowerSelect.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+// ----------------------------------------
+// Save whenever user changes dropdown
+// ----------------------------------------
+
+ballPowerSelect.addEventListener("change", () => {
+    const value = Number(ballPowerSelect.value);
+    const user = auth.currentUser;
+
+    if (user) {
+        saveBallPower(user.uid, value);
+    }
+});
+
+*/
+
+
 // ----------------------------------------
 // Auth state: load saved settings
 // ----------------------------------------
@@ -82,7 +165,8 @@ ballPowerSelect.addEventListener("change", () => {
 onAuthStateChanged(auth, (user) => {
     if (user) {
         loadBallPower(user.uid);
-    } else {
+        loadLastBag(user.uid);
+    }else {
         // Not logged in → use 0
         setBallPower(0);
     }
@@ -4107,6 +4191,12 @@ function loadBag(bagIndex) {
   triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
   // updateActiveLabel(); 
   updateClubInfoTable();
+
+// Save recent golf bag to Firestore
+  const user = auth.currentUser;
+  if (user) {
+    saveLastBagIndex(user.uid, bagIndex);
+  }
 }
 
 // Attach listeners
