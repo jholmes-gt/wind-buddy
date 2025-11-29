@@ -18,8 +18,10 @@ import {
 // Select element for ball power
 const ballPowerSelect = document.getElementById("ballPower");
 
+
+
 // ----------------------------------------
-// Save ball power to Firestore
+// Save user items to Firestore
 // ----------------------------------------
 
 async function saveBallPower(uid, value) {
@@ -31,8 +33,29 @@ async function saveBallPower(uid, value) {
     }
 }
 
+async function saveLastBagIndex(uid, bagIndex) {
+    try {
+        const ref = doc(db, "users", uid);
+        await setDoc(ref, { lastBag: bagIndex }, { merge: true });
+    } catch (err) {
+        console.error("Error saving last bag number:", err);
+    }
+}
+
+async function saveLastClub(uid, cat, club, level) {
+    try {
+        const ref = doc(db, "users", uid, "lastClub", "lastClubDetails");
+        await setDoc(ref, { category: cat }, { merge: true });
+        await setDoc(ref, { clubName: club }, { merge: true });
+        await setDoc(ref, { level: level }, { merge: true });
+    } catch (err) {
+        console.error("Error saving last club:", err);
+    }
+}
+
+
 // ----------------------------------------
-// Load existing ball power
+// Load previous user items
 // ----------------------------------------
 
 async function loadBallPower(uid) {
@@ -51,6 +74,7 @@ async function loadBallPower(uid) {
         setBallPower(0);
     }
 }
+
 
 async function loadLastBag(uid) {
     try {
@@ -67,71 +91,29 @@ async function loadLastBag(uid) {
     }
 }
 
-// ----------------------------------------
-// Helper: update UI + bubble event
-// ----------------------------------------
-
-function setBallPower(value) {
-    value = Math.max(0, Math.min(10, Number(value)));
-    ballPowerSelect.value = String(value);
-    ballPowerSelect.dispatchEvent(new Event("change", { bubbles: true }));
-}
-
-// ----------------------------------------
-// Save whenever user changes dropdown
-// ----------------------------------------
-
-ballPowerSelect.addEventListener("change", () => {
-    const value = Number(ballPowerSelect.value);
-    const user = auth.currentUser;
-
-    if (user) {
-        saveBallPower(user.uid, value);
-    }
-});
-
-
-
-
-
-
-
- // ----------------------------------------
-// Save Last Golf Bag to Firestore
-// ----------------------------------------
-
-async function saveLastBagIndex(uid, bagIndex) {
+async function selectLastClub(uid) {
     try {
-        const ref = doc(db, "users", uid);
-        await setDoc(ref, { lastBag: bagIndex }, { merge: true });
-    } catch (err) {
-        console.error("Error saving last bag number:", err);
-    }
-}
-
-/*
-// ----------------------------------------
-// Load existing ball power
-// ----------------------------------------
-
-async function loadBallPower(uid) {
-    try {
-        const ref = doc(db, "users", uid, "settings", "shot");
+        const ref = doc(db, "users", uid, "lastClub", "lastClubDetails");
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
-            const value = snap.data().ballPower ?? 0;
-            setBallPower(value);
-        } else {
-            setBallPower(0);
+            const cat = snap.data().category ?? "";
+            const club = snap.data().clubName ?? "";
+            const level = snap.data().level ?? 1;
+            if (cat){
+                selectClub(cat,club)
+                selectLevel(cat,level)
+            }
         }
     } catch (err) {
-        console.error("Error loading ballPower:", err);
-        setBallPower(0);
+        console.error("Error loading last club:", err);
     }
 }
 
-/*
+
+
+
+
 // ----------------------------------------
 // Helper: update UI + bubble event
 // ----------------------------------------
@@ -142,20 +124,8 @@ function setBallPower(value) {
     ballPowerSelect.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
-// ----------------------------------------
-// Save whenever user changes dropdown
-// ----------------------------------------
 
-ballPowerSelect.addEventListener("change", () => {
-    const value = Number(ballPowerSelect.value);
-    const user = auth.currentUser;
 
-    if (user) {
-        saveBallPower(user.uid, value);
-    }
-});
-
-*/
 
 
 // ----------------------------------------
@@ -166,6 +136,7 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         loadBallPower(user.uid);
         loadLastBag(user.uid);
+        // selectLastClub(user.uid);
     }else {
         // Not logged in → use 0
         setBallPower(0);
@@ -3904,6 +3875,7 @@ const r_75 = document.getElementById('r_75');
 let endbringerMode = false;
 let clubsShowing = true;
 let clubsShowingB4EBMode;
+let loadingGolfBag;
 
 
 
@@ -4002,6 +3974,7 @@ function selectClub(cat,club){
   updateShortcut(cat);
   triggerCalcIfReady(cat);
   setActiveShortCutButton(cat);
+  // saveLastClubDetails(cat, club)
 }
 function selectLevel(cat,level){
   state.selected[cat]=state.selected[cat]||{};
@@ -4069,7 +4042,9 @@ function setActiveShortCutButton(cat){
   if(btn)btn.classList.add('active');
   state.activeCategory=cat;
 }
+function saveLastClubDetails(cat, club){
 
+}
 
 
 
@@ -4154,11 +4129,14 @@ function showBagToast(message, duration = 5000) {
 
 // Load selection set from localStorage
 function loadBag(bagIndex) {
+
   const data = localStorage.getItem(`windbuddy_bag_${bagIndex}`);
   if (!data) {
     showToast(`No saved clubs found for Bag ${bagIndex}.`, 4000);
     return;
   }
+
+  loadingGolfBag = true;
 
   const bagData = JSON.parse(data);
    Object.keys(bagData).forEach(cat => {
@@ -4197,6 +4175,8 @@ function loadBag(bagIndex) {
   if (user) {
     saveLastBagIndex(user.uid, bagIndex);
   }
+
+  loadingGolfBag = false;
 }
 
 // Attach listeners
@@ -4304,6 +4284,11 @@ function updateClubInfoTable(){
 			 sg = stats.ball_guide
 		  document.getElementById('info-ballguide').textContent = '__' + sg ?? '__';
       
+      const user = auth.currentUser;
+      if (user){
+        if (!loadingGolfBag)
+          saveLastClub(user.uid, state.activeCategory, clubName, s.level);
+      }
 	  return;
     }
   }
@@ -4513,6 +4498,15 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
 // ----------------------------
 // 			WIRE EVENTS
 // ----------------------------
+ballPowerSelect.addEventListener("change", () => {
+    const value = Number(ballPowerSelect.value);
+    const user = auth.currentUser;
+
+    if (user) {
+        saveBallPower(user.uid, value);
+    }
+});
+
 
 ballPowerEl.addEventListener("change", async () => {
     const user = auth.currentUser;
@@ -4786,7 +4780,176 @@ function enableEndbringerSchool() {
 
 
 
-/* ---------- 2. Tournament Notes (Local Storage) ---------- */
+/* -----------------------------
+   FIRESTORE: Tournament Notes
+------------------------------*/
+
+const tournNotesBtn1 = document.getElementById("btn_tourn1");
+const tournNotesBtn2 = document.getElementById("btn_tourn2");
+const tournNotesBtn3 = document.getElementById("btn_tourn3");
+
+tournNotesBtn1.addEventListener('click', () => openTournamentNotes(1));
+tournNotesBtn2.addEventListener('click', () => openTournamentNotes(2));
+tournNotesBtn3.addEventListener('click', () => openTournamentNotes(3));
+
+
+// Reference: users/{uid}/tournamentNotes/tournament{id}
+function getTournDocRef(uid, id) {
+    return doc(db, "users", uid, "tournamentNotes", `tournament${id}`);
+}
+
+// Load all tournament data
+async function loadTournamentData(uid, id) {
+    try {
+        const ref = getTournDocRef(uid, id);
+        const snap = await getDoc(ref);
+        return snap.exists() ? snap.data() : {};
+    } catch (err) {
+        console.error("Error loading tournament data:", err);
+        return {};
+    }
+}
+
+// Save a single field (hole note or name)
+async function saveTournamentField(uid, id, field, value) {
+    try {
+        const ref = getTournDocRef(uid, id);
+        await setDoc(ref, { [field]: value }, { merge: true });
+    } catch (err) {
+        console.error("Error saving tournament field:", err);
+    }
+}
+
+// Clear 9 notes for the selected tab
+async function clearTournamentNotes(uid, id, tab) {
+    const updates = {};
+    for (let i = 1; i <= 9; i++) {
+        const holeNum = tab === "front" ? i : i + 9;
+        updates[`hole${holeNum}Notes`] = "";
+    }
+    try {
+        const ref = getTournDocRef(uid, id);
+        await setDoc(ref, updates, { merge: true });
+    } catch (err) {
+        console.error("Error clearing tournament notes:", err);
+    }
+}
+
+async function openTournamentNotes(id) {
+    if (!auth.currentUser) {
+        showToast("Please sign in to use Tournament Notes.", 4000);
+        return;
+    }
+
+    const uid = auth.currentUser.uid;
+
+    // remove any open modal
+    const existing = document.getElementById("tournament_modal");
+    if (existing) existing.remove();
+
+    const tournamentData = await loadTournamentData(uid, id);
+
+    const modal = document.createElement("div");
+    modal.id = "tournament_modal";
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100vw";
+    modal.style.height = "100vh";
+    modal.style.background = "rgba(0,0,0,0.5)";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.zIndex = "1000";
+
+    const card = document.createElement("div");
+    card.style.background = "#fff";
+    card.style.padding = "16px";
+    card.style.borderRadius = "10px";
+    card.style.width = "600px";
+    card.style.maxHeight = "80vh";
+    card.style.overflow = "auto";
+
+    card.innerHTML = `
+        <h3>Tournament ${id} Notes</h3>
+        <label>Tournament Name:
+            <input id="tourn_name" style="width:100%" value="${tournamentData.tournamentName || ""}">
+        </label>
+        <div style="margin-top:8px;">
+            <button id="tab_front">Front 9</button>
+            <button id="tab_back">Back 9</button>
+            <button id="btn_clear">Clear Notes</button>
+            <button id="btn_close" style="float:right">Close</button>
+        </div>
+        <div id="notes_container"></div>
+    `;
+
+    modal.appendChild(card);
+    document.body.appendChild(modal);
+
+    let activeTab = "front";
+    renderNotes(id, activeTab, tournamentData);
+
+    // Handlers
+    document.getElementById("tab_front").onclick = () => {
+        activeTab = "front";
+        renderNotes(id, activeTab, tournamentData);
+    };
+
+    document.getElementById("tab_back").onclick = () => {
+        activeTab = "back";
+        renderNotes(id, activeTab, tournamentData);
+    };
+
+    document.getElementById("btn_close").onclick = () => modal.remove();
+
+    document.getElementById("btn_clear").onclick = async () => {
+        await clearTournamentNotes(uid, id, activeTab);
+        const newData = await loadTournamentData(uid, id);
+        renderNotes(id, activeTab, newData);
+        showToast("Notes cleared.", 2000);
+    };
+
+    document.getElementById("tourn_name").addEventListener("input", async (e) => {
+        await saveTournamentField(uid, id, "tournamentName", e.target.value);
+    });
+}
+
+function renderNotes(id, tab, tournamentData) {
+    const uid = auth.currentUser.uid;
+    const container = document.getElementById("notes_container");
+
+    container.innerHTML = "";
+
+    for (let i = 1; i <= 9; i++) {
+        const holeNum = tab === "front" ? i : i + 9;
+
+        const label = document.createElement("p");
+        label.style.fontSize = "10px";
+        label.style.fontWeight = "bold";
+        label.style.margin = "2px 0 0 0";
+        label.textContent = `Hole ${holeNum}`;
+
+        const ta = document.createElement("textarea");
+        ta.style.width = "100%";
+        ta.style.height = "40px";
+        ta.style.marginBottom = "6px";
+
+        const fieldName = `hole${holeNum}Notes`;
+        ta.value = tournamentData[fieldName] || "";
+
+        // Save immediately on input
+        ta.addEventListener("input", async (e) => {
+            await saveTournamentField(uid, id, fieldName, e.target.value);
+        });
+
+        container.appendChild(label);
+        container.appendChild(ta);
+    }
+}
+
+
+/* /* ---------- 2. Tournament Notes (Local Storage) ---------- 
 const tournNotesBtn1 = document.getElementById("btn_tourn1")
 const tournNotesBtn2 = document.getElementById("btn_tourn2")
 const tournNotesBtn3 = document.getElementById("btn_tourn3")
@@ -4907,6 +5070,8 @@ function saveTournamentName(id, name) {
 }
 
 
+ */
+
 
 /* ---------- 3. CPC Mode / Reset Clubs ---------- */
 const resetButton = document.getElementById("btn_reset")
@@ -4944,6 +5109,13 @@ function resetClubs() {
 	  activeBagNumber = null;
   }
 }
+
+
+
+export {
+  resetClubs
+};
+
 
 
 

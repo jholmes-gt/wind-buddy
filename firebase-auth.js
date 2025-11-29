@@ -13,6 +13,12 @@ import {
     onAuthStateChanged
 } from "./firebase-init.js";
 
+import {
+    resetClubs
+} from "./WindBuddy.js";
+
+
+
 
 // UI elements
 const loginBtn = document.getElementById("loginBtn");
@@ -82,7 +88,8 @@ googleLoginBtn.onclick = async () => {
 
 logoutBtn.onclick = async () => {
     await signOut(auth);
-    showToast("Signed out", 2000);
+    showToast("Sign out successful!<br>See you next time!", 3500);
+    resetClubs();
 };
 
 // ----------------------------------------
