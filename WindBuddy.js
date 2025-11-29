@@ -11,6 +11,10 @@ import {
     onAuthStateChanged
 } from "./firebase-init.js";
 
+import {
+    showToast
+} from "./firebase-auth.js";
+
 // Select element for ball power
 const ballPowerSelect = document.getElementById("ballPower");
 
@@ -4853,40 +4857,6 @@ function resetClubs() {
 
 
 
-
-// /* ----------------------------
-   // SHOW A TOAST MESSAGE
-   // ---------------------------- */
-// function showToast(message, duration = 3000) {
-    // const toastContainer = document.getElementById('toast-container');
-    // if (!toastContainer) {
-        // console.error("Toast container not found. Please add <div id='toast-container'></div> to your HTML.");
-        // return;
-    // }
-
-    // const toastElement = document.createElement('div');
-    // toastElement.classList.add('toast');
-
-    // Allow HTML inside messages (for bold titles, <br>, etc.)
-    // toastElement.innerHTML = message;
-
-    // toastContainer.appendChild(toastElement);
-
-    // Show the toast
-    // setTimeout(() => {
-        // toastElement.classList.add('show');
-    // }, 10);
-
-    // Hide and remove the toast after the duration
-    // setTimeout(() => {
-        // toastElement.classList.remove('show');
-        // setTimeout(() => {
-            // toastContainer.removeChild(toastElement);
-        // }, 500);
-    // }, duration);
-// }
-
-
 /* init */
 (function init(){
   // show datalist (elevation) default already set
@@ -4895,7 +4865,6 @@ function resetClubs() {
   setRingsDisplay('--','--','--','--','--','--','--','--');
   
 })();
-
 
 
 
