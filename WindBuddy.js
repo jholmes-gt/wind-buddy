@@ -4456,7 +4456,6 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
 
 
 
-
 //-----------------------------------------
 //Ball Power functions (saving and setting)
 //-----------------------------------------
