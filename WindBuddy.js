@@ -8,12 +8,15 @@ import {
     doc,
     getDoc,
     setDoc,
-    onAuthStateChanged
+    onAuthStateChanged,
+    collection
 } from "./firebase-init.js";
 
 import {
     showToast
 } from "./firebase-auth.js";
+
+//import { getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 // Select element for ball power
 const ballPowerSelect = document.getElementById("ballPower");
@@ -83,8 +86,10 @@ async function loadLastBag(uid) {
 
         if (snap.exists()) {
             const value = snap.data().lastBag ?? 0;
-            if (value !== 0);
-              loadBag(value);
+            if (value !== 0){
+               // console.log("Loading bag" + value);
+                loadBagFromFirestore(value);
+            }
         }
     } catch (err) {
         console.error("Error loading last bag:", err);
@@ -136,11 +141,14 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         loadBallPower(user.uid);
         loadLastBag(user.uid);
+        checkWhichBagsExist(user.uid);
         // selectLastClub(user.uid);
     }else {
         // Not logged in → use 0
         setBallPower(0);
     }
+   console.log(user);
+//   console.log(user.displayName + " is logged in.");
 });
 
 
@@ -3875,7 +3883,6 @@ const r_75 = document.getElementById('r_75');
 let endbringerMode = false;
 let clubsShowing = true;
 let clubsShowingB4EBMode;
-let loadingGolfBag;
 
 
 
@@ -3910,8 +3917,11 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
     btn.dataset.club = club;
     btn.dataset.cat = cat;
     btn.addEventListener('click', () => {
-	  selectClub(cat,club);      
-	  updateClubInfoTable();
+	  selectClub(cat,club);   
+    if (!loadingGolfBag){
+      updateSaveButtons()
+      updateClubInfoTable();
+    }
     });
     clubsCol.appendChild(btn);
   });
@@ -3928,9 +3938,11 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
     b.dataset.cat = cat;
     b.addEventListener('click', () => {
       if (b.classList.contains('disabled')) return;
-      // deselect levels for this category
       selectLevel(cat,i);
-	  updateClubInfoTable();
+      if (!loadingGolfBag){
+        updateSaveButtons()
+        updateClubInfoTable();
+      }
     });
     LevelRow.appendChild(b);
   }
@@ -3951,11 +3963,15 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
 function selectClub(cat,club){
   state.selected[cat]=state.selected[cat]||{};
   state.selected[cat].club=club;
-  state.activeCategory = cat;
+
+  if (!loadingGolfBag)
+      state.activeCategory = cat;
+  
   // deselect other club tiles in this category only
   document.querySelectorAll(`.club-radio[data-cat="${cat}"]`).forEach(b=>b.classList.remove('selected'));
   document.querySelector(`.club-radio[data-cat="${cat}"][data-club="${club}"]`).classList.add('selected');
   
+/*
   if (activeBagNumber){
     const data = localStorage.getItem(`windbuddy_bag_${activeBagNumber}`);
     const bagData = JSON.parse(data);
@@ -3970,19 +3986,31 @@ function selectClub(cat,club){
       }
     })
   }
+*/
+
   refreshLevelButtons(cat);
   updateShortcut(cat);
-  triggerCalcIfReady(cat);
-  setActiveShortCutButton(cat);
-  // saveLastClubDetails(cat, club)
+  
+  if (!loadingGolfBag){
+    const sel=state.selected[cat];
+    if(sel.level){
+      triggerCalcIfReady(cat);
+      setActiveShortCutButton(cat);
+    }
+  }
 }
+
 function selectLevel(cat,level){
   state.selected[cat]=state.selected[cat]||{};
   state.selected[cat].level=level;
-  state.activeCategory = cat;
+
+  if (!loadingGolfBag)
+    state.activeCategory = cat;
+  
   document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>b.classList.remove('selected'));
   document.querySelector(`.level-radio[data-cat="${cat}"][data-level="${level}"]`).classList.add('selected');
   
+  /*
   if (activeBagNumber){
     const data = localStorage.getItem(`windbuddy_bag_${activeBagNumber}`);
     const bagData = JSON.parse(data);
@@ -3997,10 +4025,17 @@ function selectLevel(cat,level){
       }
     })
   }
- 
+ */
+
   updateShortcut(cat);
-  triggerCalcIfReady(cat);
-  setActiveShortCutButton(cat);
+  
+  if (!loadingGolfBag){
+    const sel=state.selected[cat];
+    if(sel.club){
+      triggerCalcIfReady(cat);
+      setActiveShortCutButton(cat);
+    }
+  }
 }
 function updateShortcut(cat){
   const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
@@ -4048,7 +4083,7 @@ function saveLastClubDetails(cat, club){
 
 
 
-
+/*
 //------------------------------------------------------
 // Golf Bags Panel functions
 //------------------------------------------------------
@@ -4184,7 +4219,202 @@ for (let i = 0; i < bagCount; i++) {
   loadButtons[i]?.addEventListener('click', () => loadBag(i + 1));
   saveButtons[i]?.addEventListener('click', () => saveBag(i + 1));
 }
+*/
 
+
+
+//------------------------------------------------------
+// Golf Bags Panel (Firestore version — 1 doc per bag)
+//------------------------------------------------------
+
+const bagCount = 5;
+const saveButtons = [];
+const loadButtons = [];
+let activeBagNumber = null;
+let loadingGolfBag = false;
+
+// Tooltip for "Please sign in"
+const bagTooltip = document.getElementById("bag-signin-tooltip");
+
+// Toast panel
+const bagSavedInfoPanel = document.getElementById("bag-toast");
+bagSavedInfoPanel.addEventListener("click", () => {
+    bagSavedInfoPanel.classList.remove("show");
+});
+
+// Create save/load arrays
+for (let i = 1; i <= bagCount; i++) {
+    loadButtons.push(document.getElementById(`btn_bag${i}`));
+    saveButtons.push(document.getElementById(`btn_bag${i}_save`));
+}
+
+
+// Disable all bag buttons unless signed in
+function updateBagButtonAccess(user) {
+    const signedIn = !!user;
+
+    loadButtons.forEach(btn => {
+        btn.disabled = !signedIn;
+        btn.classList.toggle("disabled", !signedIn);
+    });
+
+    saveButtons.forEach(btn => {
+        btn.disabled = !signedIn;
+        btn.classList.toggle("disabled", !signedIn);
+    });
+
+    // Tooltip
+    if (!signedIn) {
+        bagTooltip.style.display = "inline-block";
+    } else {
+        bagTooltip.style.display = "none";
+    }
+}
+
+
+async function checkWhichBagsExist(uid) {
+    for (let i = 1; i <= bagCount; i++) {
+        const ref = doc(db, "users", uid, "bags", `bag${i}`);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            loadButtons[i - 1].disabled = false;
+        } else {
+            loadButtons[i - 1].disabled = true;
+        }
+    }
+}
+
+
+function updateSaveButtons() {
+    const user = auth.currentUser;
+    if (!user) {
+        saveButtons.forEach(btn => btn.disabled = true);
+        return;
+    }
+
+    const cats = Object.keys(state.selected);
+    const allFilled = cats.length === 7 && cats.every(cat => {
+        const s = state.selected[cat];
+        return s && s.club && s.level;
+    });
+
+    saveButtons.forEach(btn => btn.disabled = !allFilled);
+}
+
+//document.addEventListener("click", updateSaveButtons);
+document.addEventListener("change", updateSaveButtons);
+
+
+async function saveBagToFirestore(bagIndex) {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const uid = user.uid;
+    const ref = doc(db, "users", uid, "bags", `bag${bagIndex}`);
+
+    const bagDoc = {};
+    for (const [cat, info] of Object.entries(state.selected)) {
+        if (info.club && info.level) {
+            bagDoc[cat] = { club: info.club, level: info.level };
+        }
+    }
+
+    await setDoc(ref, bagDoc, { merge: true });
+
+    // Toast summary
+    const summary = Object.entries(bagDoc)
+        .map(([cat, { club, level }]) =>
+            `${cat.replace(/_?s$/i, "")}: ${club} (Lvl ${level})`)
+        .join("<br>");
+
+    showBagToast(`Bag ${bagIndex} saved:<br>${summary}<br><br>(Click anywhere to close)`, 8000);
+
+    // Mark this as the active bag
+    activeBagNumber = bagIndex;
+    document.querySelectorAll(".smaller-btn").forEach(b => b.classList.remove("selected"));
+    document.getElementById("btn_bag" + bagIndex).classList.add("selected");
+
+    checkWhichBagsExist(uid)
+
+    //save new bag as last bag used
+    saveLastBagIndex(uid, bagIndex)
+
+    const driversScBtn = document.getElementById(`Drivers-shortcut-btn`);
+    if (driversScBtn) driversScBtn.click();
+}
+
+
+
+
+function showBagToast(message, duration = 5000) {
+  const toast = document.getElementById('bag-toast');
+  if (!toast) return;
+
+  toast.innerHTML = message.replace(/\n/g, '<br>');
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, duration);
+}
+
+
+
+async function loadBagFromFirestore(bagIndex) {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    loadingGolfBag = true;
+
+    const uid = user.uid;
+    const ref = doc(db, "users", uid, "bags", `bag${bagIndex}`);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+        showToast(`No saved clubs found for Bag ${bagIndex}.`, 4000);
+        loadingGolfBag = false;
+        return;
+    }
+
+    const bagData = snap.data();
+      
+    for (const [cat, { club, level }] of Object.entries(bagData)) {
+        state.selected[cat] = { club, level };
+
+        const clubBtn = document.querySelector(`[data-cat="${cat}"][data-club="${club}"]`);
+        const levelBtn = document.querySelector(`[data-cat="${cat}"][data-level="${level}"]`);
+
+        if (clubBtn) clubBtn.click();
+        if (levelBtn) levelBtn.click();
+    }
+
+    // Set active UI
+    activeBagNumber = bagIndex;
+    document.querySelectorAll(".smaller-btn").forEach(b => b.classList.remove("selected"));
+    document.getElementById("btn_bag" + bagIndex).classList.add("selected");
+
+    saveLastBagIndex(uid, bagIndex)
+    saveButtons.forEach(btn => btn.disabled = false);
+    
+    loadingGolfBag = false;
+
+    const driversScBtn = document.getElementById(`Drivers-shortcut-btn`);
+    if (driversScBtn) driversScBtn.click();
+    //triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
+    //updateClubInfoTable();
+
+}
+
+
+
+for (let i = 1; i <= bagCount; i++) {
+    const loadBtn = loadButtons[i - 1];
+    const saveBtn = saveButtons[i - 1];
+
+    loadBtn.addEventListener("click", () => loadBagFromFirestore(i));
+    saveBtn.addEventListener("click", () => saveBagToFirestore(i));
+}
 
 
 
@@ -5107,6 +5337,7 @@ function resetClubs() {
 	  document.getElementById(`btn_bag${activeBagNumber}`).classList.remove('selected');
 	  activeBagNumber = null;
   }
+  saveButtons.forEach(btn => btn.disabled = true);
 }
 
 

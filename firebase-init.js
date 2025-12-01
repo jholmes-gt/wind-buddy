@@ -18,7 +18,8 @@ import {
     getFirestore, 
     doc, 
     getDoc, 
-    setDoc 
+    setDoc,
+    collection
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 // ----------------------------------------
@@ -58,5 +59,6 @@ export {
     onAuthStateChanged,
     doc,
     getDoc,
-    setDoc
+    setDoc,
+    collection
 };

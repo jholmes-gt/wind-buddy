@@ -1,8 +1,8 @@
 <!-- To do:  -->
 <!-- 2. about, contact, ect pages -->
 <!-- 3. Endbringer mode needs to scan through saved bags to determine the user's level (default to level 5 if not found) -->
-<!-- 4. if no user account, disable all bag buttons and show tooltip on hover "Sign in to use golf bags" -->
-
+<!-- 4. golf bag hover tooltips that display the clubs and levels saved in that bag -->
+ 
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,19 +15,18 @@
 <body class="linear-gradient">
   <div class="app">
 
-	<div class="wb-header">
-     <img src="WBLogo.png" alt="Wind Buddy Logo">
+	<div class="header-bar">
+		<img src="WBLogo.png" alt="Wind Buddy Logo">
+	
+		
+		<div class="authContainer">
+			<div id="authBar">
+				<button id="loginBtn" class="auth-btn">Sign In</button>
+				<button id="logoutBtn" class="auth-btn hidden">Sign Out</button>
+			</div>
+			<div id='toast-container'></div>
+		</div>
 	</div>
-
-	<!-- LOGIN AREA (Header Buttons) -->
- <div class="authContainer">
-	<div id="authBar">
-		<button id="loginBtn" class="auth-btn">Sign In</button>
-		<button id="logoutBtn" class="auth-btn hidden">Sign Out</button>
-	</div>
-	<div id='toast-container'></div>
-</div>		
-
 	<!-- LOGIN MODAL -->
 	<div id="loginModal" class="modal hidden">
 		<div class="modal-content">
