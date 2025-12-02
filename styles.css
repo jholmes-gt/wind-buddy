@@ -8,51 +8,60 @@
     --border:#e6e9ef;
     --radius:10px;
     --gap:10px;
-	--mainPanelsHeight:220px;
+	--clubPanelsHeight:40vh;
+	--mainPanelsHeight:25.7vh;
+	--mainPanelsHdrHeight:2.4vh;
 	--gradientTopColor:#0E4560;
 	--gradientBottomColor:#3EB3DA;
 	--clubCardBG:#d1edf6;
   }
-  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
-	
+  *{box-sizing:content-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+ /* { outline: 1px solid red; }	*/
 	body{
 		margin:0;
 		background:var(--bg);
 		color:#111;
-		padding:14px;
+		padding:0.73%;
 		display:flex;
 		justify-content:center;
+		height:100%;
 	}
 
 	.app{
 		width:100%;
+		height:100%;
 		max-width:1400px;
 		display:flex;
 		flex-direction:column;
-		gap:8px;
 		align-items:center;
 		border-radius:8px;					
 	}
 
 	.header-bar{
 		width:100%;
-		height: 12%;
+		height:5%;
 		display:flex;
 		flex-direction: row;
-		justify-content: center;
+		justify-content:end;
+		margin-bottom: -20px;
 	}
 
-	.wb-header img {
-		max-height: 100 px;
-		width:auto;
-		
+	.img {
+		display:flex;
+		width:75%;
+		justify-content:end;
+		align-items:center;
+		/* flex-grow: 2; */
 	}
 
 	/* AUTH BUTTONS (HEADER) */
 	.authContainer {
 		position: relative;
-		top: 0px;
-		left: 27%;
+		top:0px;
+		left: 10px;
+		display:flex;
+		width: 25%;
+		justify-content: flex-end;
 		z-index: 50;
 	}
 
@@ -60,7 +69,6 @@
 	}
 
 	.auth-btn {
-		background: var(--accent);
 		color: #fff;
 		border:1px solid var(--border);
 		padding: 6px 14px;
@@ -69,6 +77,51 @@
 		font-size: 17px;
 		background:var(--gradientTopColor);
 	}
+
+		.account-trigger {
+		color: #fff;
+		border:1px solid var(--border);
+		padding: 6px 14px;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 14px;
+		background:var(--gradientTopColor);
+		user-select: none;
+		}
+
+		.account-dropdown {
+		border:1px solid var(--border);
+		border-radius: 6px;
+		margin-top: 4px;
+		min-width: 180px;
+		box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+		z-index: 1000;
+		}
+
+		.account-dropdown.hidden {
+		display: none;
+		}
+
+
+
+		.dropdown-item {
+		padding: 5px 6px;
+		font-size: 13px;
+		cursor: pointer;
+		color: white;
+		background: var(--gradientTopColor);
+		}
+
+		.dropdown-item:hover {
+		background: #e8e8e8;
+		color: black
+		}
+
+		.dropdown-item.danger:hover {
+		  background: #722020;
+		  color: white;
+		}
+
 
 	#toast-container {
 		position: absolute;
@@ -217,7 +270,7 @@
 	.clubs-top{
 		display:flex;
 		align-items:center;
-		justify-content:space-between;
+		justify-content:start ;
 		margin-bottom:6px
 	}
 	.clubs-title{
@@ -235,13 +288,15 @@
 	}
   /* the grid is horizontally scrollable only when needed */
 	.club-grid{
+		max-height: var(---clubPanelsHeight);
 		display:flex;
 		gap:8px;
 		overflow:auto;
 		padding-bottom:6px;
+		overflow:scrollbar;
 	}
 	.category{
-		max-width:185px;
+		max-width:9.64vw;
 		border:1px solid var(--border);
 		border-radius:6px;
 		padding:0;
@@ -251,6 +306,7 @@
 		justify-content:center;
 	}
 	.category h4{
+		height: var(--mainPanelsHdrHeight);
 		font-size:16px;
 		border-radius:8px;
 		margin:0;
@@ -327,11 +383,28 @@
 	.main{
 		display:flex;
 		flex-direction:row;
+		flex-wrap: wrap;
 		gap:18px;
 		width:100%;
 		justify-content:center;
 	}
 	
+	.leftMainPanel{
+		display:flex;
+		flex-direction:row;
+		gap:10px;
+		flex-grow:1;
+		min-width:300px;
+	}
+	
+	
+	.RightMainPanel{
+		display:flex;
+		flex-direction:row;
+		gap:10px;
+		flex-grow:1;
+		min-width:300px;
+	}
 	
 	
 	
@@ -339,7 +412,7 @@
 							/* <!-- GOLF BAGS --> */
 /* <!-- _______________________________________________________________________________ --> */
 	.bagsPanel{
-		width:175px;
+		width:auto;
 		height:var(--mainPanelsHeight);
 		display:flex;
 		flex-direction:column;
@@ -356,9 +429,10 @@
 		flex-grow:1;
 		overflow:auto;
 		align-items:center;
-		margin-bottom:5px;
+		margin-bottom:3px;
 	}
 	.bagsPanel h4{
+		height: var(--mainPanelsHdrHeight);
 		font-size:16px;
 		margin-bottom:0px;
 		margin-top:0px;
@@ -371,12 +445,9 @@
 	.bag-row{
 		display:flex;
 		flex-direction:row;
-		gap:15px;
+		gap:4px;
 		justify-content:center;
-		margin-bottom:2px;
-		margin-top:2px;
-		margin-left:px;
-		margin-right:1px;
+		margin:4px;
 		height:18%;
 		width:95%;
     }
@@ -384,10 +455,7 @@
 		width:60%;
 		padding-top:1px;
 		padding-bottom:1px;
-		margin-top:4px;
-		margin-bottom:4px;
-		margin-right:3px;
-		margin-left:3px;
+		margin:2px;
 		border-radius:4px;
 		border:1px solid #c9c9c9;
 		background:#f3f4f6;
@@ -400,10 +468,7 @@
 		width:40%;
 		padding-top:1px;
 		padding-bottom:1px;
-		margin-top:4px;
-		margin-bottom:4px;
-		margin-right:3px;
-		margin-left:3px;
+		margin: 2px;
 		border-radius:4px;
 		border:1px solid #c9c9c9;
 		background:#f3f4f6;
@@ -448,7 +513,7 @@
 									/* <!-- Tool Panel --> */
 /* <!-- ___________________________________________________________________________ --> */
 	.toolsPanel{
-		width:175px;
+		width:auto;
 		height:var(--mainPanelsHeight);
 		display:flex;
 		flex-direction:column;
@@ -457,28 +522,29 @@
 		border:1px solid var(--border);
 	}
 	
-	.toolsPanel h4 {
-		/* display: flex; */
-		/* flex-direction: row; */
-		align-items: center;
-		justify-self: center;
-		font-size: 16px;
-		margin-bottom: 0px;
-		margin-top: 0px;
-		/* text-align: center; */
-		text-align: end;
-		text-transform: uppercase;
-		background: var(--gradientTopColor);
-		color: var(--card);
-		border-radius: 8px;
+	.toolsPanel h4{
+		height: var(--mainPanelsHdrHeight);
+		width:100%;
+		font-size:16px;
+		margin-bottom:0px;
+		margin-top:0px;
+		text-transform:uppercase;
+		text-align:center;
+		background:var(--gradientTopColor);
+		color:var(--card);
+		border-radius:8px;
+		display: flex;
+  		align-items: center;
+  		justify-items: center;
 	}	
 
 /* --- Modal Wrapper --- */
 	#tools-info-modal {
-		position: fixed;
-		inset: 0;
+		position: absolute;
+		inset-block-start: 5vh;
+		inset-inline-start: 34vw;
 		background: rgba(0, 0, 0, 0.55);
-		display: none;
+		display: none; 
 		justify-content: center;
 		align-items: center;
 		z-index: 9999;
@@ -512,22 +578,15 @@
 	tool-row{
 		display:flex;
 		flex-direction:row;
-		gap:15px;
+		gap:10px;
 		justify-content:center;
-		margin-bottom:2px;
-		margin-top:2px;
-		margin-left:px;
-		margin-right:1px;
-		width:97%;
+		margin: 3px;
+		width:100%;
 	}
 	.btn{
-		width:97%;
-		padding-top:1px;
-		padding-bottom:1px;
-		margin-top:4px;
-		margin-bottom:4px;
-		margin-right:3px;
-		margin-left:3px;
+		width:90%;
+		padding: 2px;
+		margin: 6px;
 		border-radius:4px;
 		border:1px solid #c9c9c9;
 		background:#f3f4f6;
@@ -558,6 +617,7 @@
 		border:1px solid var(--border);
 	}
 	.clubInfoPanel h4{
+		height: var(--mainPanelsHdrHeight);
 		font-size:16px;
 		margin-bottom:5px;
 		margin-top:0px;
@@ -613,6 +673,7 @@
 		row-gap:5px;
 	}
 	.shotAdjPanel h4{
+		height: var(--mainPanelsHdrHeight);
 		font-size:16px;
 		margin-bottom:4px;
 		margin-top:0px;
@@ -736,6 +797,7 @@
 		border:1px solid var(--border);
 	}
 	.ring-card h4{
+		height: var(--mainPanelsHdrHeight);
 		font-size:16px;
 		margin-bottom:2px;
 		margin-top:0px;
@@ -815,8 +877,9 @@
 
 	/* --- Modal Wrapper --- */
 	#sc-info-modal {
-		position: fixed;
-		inset: 0;
+		position: absolute;
+		inset-block-start: 15vh;
+		inset-inline-start: 37vw;
 		background: rgba(0, 0, 0, 0.55);
 		display: none;
 		justify-content: center;
@@ -971,24 +1034,8 @@
 
 	/* --- Info Icon --- */
 	.info-icon {
-		display: inline-flex;
-		justify-content: center;
-		align-self: center;
-		align-items: center;
-		width: 18px;
-		height: 18px;
-		padding-top: 8px;
-		margin-right: 12px;
-		font-family: Javanese Text;
-		font-size: 15px;
-		font-weight: bold;
-		text-transform: lowercase;
-		border-radius: 50%;
-		background-color: #fff;
-		color: #0a3d62;
-		border: 1px solid #0a3d62;
-		cursor: pointer;
-		user-select: none;
+	
+	
 	}	
 	.info-icon-spcr {
 		display: inline-flex;

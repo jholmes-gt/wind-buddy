@@ -22,7 +22,7 @@ import {
 
 // UI elements
 const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
+const menuSignOut = document.getElementById("menuSignOut");
 const loginModal = document.getElementById("loginModal");
 const loginClose = document.getElementById("loginClose");
 
@@ -36,6 +36,11 @@ const passwordField = document.getElementById("loginPassword");
 // ----------------------------------------
 // Modal show/hide
 // ----------------------------------------
+
+if (loginBtn)
+    console.log("loginBtn found");
+else
+    console.log("loginBtn NOT found");
 
 loginBtn.onclick = () => loginModal.classList.remove("hidden");
 loginClose.onclick = () => loginModal.classList.add("hidden");
@@ -86,7 +91,7 @@ googleLoginBtn.onclick = async () => {
 // Logout
 // ----------------------------------------
 
-logoutBtn.onclick = async () => {
+menuSignOut.onclick = async () => {
     await signOut(auth);
     showToast("Sign out successful!<br>See you next time!", 3500);
     resetClubs();
@@ -99,9 +104,9 @@ logoutBtn.onclick = async () => {
 onAuthStateChanged(auth, (user) => {
     if (user) {
         loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
+        menuSignOut.classList.remove("hidden");
     } else {
-        logoutBtn.classList.add("hidden");
+        menuSignOut.classList.add("hidden");
         loginBtn.classList.remove("hidden");
     }
 });

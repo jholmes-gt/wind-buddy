@@ -136,7 +136,7 @@ function setBallPower(value) {
 // ----------------------------------------
 // Auth state: load saved settings
 // ----------------------------------------
-
+/*
 onAuthStateChanged(auth, (user) => {
     if (user) {
         loadBallPower(user.uid);
@@ -151,8 +151,88 @@ onAuthStateChanged(auth, (user) => {
 //   console.log(user.displayName + " is logged in.");
 });
 
+*/
+
+// UI Elements
+const accountMenuContainer = document.getElementById("accountMenuContainer");
+const accountMenuTrigger = document.getElementById("accountMenuTrigger");
+const accountDropdown = document.getElementById("accountDropdown");
+const accountUserName = document.getElementById("accountUserName");
+const menuChangePassword = document.getElementById("menuChangePassword");
+const menuSignOut = document.getElementById("menuSignOut");
+
+// Toggle dropdown
+accountMenuTrigger?.addEventListener("click", () => {
+  accountDropdown.classList.toggle("hidden");
+});
+
+// Close dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  if (!accountMenuContainer.contains(e.target)) {
+    accountDropdown.classList.add("hidden");
+  }
+});
 
 
+// ---- AUTH STATE HANDLER ----
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    accountMenuContainer.style.display = "none";
+    loadBallPower(0);
+    return;
+  }
+
+  // Show menu container
+  accountMenuContainer.style.display = "inline-block";
+
+  // Determine username display
+  let username = "";
+  const provider = user.providerData[0]?.providerId;
+
+  if (provider === "password") {
+    username = user.email;                                  // Email login
+    menuChangePassword.style.display = "block";             // Allow password change
+  } else if (provider === "google.com") {
+    username = user.displayName || user.email;              // Google login
+    menuChangePassword.style.display = "none";              // No password change
+  }
+
+  accountUserName.textContent = username;
+
+  loadBallPower(user.uid);
+  loadLastBag(user.uid);
+  checkWhichBagsExist(user.uid);
+
+});
+
+
+// ---- Menu Item Actions ----
+
+// Sign Out
+menuSignOut.addEventListener("click", async () => {
+  try {
+    await auth.signOut();
+    accountDropdown.classList.add("hidden");
+  } catch (err) {
+    console.error("Sign out error:", err);
+  }
+});
+
+
+// Change Password (email/password users only)
+menuChangePassword.addEventListener("click", async () => {
+  const email = auth.currentUser?.email;
+  if (!email) return;
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    alert("A password reset email has been sent to " + email);
+    accountDropdown.classList.add("hidden");
+  } catch (err) {
+    console.error("Password reset error:", err);
+    alert("Error sending password reset email.");
+  }
+});
 
 
 
