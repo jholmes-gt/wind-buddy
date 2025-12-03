@@ -1,4 +1,3 @@
-
 :root{
 	--bg:#fbfcfd;
 	--card:#ffffff;
@@ -53,27 +52,23 @@ body{
 	margin-left: 0;
 }
 
+
 .header-bar {
-	width: 61%;
+	width: 96%;
 	max-height: 10vh;
 	display: flex;
 	flex-direction: row;
 	justify-content: end;
-	margin-bottom: 2.0vh;
-	margin-top: 2vh;
+	margin-bottom: -0.5vh;
+	margin-top: 1vh;
 }
 
 .img {
 	display:flex;
-	width: 75%;
+	width:75%;
 	justify-content:end;
 	align-items:center;
 }
-
-.hdrBarImg{
-	height:150%;
-}
-
 
 /* AUTH BUTTONS (HEADER) */
 .authContainer {
@@ -284,6 +279,7 @@ header{
 	justify-self: center;
 	justify-items: center;
 	align-items: center;
+	height: 43vh;
 	margin-bottom: 1vh;
 }
 .clubs-top{
@@ -301,7 +297,7 @@ header{
 	user-select:none
 }
 
-
+/* the grid is horizontally scrollable only when needed */
 .club-grid {
 	height: 90%;
 	display: flex;
@@ -312,6 +308,21 @@ header{
 	width: 95%;
 	justify-content: center;
 }
+/* .club-grid-f4, .club-grid-l3 {
+	max-height: min-content;
+	display: flex;
+	flex-direction: row;
+	column-gap: inherit;
+	justify-self: center;
+}
+
+.club-grid-f4 {
+	width: 60%;
+}
+
+.club-grid-l3 {
+	width: 40%;
+} */
 
 .category-container {
 	display: inline-flex;
@@ -1072,5 +1083,5 @@ footer{
 
 /* Visibility classes */
 .hidden {
-	display: none;
+	/* displ/y: none; */
 }

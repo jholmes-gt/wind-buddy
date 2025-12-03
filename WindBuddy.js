@@ -4921,13 +4921,13 @@ const toggleClubsLink = document.getElementById('toggleClubs');
 // const clubsWrap = document.querySelector('.clubs-wrap'); 
 toggleClubsLink.addEventListener('click', ()=>{
   if (toggleClubsLink.textContent === 'Hide Clubs ▲') {
-    clubGrid.classList.add('hidden');
-	toggleClubsLink.textContent = 'Show Clubs ▼';
- 	clubsShowing = false;
+    clubGrid.style.display = 'none';
+	  toggleClubsLink.textContent = 'Show Clubs ▼';
+ 	  clubsShowing = false;
   } else {
-    clubGrid.classList.remove('hidden');
+    clubGrid.style.display = 'flex';
     toggleClubsLink.textContent = 'Hide Clubs ▲';
-	clubsShowing = true;
+  	clubsShowing = true;
   }
 });
 
