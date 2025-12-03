@@ -3979,6 +3979,8 @@ const activeClubLabel=document.getElementById('active_club');
    Build UI: club grid + bags + datalist
    ---------------------------- */
 const clubGrid = document.getElementById('clubGrid');
+const clubGridF4 = document.getElementById('clubGridF4');
+const clubGridL3 = document.getElementById('clubGridL3');
 for (const [cat, clubs] of Object.entries(clubCats)) {
   const panel = document.createElement('div');
   panel.className = 'category';
@@ -4027,9 +4029,15 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
     LevelRow.appendChild(b);
   }
   panel.appendChild(LevelRow);
-
-  clubGrid.appendChild(panel);
+  console.log(cat);
+ if (['Drivers', 'Woods', 'Long_Irons', 'Short_Irons'].includes(cat))
+    clubGridF4.appendChild(panel);
+  else
+    clubGridL3.appendChild(panel);
 }
+clubGrid.appendChild(clubGridF4);
+clubGrid.appendChild(clubGridL3);
+
 
 
 
@@ -4930,14 +4938,14 @@ windInput.addEventListener('focus', () => {
 const toggleClubsLink = document.getElementById('toggleClubs');
 // const clubsWrap = document.querySelector('.clubs-wrap'); 
 toggleClubsLink.addEventListener('click', ()=>{
-  if (clubGrid.style.display === 'none') {
-    clubGrid.style.display = 'flex';
+  if (toggleClubsLink.textContent === 'Hide Clubs ▲') {
+    clubGrid.classList.add('hidden');
+	toggleClubsLink.textContent = 'Show Clubs ▼';
+ 	clubsShowing = false;
+  } else {
+    clubGrid.classList.remove('hidden');
     toggleClubsLink.textContent = 'Hide Clubs ▲';
 	clubsShowing = true;
-  } else {
-    clubGrid.style.display = 'none';
-    toggleClubsLink.textContent = 'Show Clubs ▼';
-	clubsShowing = false;
   }
 });
 
