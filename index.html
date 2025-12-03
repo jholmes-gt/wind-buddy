@@ -43,9 +43,6 @@
 		</div>
 	</div>
 
-
-
-
 	<!-- LOGIN MODAL -->
 	<div id="loginModal" class="modal hidden">
 		<div class="modal-content">
@@ -81,8 +78,6 @@
 			<!-- CLUBS AND LEVELS -->
         <div id="clubGrid" class="club-grid">
         	<!-- categories created by JS -->
-			<div id="clubGridF4" class="club-grid-f4"></div>
-			<div id="clubGridL3" class="club-grid-l3"></div>
 	    </div>
     </div>
 
@@ -127,10 +122,10 @@
 				<!-- TOOL PANEL -->
       		<div id="left-mid-panel" class="toolsPanel">
         		<h4>
-					<div style="width: 100%;">Tools</div>
+					<div style="width: 100%;">TOOLS</div>
 					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
 						<img src="info_icon.png" style="height: 75%; width:auto;margin-left: auto;margin-right: 1vw; margin-top:3px;" id="tools-info-btn">	
-						<div class="input-tooltip" role="status" aria-hidden="true">
+						<div class="input-tooltip toolsPanelInfoIcon" role="status" aria-hidden="true">
 						  Click here for more info about the Tools Panel.
 						</div>
 					</div>
@@ -337,13 +332,13 @@
 
 
 <!-- Init Firebase -->
-<script type="module" src="./firebase-init.js"></script>
+<script type="module" src="firebase-init.js"></script>
 
 <!-- Auth UI + onAuthState (needs firebase-init) -->
-<script type="module" src="./firebase-auth.js"></script>
+<script type="module" src="firebase-auth.js"></script>
 
 <!-- Your app code (imports firebase-init & auth) -->
-<script type="module" src="./WindBuddy.js"></script>
+<script type="module" src="WindBuddy.js"></script>
 
 
 </body>

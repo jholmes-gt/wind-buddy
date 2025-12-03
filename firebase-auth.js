@@ -37,10 +37,6 @@ const passwordField = document.getElementById("loginPassword");
 // Modal show/hide
 // ----------------------------------------
 
-if (loginBtn)
-    console.log("loginBtn found");
-else
-    console.log("loginBtn NOT found");
 
 loginBtn.onclick = () => loginModal.classList.remove("hidden");
 loginClose.onclick = () => loginModal.classList.add("hidden");

@@ -133,26 +133,6 @@ function setBallPower(value) {
 
 
 
-// ----------------------------------------
-// Auth state: load saved settings
-// ----------------------------------------
-/*
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        loadBallPower(user.uid);
-        loadLastBag(user.uid);
-        checkWhichBagsExist(user.uid);
-        // selectLastClub(user.uid);
-    }else {
-        // Not logged in → use 0
-        setBallPower(0);
-    }
-   console.log(user);
-//   console.log(user.displayName + " is logged in.");
-});
-
-*/
-
 // UI Elements
 const accountMenuContainer = document.getElementById("accountMenuContainer");
 const accountMenuTrigger = document.getElementById("accountMenuTrigger");
@@ -3960,6 +3940,9 @@ const r_min = document.getElementById('r_min');
 const r_25 = document.getElementById('r_25');
 const r_75 = document.getElementById('r_75');
 
+const clientWidth = document.documentElement.clientWidth;
+const clientHeight = document.documentElement.clientHeight;
+
 let endbringerMode = false;
 let clubsShowing = true;
 let clubsShowingB4EBMode;
@@ -3979,17 +3962,18 @@ const activeClubLabel=document.getElementById('active_club');
    Build UI: club grid + bags + datalist
    ---------------------------- */
 const clubGrid = document.getElementById('clubGrid');
-const clubGridF4 = document.getElementById('clubGridF4');
-const clubGridL3 = document.getElementById('clubGridL3');
 for (const [cat, clubs] of Object.entries(clubCats)) {
+  const catContainer = document.createElement('div');
+  catContainer.className = 'category-container';
+  const title = document.createElement('div');
+  title.textContent = cat.replace(/_/g,' ');
+  title.className = 'category-header'
+  catContainer.appendChild(title);
+	
   const panel = document.createElement('div');
   panel.className = 'category';
   panel.dataset.cat = cat;
-
-  const title = document.createElement('h4');
-  title.textContent = cat.replace(/_/g,' ');
-  panel.appendChild(title);
-
+  
   const clubsCol = document.createElement('div');
   clubsCol.className = 'club-list';
   clubCats[cat].forEach(club => {
@@ -4029,15 +4013,13 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
     LevelRow.appendChild(b);
   }
   panel.appendChild(LevelRow);
-  console.log(cat);
- if (['Drivers', 'Woods', 'Long_Irons', 'Short_Irons'].includes(cat))
-    clubGridF4.appendChild(panel);
-  else
-    clubGridL3.appendChild(panel);
+	//  if (['Drivers', 'Woods', 'Long_Irons', 'Short_Irons'].includes(cat))
+	//     clubGridF4.appendChild(panel);
+	//   else
+	//     clubGridL3.appendChild(panel);
+	catContainer.appendChild(panel);
+	clubGrid.appendChild(catContainer);
 }
-clubGrid.appendChild(clubGridF4);
-clubGrid.appendChild(clubGridL3);
-
 
 
 
