@@ -164,7 +164,8 @@ onAuthStateChanged(auth, (user) => {
 
   // Show menu container
   accountMenuContainer.style.display = "inline-block";
-
+  accountMenuContainer.classList.remove("hidden");
+  
   // Determine username display
   let username = "";
   const provider = user.providerData[0]?.providerId;

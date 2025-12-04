@@ -53,6 +53,136 @@ body{
 	margin-left: 0;
 }
 
+
+
+/* ================================
+   NEW WIND BUDDY HEADER
+   ================================ */
+
+.wb-header {
+    width: 100%;
+    background: var(--background1);
+    padding: 0.5rem 1rem;
+}
+
+.wb-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* -------- Logo -------- */
+.wb-logo img {
+    height: 70px;
+    width: auto;
+    user-select: none;
+}
+
+/* ================================
+   RESPONSIVE BEHAVIOR
+   ================================ */
+
+/* Slightly smaller logo when width < 1100px */
+@media (max-width: 1100px) {
+    .wb-logo img {
+        height: 60px;
+    }
+}
+
+/* Stack logo + menu on very small devices */
+@media (max-width: 700px) {
+    .wb-header-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.75rem;
+    }
+}
+
+
+
+
+
+
+
+
+/* -------- Account area -------- */
+.wb-account {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Show/Hide container */
+.hidden {
+    display: none !important;
+}
+
+/* Login button (unchanged styling) */
+.auth-btn {
+    color: #fff;
+    border: 0.0625rem solid var(--border);
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: var(--normalFontSize);
+    background: var(--gradientTopColor);
+}
+
+/* Account trigger */
+.account-trigger {
+    color: #fff;
+    border: 0.0625rem solid var(--border);
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: var(--normalFontSize);
+    background: var(--gradientTopColor);
+    user-select: none;
+}
+
+/* Dropdown */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    background: var(--card);
+    border: 0.0625rem solid var(--border);
+    border-radius: 0.375rem;
+    min-width: 12rem;
+    box-shadow: 0 0.375rem 0.75rem rgba(0,0,0,0.25);
+    z-index: 1000;
+    padding: 0.25rem 0;
+}
+
+.dropdown-item {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--normalFontSize);
+    cursor: pointer;
+    color: white;
+    background: var(--gradientTopColor);
+}
+
+.dropdown-item:hover {
+    background: #e8e8e8;
+    color: black;
+}
+
+.dropdown-item.danger:hover {
+    background: #802020;
+    color: white;
+}
+
+.dropdown-item.signout:hover {
+    background: #204a80;
+    color: white;
+}
+
+
+/*
 .header-bar {
 	width: 100%;
 	max-height: 10vh;
@@ -63,6 +193,38 @@ body{
 	margin-top: 2vh;
 }
 
+
+
+@media (max-width: 1100px) {
+    .header-bar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 0.5rem;
+        justify-content: center;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .header-logo {
+        height: 45px;  /* reduce logo size */
+  /*  }
+
+    .header-title {
+        font-size: 1.4rem;
+        width: 100%;
+    /*    text-align: center; 
+        order: 2;     /* force title to appear in center row */
+   /* }
+*/
+    .account-menu-container {
+        order: 3;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/*
 .img {
 	max-height: -webkit-fill-available;
 	justify-self: center;
@@ -70,7 +232,7 @@ body{
 
 
 
-/* AUTH BUTTONS (HEADER) */
+/* AUTH BUTTONS (HEADER) 
 .authContainer {
 	position: relative;
 	top:0px;
@@ -80,7 +242,7 @@ body{
 	justify-content: flex-end;
 	z-index: 50;
 }
-
+*/
 .auth-btn {
 	color: #fff;
 	border:0.0625rem solid var(--border);
@@ -308,6 +470,10 @@ header{
 	justify-content: space-evenly;
 }
 
+
+
+
+
 .category-container {
 	display: inline-flex;
 	flex-direction: column;
@@ -317,17 +483,6 @@ header{
 	min-width: 8.9vw;
 }
 
-.category-header{
-	font-size: var(--hdrFontSize);
-	font-weight: 700;
-	border-radius: 0.5rem;
-	text-align: center;
-	text-transform: uppercase;
-	color: var(--card);
-	background: var(--gradientTopColor);
-	border: 0.0625rem solid var(--border);
-	width:-webkit-fill-available
-}
 
 .category {
     border-radius: 0.375rem;
@@ -336,6 +491,27 @@ header{
     display: flex;
     width: -webkit-fill-available;
 }
+
+@media (max-width: 1100px) {
+    .club-grid {
+        width: 100%;
+        justify-content: flex-start;   /* left-align so scroll works naturally */
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 0.5rem;
+        height: auto;
+    }
+
+    .category-container {
+        min-width: 140px;  /* good sweet spot — tweak as needed */
+        height: auto;
+    }
+
+    .category {
+        height: auto;
+    }
+}
+
 
 .category h4 {
 	height: auto;
@@ -353,6 +529,19 @@ header{
 	display: table-caption;
 	border: 0.0625rem solid var(--border);
 }
+
+.category-header{
+	font-size: var(--hdrFontSize);
+	font-weight: 700;
+	border-radius: 0.5rem;
+	text-align: center;
+	text-transform: uppercase;
+	color: var(--card);
+	background: var(--gradientTopColor);
+	border: 0.0625rem solid var(--border);
+	width:-webkit-fill-available
+}
+
 
 /* <!-- ______________________________________________________________________________ --> */
 						/* <!-- CLUBS --> */
