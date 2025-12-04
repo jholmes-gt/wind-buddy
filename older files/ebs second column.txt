@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>My Awesome Webpage</h1>
+    <button id="toggle-panel-btn">Show Panel</button>
+    <div id="ebs-panel-root"></div>
+    <script src="app.js"></script>
+</body>
+</html>
+
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+
+
+
+    .ebsPanelWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid #fff;
+    padding: 1px;
+    max-width: 800px;
+    margin: 2px auto;
+	background:var(--card)
+   }
+
+   .ebsPanelHeader {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 1px;
+   }
+
+   .ebsPanelContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+   }
+
+   .ebsPanelColumn {
+    flex: 1;
+    padding: 1px;
+    background-color: #ffffff;
+   }
+
+/* Visibility classes */
+.hidden {
+    display: none;
+}
+
+
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const panelRoot = document.getElementById('ebsPanelRoot');
+  const toggleBtn = document.getElementById('btn_endbringer');
+
+  // Function to create and build the panel
+  function createPanel() {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('panel-wrapper', 'hidden'); // Initially hidden
+
+    // Create header
+    const header = document.createElement('header');
+    header.classList.add('panel-header');
+    const headerText = document.createElement('h1');
+    headerText.textContent = "Your Panel Header";
+    header.appendChild(headerText);
+    wrapper.appendChild(header);
+
+    // Create the two columns container
+    const container = document.createElement('div');
+    container.classList.add('panel-container');
+
+    // Create the first column
+    const column1 = document.createElement('div');
+    column1.classList.add('panel-column');
+    column1.innerHTML = '<h2>Column One</h2><p>Content for the first column.</p>';
+
+    // Create the second column
+    const column2 = document.createElement('div');
+    column2.classList.add('panel-column');
+    column2.innerHTML = '<h2>Column Two</h2><p>Content for the second column.</p>';
+
+    // Append columns to their container
+    container.appendChild(column1);
+    container.appendChild(column2);
+    wrapper.appendChild(container);
+
+    return wrapper;
+  }
+
+  // Create the panel and append it to the root element
+  const panel = createPanel();
+  panelRoot.appendChild(panel);
+
+  // Add event listener to the button
+  toggleBtn.addEventListener('click', () => {
+    if (panel.classList.contains('hidden')) {
+      panel.classList.remove('hidden');
+      toggleBtn.textContent = 'Hide Panel';
+    } else {
+      panel.classList.add('hidden');
+      toggleBtn.textContent = 'Show Panel';
+    }
+  });
+});
+
+
+
+  let col1_text
+  for (let pct = 130; pct >= 70; pct -= 5) {
+    col1_text = col1_text + pct + "% → --\n";
+  }
+
+  const column1 = document.createElement('div');
+  column1.id = "ebsCol1";
+  column1.style.flex = "1";
+  column1.style.padding = "10px";
+  column1.style.background = "#fff;"
+  column1.innerHTML = col1_text;
+  
+  let col2_text
+  for (let pct = 65; pct >= 5; pct -= 5) {
+    col2_text = col2_text + pct + "% → --\n";
+  }
+
+  const column2 = document.createElement('div');
+  column2.id = "ebsCol2";
+  column2.style.flex = "1";
+  column2.style.padding = "10px";
+  column2.style.background = "#fff;"
+  column2.innerHTML = col2_text;
+
+
+
+
+
+  for (let pct = 130; pct >= 5; pct -= 5) {
+   const result = calculateRings_JS({
+		wind: wind,
+		elevation: elevation,
+        ballPower: ballPower,
+        club_distance: pct,
+        this_club_cat: category,
+        wind_per_ring: wind_per_ring
+      });
+	  const row = document.getElementById("ebs-row-" + pct);
+	  if (row){
+		row.textContent = `${pct}% → ${result.true_club_rings.toFixed(1)}`;
+
+
+
+
+
+
+
+  const lines2 = [];
+  for (let pct = 130; pct >= 70; pct -= 5) {
+    lines2.push(`${pct}% → --`);
+  }
+  const col2_text = lines2.join('\n'); // Joins all array elements into a single string with newlines
+
+  const column2 = document.createElement('div');
+  column2.id = "ebsCol2";
+  column2.style.flex = "1";
+  column2.style.padding = "1px";
+  column2.style.background = "#fff";
+  column2.style.flexDirection = "column";
+  column2.innerHTML = col2_text;
