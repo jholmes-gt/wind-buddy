@@ -1,3 +1,4 @@
+<!-- To do:  -->
 <!-- 2. about, contact, ect pages -->
 <!-- 3. Endbringer mode needs to scan through saved bags to determine the user's level (default to level 5 if not found) -->
 <!-- 4. golf bag hover tooltips that display the clubs and levels saved in that bag -->
@@ -15,14 +16,9 @@
   <div class="app">
 
 	<div class="header-bar">
-	  <div class = "img">
-		<img class="hdrBarImg" src="3_in_1.png">
-		<!-- <img style="" src="WindBuddy-shadow-text.png">
-		<img style="" src="wind-symbol.png"> -->
-	  </div>
-		
+		<img class="img" src="3_in_1.png">
 		<div class="authContainer">
-			<div id="authBar">
+			<div id="authColumn" style="display:content">
 				<button id="loginBtn" class="auth-btn">Sign In</button>
 				<div id="accountMenuContainer" style="display:none;">
 					<div id="accountMenuTrigger" class="account-trigger">
@@ -38,7 +34,6 @@
 				</div>
 
 			</div>
-			<div id='toast-container'></div>
 		</div>
 	</div>
 
@@ -66,8 +61,6 @@
 		</div>
 	</div>
 
-
-
 			<!-- CATEGORY/SHOW CLUBS TOGGLE WRAPPER -->
     <div class="clubs-wrap">
     	<div class="clubs-top">
@@ -79,9 +72,6 @@
         	<!-- categories created by JS -->
 	    </div>
     </div>
-
-
-
 
 
 		<!-- MAIN CONTROL ROW -->
@@ -123,7 +113,7 @@
         		<h4>
 					<div style="width: 100%;">TOOLS</div>
 					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-						<img src="info_icon.png" style="height: 75%; width:auto;margin-left: auto;margin-right: 1vw; margin-top:3px;" id="tools-info-btn">	
+						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="tools-info-btn">	
 						<div class="input-tooltip toolsPanelInfoIcon" role="status" aria-hidden="true">
 						  Click here for more info about the Tools Panel.
 						</div>
@@ -214,12 +204,13 @@
 
   		<!-- SHORTCUT BUTTONS -->
   	<div class="shortcut-bar" id="shortcutBar">
-	<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-		<img src="info_icon.png" style="height: 75%; width:auto;margin-right: 3px;" id="sc-info-btn">	
-		<div class="input-tooltip" role="status" aria-hidden="true">
-		  Click here for more info about the Shortcut Buttons.
+		<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
+			<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">	
+			<div class="input-tooltip" role="status" aria-hidden="true">
+			Click here for more info about the Shortcut Buttons.
+			</div>
 		</div>
-	</div>
+		
 	</div>
 
 
