@@ -15,34 +15,27 @@
 <body class="linear-gradient">
   <div class="app">
 
-<header class="wb-header">
-  <div class="wb-header-inner">
+	<div class="header-bar">
+		<img class="img" src="3_in_1.png">
+		<div class="authContainer">
+			<div id="authColumn" style="display:content">
+				<button id="loginBtn" class="auth-btn">Sign In</button>
+				<div id="accountMenuContainer" style="display:none;">
+					<div id="accountMenuTrigger" class="account-trigger">
+						Logged in as <span id="accountUserName"></span> ▼
+					</div>
 
-    <!-- Left: Logo -->
-    <div class="wb-logo">
-      <img src="3_in_1.png" alt="Wind Buddy Logo">
-    </div>
+					<div id="accountDropdown" class="hidden dropdown-menu">
+						<div id="menuChangePassword" class="dropdown-item">Change Password</div>
+						<div id="menuResetAppData" class="dropdown-item danger">Reset All App Data</div>
+						<div id="menuDeleteAccount" class="dropdown-item danger">Delete Account</div>
+						<div id="menuSignOut" class="dropdown-item">Sign Out</div>
+					</div>
+				</div>
 
-    <!-- Right: Account menu -->
-    <div class="wb-account">
-      <button id="loginBtn" class="auth-btn">Sign In</button>
-
-      <div id="accountMenuContainer" class="account-wrapper hidden">
-        <div id="accountMenuTrigger" class="account-trigger">
-          Logged in as <span id="accountUserName"></span> ▼
-        </div>
-
-        <div id="accountDropdown" class="dropdown hidden">
-          <div id="menuChangePassword" class="dropdown-item">Change Password</div>
-          <div id="menuResetAppData" class="dropdown-item danger">Reset All App Data</div>
-          <div id="menuDeleteAccount" class="dropdown-item danger">Delete Account</div>
-          <div id="menuSignOut" class="dropdown-item signout">Sign Out</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</header>
+			</div>
+		</div>
+	</div>
 
 	<!-- LOGIN MODAL -->
 	<div id="loginModal" class="modal hidden">
@@ -68,8 +61,6 @@
 		</div>
 	</div>
 
-
-
 			<!-- CATEGORY/SHOW CLUBS TOGGLE WRAPPER -->
     <div class="clubs-wrap">
     	<div class="clubs-top">
@@ -83,13 +74,10 @@
     </div>
 
 
-
-
-
 		<!-- MAIN CONTROL ROW -->
 	<div class="main">
 
-		<!-- <div class="leftMainPanels"> -->
+		<div class="leftMainPanels">
 			
 					<!-- GOLF BAG PANEL -->
 			<div id="golfBagsPanel" class="bagsPanel">
@@ -125,7 +113,7 @@
         		<h4>
 					<div style="width: 100%;">TOOLS</div>
 					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="tools-info-btn">
+						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="tools-info-btn">	
 						<div class="input-tooltip toolsPanelInfoIcon" role="status" aria-hidden="true">
 						  Click here for more info about the Tools Panel.
 						</div>
@@ -153,9 +141,9 @@
 	        	</div>
     		</div>
 
-		<!-- </div>    -->
+		</div>   
 
-		<!-- <div class="rightMainPanels"> -->
+		<div class="rightMainPanels">
 
 				<!-- SHOT ADJUSTMENTS PANEL -->
 			<div id="shot_adj_panel" class="shotAdjPanel">
@@ -210,19 +198,20 @@
 				<div class="active-club" id="active_club">--</div>
 			</div>
 
-  		<!-- SHORTCUT BUTTONS -->
-			<div class="shortcut-bar" id="shortcutBar">
-			<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-				<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">
-				<div class="input-tooltip" role="status" aria-hidden="true">
-				Click here for more info about the Shortcut Buttons.
-				</div>
-			</div>
-			</div>
-
-
+		</div>
+		
 	</div>
 
+  		<!-- SHORTCUT BUTTONS -->
+  	<div class="shortcut-bar" id="shortcutBar">
+		<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
+			<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">	
+			<div class="input-tooltip" role="status" aria-hidden="true">
+			Click here for more info about the Shortcut Buttons.
+			</div>
+		</div>
+		
+	</div>
 
 
 <!-- ______________________________________________________________________________________ -->
@@ -275,16 +264,10 @@
 
 
 
-		       <!-- FOOTER -->
-	<footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer>
-  </div>
+<!-- ______________________________________________________________________________________ -->
+			<!-- Tools Info panel (hidden initially) -->
+<!--_______________________________________________________________________________			 -->
 
-
-
-<!-- /* ______________________________________________________________________________________ 
-		 Tools Info panel (hidden initially) 
-_______________________________________________________________________________		*/
- -->
 	<div id="tools-info-modal">
 		<div id="tools-info-box">
 			<div id="tools-info-close">✖</div>
@@ -331,6 +314,10 @@ _______________________________________________________________________________	
 		</div>
 	</div>
 
+
+	       <!-- FOOTER -->
+	<footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer>
+  </div>
 
 
 
