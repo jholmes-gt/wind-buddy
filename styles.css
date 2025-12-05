@@ -116,10 +116,6 @@ body{
     align-items: center;
 }
 
-/* Show/Hide container */
-.hidden {
-    display: none !important;
-}
 
 /* Login button (unchanged styling) */
 .auth-btn {
@@ -321,7 +317,6 @@ body{
 
 
 
-.hidden { display:none !important; }
 
 
 /* MODAL BACKDROP */
@@ -642,14 +637,17 @@ header{
 	margin-bottom:0.1875rem;
 }
 .bagsPanel h4{
+	width:100%;
 	font-size:var(--hdrFontSize);
 	margin-bottom:0px;
 	margin-top:0px;
-	text-transform:uppercase;
 	text-align:center;
 	background:var(--gradientTopColor);
 	color:var(--card);
 	border-radius:0.5rem;
+	display: flex;
+	align-items: center;
+	justify-items: center;
 }
 .bag-row{
 	display:flex;
@@ -718,6 +716,43 @@ header{
 }
 
 
+/* --- Modal Wrapper --- */
+#gb-info-modal {
+	position: absolute;
+	inset-block-start: 15vh;
+	inset-inline-start: 37vw;
+	background: rgba(0, 0, 0, 0.55);
+	display: none;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+}
+
+/* --- Modal Content --- */
+#gb-info-box {
+	background: #ffffff;
+	width: 90%;
+	max-width: 51.25rem;
+	padding: 1.25rem;
+	border-radius: 0.75rem;
+	box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.25);
+	font-size:var(--normalFontSize);
+	line-height: 1.45;
+	color: #003f66;
+	position: relative;
+}
+
+/* Close Button */
+#gb-info-close {
+	position: absolute;
+	right: 0.625rem;
+	top: 0.5rem;
+	font-size: var(--hdrFontSize);
+	cursor: pointer;
+	color: #555;
+}
+
+
 /* <!-- ________________________________________________________________________________ --> */
 								/* <!-- Tool Panel --> */
 /* <!-- ___________________________________________________________________________ --> */
@@ -731,11 +766,6 @@ header{
 	border: 0.0625rem solid var(--border);
 }
 
-.toolsPanelInfoIcon{
-	font-size:var(--normalFontSize);
-	text-align:left;
-	font-weight:normal;
-}
 
 .toolsInnerPanel{
 	display:flex;
@@ -994,7 +1024,7 @@ input[type=range]{
 	display: block;
 }
 
-/* show tooltip on hover OR when input is focused (keyboard accessible) */
+/* show tooltip on hover  */
 .tooltip-wrapper:hover .input-tooltip {
 	opacity: 1;
 	transform: translateY(0);
@@ -1244,6 +1274,13 @@ footer{
 	color:#fff;
 	border-color: #111;
 }
+
+.toolsPanelInfoIcon, .bagsPanelInfoIcon{
+	font-size:var(--normalFontSize);
+	text-align:left;
+	font-weight:normal;
+}
+
 
 .info-icon{
 	height:clamp(20px,1.25rem,30px);  

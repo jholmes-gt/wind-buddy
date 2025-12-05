@@ -157,6 +157,9 @@ document.addEventListener("click", (e) => {
 // ---- AUTH STATE HANDLER ----
 onAuthStateChanged(auth, (user) => {
   if (!user) {
+    for (let i = 1; i <= bagCount; i++) {
+      loadButtons[i - 1].disabled = true;
+    }
     accountMenuContainer.style.display = "none";
     loadBallPower(0);
     return;
@@ -165,7 +168,7 @@ onAuthStateChanged(auth, (user) => {
   // Show menu container
   accountMenuContainer.style.display = "inline-block";
   accountMenuContainer.classList.remove("hidden");
-  
+
   // Determine username display
   let username = "";
   const provider = user.providerData[0]?.providerId;
@@ -4153,147 +4156,6 @@ function saveLastClubDetails(cat, club){
 }
 
 
-
-/*
-//------------------------------------------------------
-// Golf Bags Panel functions
-//------------------------------------------------------
-
-const bagCount = 5;
-const saveButtons = [];
-const loadButtons = [];
-let activeBagNumber;
-const bagSavedInfoPanel = document.getElementById('bag-toast');
-
-bagSavedInfoPanel.addEventListener('click', dismissSavedBagInfo);
-
-function dismissSavedBagInfo(){
-	bagSavedInfoPanel.classList.remove('show');
-}
-
-
-for (let i = 1; i <= bagCount; i++) {
-  loadButtons.push(document.getElementById(`btn_bag${i}`));        // e.g. <button id="btn_bag1">
-  saveButtons.push(document.getElementById(`btn_bag${i}_save`));  // e.g. <button id="btn_bag1_save">
-};
-
-// Enable/disable Save buttons based on completeness
-function updateSaveButtons() {
-  const allCategories = Object.keys(state.selected);
-  const allFilled = allCategories.length === 7 && allCategories.every(cat => {
-    const s = state.selected[cat];
-    return s && s.club && s.level;
-  });
-
-  saveButtons.forEach(btn => btn.disabled = !allFilled);
-  
-}
-
-// Call this after any selection change
-document.addEventListener('click', updateSaveButtons);
-document.addEventListener('change', updateSaveButtons);
-
-// Save current selection set to localStorage
-function saveBag(bagIndex) {
-	const bagData = {};
-	for (const [cat, info] of Object.entries(state.selected)) {
-		if (info.club && info.level) {
-		bagData[cat] = { club: info.club, level: info.level };
-		}
-	}
-
-	localStorage.setItem(`windbuddy_bag_${bagIndex}`, JSON.stringify(bagData));
-
-	// Toast summary (singularized categories + multiline)
-	const summary = Object.entries(bagData)
-	.map(([cat, { club, level }]) => {
-       const singular = cat.replace(/_?s$/i, '');
-       return `${singular}: ${club} (Lvl ${level})`;
-	})
-	.join('<br>') + "<br><br>(Click anywhere to close)";
-	
-	showBagToast(`Bag ${bagIndex} saved:<br>${summary}`, 10000);
-	
-	activeBagNumber = bagIndex;
-	document.querySelectorAll('.smaller-btn').forEach(b=>b.classList.remove('selected'));
-	document.getElementById("btn_bag" + activeBagNumber).classList.add('selected');
-}
-
-
-function showBagToast(message, duration = 5000) {
-  const toast = document.getElementById('bag-toast');
-  if (!toast) return;
-
-  toast.innerHTML = message.replace(/\n/g, '<br>');
-  toast.classList.add('show');
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, duration);
-}
-
-
-// Load selection set from localStorage
-function loadBag(bagIndex) {
-
-  const data = localStorage.getItem(`windbuddy_bag_${bagIndex}`);
-  if (!data) {
-    showToast(`No saved clubs found for Bag ${bagIndex}.`, 4000);
-    return;
-  }
-
-  loadingGolfBag = true;
-
-  const bagData = JSON.parse(data);
-   Object.keys(bagData).forEach(cat => {
-    const { club, level } = bagData[cat];
-    state.selected[cat] = { club, level };
-	
-    // Update UI selections
-    const clubBtn = document.querySelector(
-      `[data-cat="${cat}"][data-club="${club}"]`
-    );
-    const lvlBtn = document.querySelector(
-      `[data-cat="${cat}"][data-level="${level}"]`
-    );
-	// console.log(clubBtn) 
-	// console.log(lvlBtn) 
-    if (clubBtn) clubBtn.click();
-    if (lvlBtn) lvlBtn.click();
-  });
-
-  const driversScBtn = document.querySelector(
-    `.shortcut-btn[data-cat="Drivers"]`
-  );
-  if (driversScBtn) driversScBtn.click();
-  activeBagNumber = bagIndex;
-  document.querySelectorAll('.smaller-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById("btn_bag" + activeBagNumber).classList.add('selected');
-    
-  // Recalculate and refresh displays
-  updateSaveButtons();
-  triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
-  // updateActiveLabel(); 
-  updateClubInfoTable();
-
-// Save recent golf bag to Firestore
-  const user = auth.currentUser;
-  if (user) {
-    saveLastBagIndex(user.uid, bagIndex);
-  }
-
-  loadingGolfBag = false;
-}
-
-// Attach listeners
-for (let i = 0; i < bagCount; i++) {
-  loadButtons[i]?.addEventListener('click', () => loadBag(i + 1));
-  saveButtons[i]?.addEventListener('click', () => saveBag(i + 1));
-}
-*/
-
-
-
 //------------------------------------------------------
 // Golf Bags Panel (Firestore version — 1 doc per bag)
 //------------------------------------------------------
@@ -4303,6 +4165,29 @@ const saveButtons = [];
 const loadButtons = [];
 let activeBagNumber = null;
 let loadingGolfBag = false;
+
+
+// Golf Bag Info Modal
+const gbinfoBtn = document.getElementById("gb-info-btn");
+const gbinfoModal = document.getElementById("gb-info-modal");
+const gbinfoClose = document.getElementById("gb-info-close");
+
+gbinfoBtn.addEventListener("click", () => {
+    gbinfoModal.style.display = "flex";
+});
+
+gbinfoClose.addEventListener("click", () => {
+    gbinfoModal.style.display = "none";
+});
+
+gbinfoModal.addEventListener("click", (e) => {
+    // Click outside the box to close
+    if (e.target === gbinfoModal) {
+        gbinfoModal.style.display = "none";
+    }
+});
+
+
 
 // Tooltip for "Please sign in"
 const bagTooltip = document.getElementById("bag-signin-tooltip");

@@ -93,7 +93,15 @@
 			
 					<!-- GOLF BAG PANEL -->
 			<div id="golfBagsPanel" class="bagsPanel">
-				<h4>Golf Bags</h4>
+				<h4>
+					<div style="width: 100%;">GOLF BAGS</div>
+					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
+						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="gb-info-btn">
+						<div class="input-tooltip" role="status" aria-hidden="true">
+						  Click here for more info about the Golf Bags Panel.
+						</div>
+					</div>
+				</h4>
 				<div class="bagsInnerPanel" id="bagsContainer">
 					<div class="bag-row">
 		    			<button id="btn_bag1" class="smaller-btn">Bag1</button>
@@ -126,7 +134,7 @@
 					<div style="width: 100%;">TOOLS</div>
 					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
 						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="tools-info-btn">
-						<div class="input-tooltip toolsPanelInfoIcon" role="status" aria-hidden="true">
+						<div class="input-tooltip" role="status" aria-hidden="true">
 						  Click here for more info about the Tools Panel.
 						</div>
 					</div>
@@ -271,9 +279,6 @@
 	    </div>
 	</div>
 	
-	
-
-
 
 		       <!-- FOOTER -->
 	<footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer>
@@ -332,6 +337,24 @@ _______________________________________________________________________________	
 	</div>
 
 
+<!-- ______________________________________________________________________________________ -->
+			<!-- Shortcut Buttons Info panel (hidden initially) -->
+<!--_______________________________________________________________________________			 -->
+	<div id="gb-info-modal">
+		<div id="gb-info-box">
+			<div id="gb-info-close">✖</div>
+
+			<h3 style="margin-top: 0;">Golf Bags</h3>
+
+			<p>
+			The Golf Bags panel allows you to save and load up to 5 different sets of club selections and levels. This is useful because various courses require different club setups. To save your current club selections and levels into a golf bag, simply click the "Save Current" button next to the desired bag number. The "Save Current" buttons only become enabled when a club and a level are selected for each club category. Saving a golf bag will overwrite any previously saved data in that bag. To load a saved golf bag, click on the corresponding bag button (e.g., "Bag1", "Bag2", etc.). The app will then update the club selections and levels to match those saved in the selected bag.
+			</p>
+			<p>
+			To utilize the Golf Bags feature, you must be signed in to your account. This ensures that your saved bags are securely stored and can be accessed across different devices. If you are not signed in, the golf bag buttons will be disabled. If you do not have a user account, you can create one using the Sign In button at the top right of the application. It's free and only takes a moment.
+			</p>
+
+		</div>
+	</div>
 
 
 <!-- Init Firebase -->
