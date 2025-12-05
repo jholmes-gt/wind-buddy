@@ -93,15 +93,17 @@
 			
 					<!-- GOLF BAG PANEL -->
 			<div id="golfBagsPanel" class="bagsPanel">
-				<h4>
-					<div style="width: 100%;">GOLF BAGS</div>
-					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="gb-info-btn">
-						<div class="input-tooltip" role="status" aria-hidden="true">
-						  Click here for more info about the Golf Bags Panel.
+				
+				<h4 class="headerWithInfoIcon" style="gap:1.07rem">
+					GOLF BAGS
+					<div class="tooltip-wrapper">
+						<img src="info_icon.png" class="info-icon" id="gb-info-btn" style="margin-right:0.75rem;">
+						<div class="tooltip" style="font-weight: normal;">
+							Click here for more info about the Golf Bags Panel.
 						</div>
 					</div>
 				</h4>
+
 				<div class="bagsInnerPanel" id="bagsContainer">
 					<div class="bag-row">
 		    			<button id="btn_bag1" class="smaller-btn">Bag1</button>
@@ -130,12 +132,12 @@
 		
 				<!-- TOOL PANEL -->
       		<div id="left-mid-panel" class="toolsPanel">
-        		<h4>
-					<div style="width: 100%;">TOOLS</div>
-					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-						<img src="info_icon.png" class="info-icon" style="margin-right:0.75rem;" id="tools-info-btn">
-						<div class="input-tooltip" role="status" aria-hidden="true">
-						  Click here for more info about the Tools Panel.
+				<h4 class="headerWithInfoIcon">
+					TOOLS
+					<div class="tooltip-wrapper">
+						<img src="info_icon.png" class="info-icon" id="tools-info-btn" style="margin-right:0.75rem;">
+						<div class="tooltip" style="font-weight: normal;">
+							Click here for more info about the Tools Panel.
 						</div>
 					</div>
 				</h4>
@@ -161,9 +163,6 @@
 	        	</div>
     		</div>
 
-		<!-- </div>    -->
-
-		<!-- <div class="rightMainPanels"> -->
 
 				<!-- SHOT ADJUSTMENTS PANEL -->
 			<div id="shot_adj_panel" class="shotAdjPanel">
@@ -172,10 +171,10 @@
 				<div class="sa_row">
 					<label for="windInput">Wind (mph)</label>
 					<div class="tooltip-wrapper">
-					<input id="windInput" type="number" step="0.1" value="0.0">
-					<div class="input-tooltip" role="status" aria-hidden="true">
-						It is not necessary to type the decimal (dot) key. (example: type 125 for 12.5)
-					</div>
+						<input id="windInput" type="number" step="0.1" value="0.0">
+						<div class="tooltip" role="status" aria-hidden="true" style="font-weight: normal;">
+							Type 3 digits (no dot) for the wind (example: type 087 for 8.7 and 125 for 12.5)
+						</div>
 					</div>
 				</div>
 			
@@ -185,14 +184,14 @@
 				</div>
 			
 				<div class="sa_row">
-					<label for="clubDistance" style="margin-left:5px">Club Distance (%)</label>
-					<div class="tooltip-wrapper">
-					<input id="clubDistance" type="range" min="1" max="100" value="100">
-					<div class="input-tooltip" role="status" aria-hidden="true">
-							You can set club distance by using the slider or entering a value between 0 - 100 in the input box beside the slider.
+					<label for="clubDistance" style="margin-left:5px;width:28%">Club Distance</label>
+					<div class="tooltip-wrapper" style="width:63%">
+						<input id="clubDistance" type="range" style="width:100%" min="1" max="100" value="100">
+						<div class="tooltip" role="status" aria-hidden="true">
+							Club distance can be set by the slider or entering a value between 0 - 100 in the input box beside the slider.
+						</div>
 					</div>
-					</div>
-					<input id="clubDistanceVal" type="number" step="1" value="100" style="margin-right:2px">
+					<input id="clubDistanceVal" type="number" step="1" value="100" style="margin-right:2px;width:9%">
 				</div>
 		
 				<div class="sa_row">
@@ -218,71 +217,75 @@
 				<div class="active-club" id="active_club">--</div>
 			</div>
 
-  		<!-- SHORTCUT BUTTONS -->
-			<div class="shortcut-bar" id="shortcutBar">
-			<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-				<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">
-				<div class="input-tooltip" role="status" aria-hidden="true">
-				Click here for more info about the Shortcut Buttons.
-				</div>
-			</div>
-			</div>
-
-
-	</div>
-
-
-
 <!-- ______________________________________________________________________________________ -->
 			<!-- Endbringer School panel (hidden initially) -->
 <!--_______________________________________________________________________________			 -->
-	<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
-	     <div id="ebsHeader" class="ebsPanelHeader">Endbringer School (Club Distance% --> Rings)</div>
-		 <div class="ebsPanelInfo">(To dismiss, choose a different selected club or click the "Endbringer School" button again.)</div>
-         <div id="ebsContainer" class="ebsPanelContainer">
-           <div id="ebsCol1" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-			 <div class="ebsColRow"><p>140% --> <span id="ebs140">---</span></p></div>
-			 <div class="ebsColRow"><p>135% --> <span id="ebs135">---</span></p></div>
-			 <div class="ebsColRow"><p>130% --> <span id="ebs130">---</span></p></div>
-			 <div class="ebsColRow"><p>125% --> <span id="ebs125">---</span></p></div>
-			 <div class="ebsColRow"><p>120% --> <span id="ebs120">---</span></p></div>
-			 <div class="ebsColRow"><p>115% --> <span id="ebs115">---</span></p></div>
-			 <div class="ebsColRow"><p>110% --> <span id="ebs110">---</span></p></div>
-		  </div>
-		  <div id="ebsCol2" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-			<div class="ebsColRow"><p>105% --> <span id="ebs105">---</span></p></div>
-			<div class="ebsColRow"><p>100% --> <span id="ebs100">---</span></p></div>
-			<div class="ebsColRow"><p>95% --> <span id="ebs95">---</span></p></div>
-			<div class="ebsColRow"><p>90% --> <span id="ebs90">---</span></p></div>
-			<div class="ebsColRow"><p>85% --> <span id="ebs85">---</span></p></div>
-			<div class="ebsColRow"><p>80% --> <span id="ebs80">---</span></p></div>
-			<div class="ebsColRow"><p>75% --> <span id="ebs75">---</span></p></div>
-		  </div>
-          <div id="ebsCol3" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-			<div class="ebsColRow"><p>70% --> <span id="ebs70">---</span></p></div>
-			<div class="ebsColRow"><p>65% --> <span id="ebs65">---</span></p></div>
-			<div class="ebsColRow"><p>60% --> <span id="ebs60">---</span></p></div>
-			<div class="ebsColRow"><p>55% --> <span id="ebs55">---</span></p></div>
-			<div class="ebsColRow"><p>50% --> <span id="ebs50">---</span></p></div>
-			<div class="ebsColRow"><p>45% --> <span id="ebs45">---</span></p></div>
-			<div class="ebsColRow"><p>40% --> <span id="ebs40">---</span></p></div>
-		  </div>
-		  <div id="ebsCol4" class="ebsPanelColumn">
-			<div class="ebsColRow"><p>35% --> <span id="ebs35">---</span></p></div>
-			<div class="ebsColRow"><p>30% --> <span id="ebs30">---</span></p></div>
-			<div class="ebsColRow"><p>25% --> <span id="ebs25">---</span></p></div>
-			<div class="ebsColRow"><p>20% --> <span id="ebs20">---</span></p></div>
-			<div class="ebsColRow"><p>15% --> <span id="ebs15">---</span></p></div>
-			<div class="ebsColRow"><p>10% --> <span id="ebs10">---</span></p></div>
-			<div class="ebsColRow"><p>5% --> <span id="ebs5">---</span></p></div>
-		  </div>
-	    </div>
-	</div>
+			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
+				 <div id="ebsHeader" class="ebsPanelHeader">Endbringer School (Club Distance% --> Rings)</div>
+				 <div class="ebsPanelInfo">(To dismiss, choose a different selected club or click the "Endbringer School" button again.)</div>
+				 <div id="ebsContainer" class="ebsPanelContainer">
+				   <div id="ebsCol1" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
+					 <div class="ebsColRow"><p>140% --> <span id="ebs140">---</span></p></div>
+					 <div class="ebsColRow"><p>135% --> <span id="ebs135">---</span></p></div>
+					 <div class="ebsColRow"><p>130% --> <span id="ebs130">---</span></p></div>
+					 <div class="ebsColRow"><p>125% --> <span id="ebs125">---</span></p></div>
+					 <div class="ebsColRow"><p>120% --> <span id="ebs120">---</span></p></div>
+					 <div class="ebsColRow"><p>115% --> <span id="ebs115">---</span></p></div>
+					 <div class="ebsColRow"><p>110% --> <span id="ebs110">---</span></p></div>
+				  </div>
+				  <div id="ebsCol2" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
+					<div class="ebsColRow"><p>105% --> <span id="ebs105">---</span></p></div>
+					<div class="ebsColRow"><p>100% --> <span id="ebs100">---</span></p></div>
+					<div class="ebsColRow"><p>95% --> <span id="ebs95">---</span></p></div>
+					<div class="ebsColRow"><p>90% --> <span id="ebs90">---</span></p></div>
+					<div class="ebsColRow"><p>85% --> <span id="ebs85">---</span></p></div>
+					<div class="ebsColRow"><p>80% --> <span id="ebs80">---</span></p></div>
+					<div class="ebsColRow"><p>75% --> <span id="ebs75">---</span></p></div>
+				  </div>
+				  <div id="ebsCol3" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
+					<div class="ebsColRow"><p>70% --> <span id="ebs70">---</span></p></div>
+					<div class="ebsColRow"><p>65% --> <span id="ebs65">---</span></p></div>
+					<div class="ebsColRow"><p>60% --> <span id="ebs60">---</span></p></div>
+					<div class="ebsColRow"><p>55% --> <span id="ebs55">---</span></p></div>
+					<div class="ebsColRow"><p>50% --> <span id="ebs50">---</span></p></div>
+					<div class="ebsColRow"><p>45% --> <span id="ebs45">---</span></p></div>
+					<div class="ebsColRow"><p>40% --> <span id="ebs40">---</span></p></div>
+				  </div>
+				  <div id="ebsCol4" class="ebsPanelColumn">
+					<div class="ebsColRow"><p>35% --> <span id="ebs35">---</span></p></div>
+					<div class="ebsColRow"><p>30% --> <span id="ebs30">---</span></p></div>
+					<div class="ebsColRow"><p>25% --> <span id="ebs25">---</span></p></div>
+					<div class="ebsColRow"><p>20% --> <span id="ebs20">---</span></p></div>
+					<div class="ebsColRow"><p>15% --> <span id="ebs15">---</span></p></div>
+					<div class="ebsColRow"><p>10% --> <span id="ebs10">---</span></p></div>
+					<div class="ebsColRow"><p>5% --> <span id="ebs5">---</span></p></div>
+				  </div>
+				</div>
+			</div>
+
+  		
+		<!-- SHORTCUT BUTTONS -->
+			<div class="shortcut-bar" id="shortcutBar">
+				<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
+					<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">
+					<div class="tooltip" role="status" aria-hidden="true">
+						Click here for more info about the Shortcut Buttons.
+					</div>
+				</div>
+			</div>
+
+
+	</div>   <!-- end of Main Panel -->
+
+
+
 	
 
 		       <!-- FOOTER -->
-	<footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer>
-  </div>
+	<!-- <footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer> -->
+  
+
+	</div>		<!-- End of div.App -->
 
 
 

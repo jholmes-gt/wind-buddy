@@ -575,7 +575,7 @@ header{
 	margin-top: 0;
 	margin-bottom: 0px;
 	width:35%;
-	height: 100%;
+	height: 97%;
 }
 
 .level-radio{
@@ -641,13 +641,12 @@ header{
 	font-size:var(--hdrFontSize);
 	margin-bottom:0px;
 	margin-top:0px;
-	text-align:center;
+	text-align: center;
 	background:var(--gradientTopColor);
 	color:var(--card);
 	border-radius:0.5rem;
 	display: flex;
-	align-items: center;
-	justify-items: center;
+	justify-items: self-end;
 }
 .bag-row{
 	display:flex;
@@ -927,6 +926,7 @@ tool-row{
 	border:0.0625rem solid var(--border);
 	row-gap:1vh;
 	padding-bottom: 1vh;
+	width: clamp(250px,95vw,400px);
 }
 .shotAdjPanel h4{
 	font-size:var(--hdrFontSize);
@@ -956,8 +956,8 @@ tool-row{
 	margin-right:0.125rem;
 	font-size:var(--normalFontSize);
 	text-align:center;
-	align-content: center;	
-	text-wrap: nowrap;	
+	align-content: center;
+	text-wrap: nowrap;
 }
 
 input[type=number],select,input[list]{
@@ -968,18 +968,17 @@ input[type=number],select,input[list]{
 	max-width:3.75rem;
 }
 input[type=range]{
-	width:250px;
 	border-radius:0.375rem;
 	border:0.0625rem solid var(--border);
 	font-size:var(--normalFontSize);
-	padding:0px
+	padding:0px;
+	display: flex;
+	/* min-width: 100px; */
+	/* max-width: 215px; */
+	width: 100%;
 }
 	
-/* wrapper must be positioned so tooltip can be absolutely positioned relative to it */
-.tooltip-wrapper {
-	position: relative;
-	display: contents; /* or block per layout */
-}
+
 
 /* style the input as you already have */
 #windInput {
@@ -989,47 +988,7 @@ input[type=range]{
 	min-width: 4rem;
 }
 
-/* tooltip box (hidden by default) */
-.input-tooltip {
-	position: absolute;
-	left: 0;
-	bottom: calc(100% + 0.5rem); /* place above the input */
-	transform-origin: bottom left;
-	white-space: nowrap;
-	background: #222;
-	color: #fff;
-	padding: 0.5rem 0.625rem;
-	border-radius: 0.375rem;
-	font-size:var(--normalFontSize);
-	line-height: 1.2;
-	box-shadow: 0 0.375rem 1.125rem rgba(0,0,0,0.25);
-	opacity: 0;
-	pointer-events: none;
-	transition: opacity .18s ease, transform .18s ease;
-	transform: translateY(0.375rem);
-	z-index: 30;
-}
 
-/* small arrow */
-.input-tooltip::after {
-	content: "";
-	position: absolute;
-	left: 0.75rem;
-	top: 100%;
-	width: 0;
-	height: 0;
-	border-left: 0.375rem solid transparent;
-	border-right: 0.375rem solid transparent;
-	border-top: 0.375rem solid #222;
-	display: block;
-}
-
-/* show tooltip on hover  */
-.tooltip-wrapper:hover .input-tooltip {
-	opacity: 1;
-	transform: translateY(0);
-	pointer-events: auto;
-}
 
 
 /* hide number spinners */
@@ -1275,17 +1234,77 @@ footer{
 	border-color: #111;
 }
 
-.toolsPanelInfoIcon, .bagsPanelInfoIcon{
-	font-size:var(--normalFontSize);
-	text-align:left;
-	font-weight:normal;
+
+
+.headerWithInfoIcon {
+    display: flex;
+    text-align: center;
+    gap: 1.7rem;
+    justify-items: center;
+    justify-content: end;
 }
 
 
 .info-icon{
-	height:clamp(20px,1.25rem,30px);  
+	height:clamp(20px,1.25rem,30px);
 	width:auto;
+	justify-self: right;
+	align-self: center;
+	cursor: pointer;
+	position: sticky;
 }
+
+/* wrapper must be positioned so tooltip can be absolutely positioned relative to it */
+.tooltip-wrapper {
+    position: relative;
+    display: inline-flex; /* or inline-block, block, flex */
+    align-items: center;   /* keeps icon vertically aligned */
+}
+
+
+/* tooltip box (hidden by default) */
+.tooltip {
+	position: absolute;
+	left: 0;
+	bottom: calc(100% + 0.5rem); /* place above the input */
+	transform-origin: bottom left;
+	white-space: nowrap;
+	background: #222;
+	color: #fff;
+	padding: 0.5rem 0.625rem;
+	border-radius: 0.375rem;
+	font-size:var(--normalFontSize);
+	line-height: 1.2;
+	box-shadow: 0 0.375rem 1.125rem rgba(0,0,0,0.25);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity .18s ease, transform .18s ease;
+	transform: translateY(0.375rem);
+	z-index: 30;
+}
+
+/* small arrow */
+.tooltip::after {
+	content: "";
+	position: absolute;
+	left: 0.75rem;
+	top: 100%;
+	width: 0;
+	height: 0;
+	border-left: 0.375rem solid transparent;
+	border-right: 0.375rem solid transparent;
+	border-top: 0.375rem solid #222;
+	display: block;
+}
+
+/* show tooltip on hover  */
+.tooltip-wrapper:hover .tooltip {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+
 
 .show {
 	/* .toast.show { */

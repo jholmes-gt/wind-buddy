@@ -4514,18 +4514,18 @@ function triggerCalcIfReady(category){
 	if (endbringerMode){
 		
 		if (category !== "Wedges"){
-          if (clubsShowingB4EBMode){
+        if (clubsShowingB4EBMode){
 	         if (!clubsShowing) toggleClubsLink.click();
 	      }
 	      else{
 	         if (clubsShowing) toggleClubsLink.click();
-          }
+        }
 		  endbringerMode = false;
 		  const ebspanel = document.getElementById("ebs-panel-root");
 		  ebspanel.classList.add('hidden');
 		  ebsToggleBtn.classList.remove('selected')	  
 		  return;
-        }
+      }
      	for (let pct = 140; pct >= 5; pct -= 5) {
          const result = calculateRings_JS({ 
 		   wind: wind,
@@ -4552,6 +4552,8 @@ function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 /* Calculation logic translated from AHK */
 function calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring }) {
   let adj;
+  if (ballPower === 0)
+    ballPower = 0.1;
   if (ballPower < 6) adj = 1 - (0.0119 * (6 - ballPower));
   else if (ballPower === 6) adj = 1;
        else adj = 1 + (0.0119 * (ballPower - 6));
