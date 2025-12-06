@@ -49,9 +49,9 @@ emailLoginBtn.onclick = async () => {
     try {
         await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
         loginModal.classList.add("hidden");
-        showToast("Signed in!", 2500);
+        showToast("Signed in!", 5000);
     } catch (err) {
-        showToast(err.message, 4000);
+        showToast(err.message, 5000);
     }
 };
 
@@ -63,9 +63,9 @@ emailSignupBtn.onclick = async () => {
     try {
         await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
         loginModal.classList.add("hidden");
-        showToast("Account created!", 2500);
+        showToast("Account created!", 5000);
     } catch (err) {
-        showToast(err.message, 4000);
+        showToast(err.message, 5000);
     }
 };
 
@@ -77,9 +77,9 @@ googleLoginBtn.onclick = async () => {
     try {
         await signInWithPopup(auth, googleProvider);
         loginModal.classList.add("hidden");
-        showToast("Signed in with Google!", 2500);
+        showToast("Signed in with Google!", 5000);
     } catch (err) {
-        showToast(err.message, 4000);
+        showToast(err.message, 5000);
     }
 };
 
@@ -89,7 +89,7 @@ googleLoginBtn.onclick = async () => {
 
 menuSignOut.onclick = async () => {
     await signOut(auth);
-    showToast("Sign out successful!<br>See you next time!", 3500);
+    showToast("Sign out successful!<br>See you next time!", 5000);
     resetClubs();
 };
 
@@ -112,9 +112,9 @@ onAuthStateChanged(auth, (user) => {
    SHOW A TOAST MESSAGE
    ---------------------------- */
 function showToast(message, duration = 3000) {
-    const toastContainer = document.getElementById('toast-container');
+    const toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) {
-        console.error("Toast container not found. Please add <div id='toast-container'></div> to your HTML.");
+        console.error("Toast container not found. Please add <div id='toastContainer'></div> to your HTML.");
         return;
     }
 

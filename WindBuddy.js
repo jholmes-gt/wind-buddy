@@ -19,7 +19,7 @@ import {
 //import { getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 // Select element for ball power
-const ballPowerSelect = document.getElementById("ballPower");
+const ballPowerEl = document.getElementById("ballPower");
 
 
 
@@ -117,21 +117,15 @@ async function selectLastClub(uid) {
 
 
 
-
-
 // ----------------------------------------
 // Helper: update UI + bubble event
 // ----------------------------------------
 
 function setBallPower(value) {
     value = Math.max(0, Math.min(10, Number(value)));
-    ballPowerSelect.value = String(value);
-    ballPowerSelect.dispatchEvent(new Event("change", { bubbles: true }));
+    ballPowerEl.value = String(value);
+    ballPowerEl.dispatchEvent(new Event("change", { bubbles: true }));
 }
-
-
-
-
 
 // UI Elements
 const accountMenuContainer = document.getElementById("accountMenuContainer");
@@ -3932,10 +3926,12 @@ const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Griz
    UI elements & helpers
    ---------------------------- */
 const windInput = document.getElementById('windInput');
-const ballPowerEl = document.getElementById('ballPower');
 const distanceEl = document.getElementById('clubDistance');
 const distanceVal = document.getElementById('clubDistanceVal');
 const elevationEl = document.getElementById('elevation');
+const ebsWindInput = document.getElementById("ebsWindInput");
+const ebsBallPower = document.getElementById("ebsBallPower");
+const ebsElevation = document.getElementById("ebsElevation");
 
 const ringsMain = document.getElementById('ringsMain');
 const r_max = document.getElementById('r_max');
@@ -3958,6 +3954,11 @@ let clubsShowingB4EBMode;
    ---------------------------- */
 let state = {selected:{},activeCategory:null};
 const shortcutBar=document.getElementById('shortcutBar');
+const bagsPanel=document.getElementById('golfBagsPanel');
+const toolsPanel=document.getElementById('toolsBtnsPanel');
+const clubStatsPanel=document.getElementById('clubStatsPanel');
+const saPanel=document.getElementById('saPanel');
+const ringsPanel=document.getElementById('ringsPanel');
 const activeClubLabel=document.getElementById('active_club');
 
 
@@ -4498,6 +4499,32 @@ function updateClubInfoTable(){
 function triggerCalcIfReady(category){
   const sel = state.selected[category];
   if (!sel || !sel.club || !sel.level) return;
+
+  if (endbringerMode){
+    const wind = parseFloat(ebsWindInput.value);
+    const elevation = parseFloat(ebsElevation.value);
+    const ballPower = parseInt(ebsBallPower.value);
+    const catData = windData[category];
+    const club = sel.club
+    const level = sel.level
+    const wind_per_ring = catData[sel.club][sel.level];
+
+    for (let pct = 140; pct >= 5; pct -= 5) {
+      const result = calculateRings_JS({ 
+		    wind: wind,
+		    elevation: elevation, 
+		    ballPower: ballPower, 
+		    club_distance: pct, 
+		    category: category, 
+		    wind_per_ring: wind_per_ring 
+		  });
+		  const ebsRings = document.getElementById("ebs" + pct);
+		  // ebsRings.textContent = tcrAsNumber; 
+		  ebsRings.textContent = `${result.true_club_rings}`;
+	  }
+		return;
+	};
+    
   const wind = parseFloat(windInput.value) || 0;
   const elevation = parseFloat(elevationEl.value) || 0;
   const ballPower = parseInt(ballPowerEl.value)
@@ -4510,41 +4537,11 @@ function triggerCalcIfReady(category){
     const wind_per_ring = catData[sel.club][sel.level];
     const res = calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring });
     setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
-	
-	if (endbringerMode){
-		
-		if (category !== "Wedges"){
-        if (clubsShowingB4EBMode){
-	         if (!clubsShowing) toggleClubsLink.click();
-	      }
-	      else{
-	         if (clubsShowing) toggleClubsLink.click();
-        }
-		  endbringerMode = false;
-		  const ebspanel = document.getElementById("ebs-panel-root");
-		  ebspanel.classList.add('hidden');
-		  ebsToggleBtn.classList.remove('selected')	  
-		  return;
-      }
-     	for (let pct = 140; pct >= 5; pct -= 5) {
-         const result = calculateRings_JS({ 
-		   wind: wind,
-		   elevation: elevation, 
-		   ballPower: ballPower, 
-		   club_distance: pct, 
-		   category: category, 
-		   wind_per_ring: wind_per_ring 
-		 });
-		 const ebsRings = document.getElementById("ebs" + pct);
-		 // ebsRings.textContent = tcrAsNumber; 
-		 ebsRings.textContent = `${result.true_club_rings}`;
-	    }
-		
-	};
-    return;
+	  return;
   };
-      setRingsDisplay('--','--','--','--','--','--','--','--');
-	  return
+  
+  setRingsDisplay('--','--','--','--','--','--','--','--');
+	return
 }
 
 function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
@@ -4645,56 +4642,21 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
 
 
 
-//-----------------------------------------
-//Ball Power functions (saving and setting)
-//-----------------------------------------
-// function setBallPower(bp) {
-    // const el = document.getElementById("ballPower");
-
-    // force number into valid range
-    // bp = Math.max(0, Math.min(10, parseInt(bp)));
-
-    // el.value = String(bp);
-
-    // dispatch change so your app reacts
-    // el.dispatchEvent(new Event("change", { bubbles: true }));
-// }
-
-// function setupBallPowerSaving() {
-    // const el = document.getElementById("ballPower");
-
-    // el.addEventListener("change", async () => {
-        // const user = auth.currentUser;
-        // if (!user) return; // not logged in → don't save
-
-        // try {
-            // await db.collection("users")
-                // .doc(user.uid)
-                // .collection("settings")
-                // .doc("shot")
-                // .set({ ballPower: parseInt(el.value) });
-
-        // } catch (err) {
-            // console.error("Failed to save ball power:", err);
-        // }
-    // });
-// }
-
-// setupBallPowerSaving();
 
 
 // ----------------------------
 // 			WIRE EVENTS
 // ----------------------------
-ballPowerSelect.addEventListener("change", () => {
-    const value = Number(ballPowerSelect.value);
+/*
+ballPowerEl.addEventListener("change", () => {
+    const value = Number(ballPowerEl.value);
     const user = auth.currentUser;
 
     if (user) {
         saveBallPower(user.uid, value);
     }
 });
-
+*/
 
 ballPowerEl.addEventListener("change", async () => {
     const user = auth.currentUser;
@@ -4710,6 +4672,21 @@ ballPowerEl.addEventListener("change", async () => {
         console.error("Failed to save ball power:", err);
     }
 });
+
+ebsBallPower.addEventListener("change", async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const bp = parseInt(ebsBallPower.value);
+    try {
+        await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
+            ballPower: bp
+        }, { merge: true });
+    } catch (err) {
+        console.error("Failed to save ball power:", err);
+    }
+});
+
 
 distanceEl.addEventListener('input', (e)=> {
   distanceVal.value = e.target.value;
@@ -4793,17 +4770,80 @@ windInput.addEventListener('input', () => {
   }  
 });
 
+
+/* ebs version of wind input rule*/
+ebsWindInput.addEventListener('input', () => {
+  const cat = state.activeCategory;
+  const v = ebsWindInput.value;
+  if (v === '') return;
+  const vLength = v.length;
+  
+  if (vLength === 1) {
+	triggerCalcIfReady(cat);
+	return;
+  };
+  
+  if (!v.includes('.')) {
+    const n = parseFloat(v);
+    if (isNaN(n)) return 
+    ebsWindInput.value = (n/10).toFixed(1);    
+  } else {
+    // has decimal: use string length logic to determine where decimal should be 
+    const n = v;
+	const nAsString = n.toString()
+    if (isNaN(n)) return
+    const nLength = nAsString.length;
+	if (nLength === 3)
+	    if (n < 10)
+          ebsWindInput.value = (n*10).toFixed(1);
+		else
+		    ebsWindInput.value = n.toFixed(1);
+        
+	if (nLength === 4)
+	    if (n < 10)
+          ebsWindInput.value = (n*10).toFixed(1);
+		else
+		    ebsWindInput.value = n.toFixed(1);
+        
+	if (nLength === 5){
+		const m = (n % 10) * 10
+		ebsWindInput.value = m.toFixed(1);
+	  }
+  }
+  // recalc
+  if (cat && state.selected[cat] && state.selected[cat].club && state.selected[cat].level) {
+    triggerCalcIfReady(cat);
+  }  
+});
+
+
+
 windInput.addEventListener('focus', () => {
      // Select all the text in the input
      windInput.select();
 });
 
+ebsWindInput.addEventListener('focus', () => {
+     // Select all the text in the input
+     ebsWindInput.select();
+});
 
+
+
+/*  run calc when ball power or elevation changes */
 [ballPowerEl, elevationEl].forEach(el => el.addEventListener('input', ()=> {
   const cat = state.activeCategory
   if (cat)
     triggerCalcIfReady(cat); 
 }));
+
+[ebsBallPower, ebsElevation].forEach(el => el.addEventListener('input', ()=> {
+  const cat = state.activeCategory
+  if (cat === "Wedges")
+    triggerCalcIfReady(cat); 
+}));
+
+
 
 /* toggle hide/show clubs (toggle button remains visible) */
 const toggleClubsLink = document.getElementById('toggleClubs');
@@ -4821,9 +4861,10 @@ toggleClubsLink.addEventListener('click', ()=>{
 });
 
 
-let elevationDefaultValue = elevationEl.value;
+//-----------------------------------------------------------------------------------------
 	// Event Listeners to show all elevation options when user interacts with the input field 
-
+//-----------------------------------------------------------------------------------------
+let elevationDefaultValue = elevationEl.value;
   // Save the default value to a placeholder on focus
   elevationEl.addEventListener('focus', () => {
     elevationEl.placeholder = elevationDefaultValue;
@@ -4844,7 +4885,36 @@ let elevationDefaultValue = elevationEl.value;
   });
 
 
+//EBS Version of above
+let ebsElevationDefaultValue = ebsElevation.value;
+  // Save the default value to a placeholder on focus
+  ebsElevation.addEventListener('focus', () => {
+    ebsElevation.placeholder = ebsElevationDefaultValue;
+    ebsElevation.value = ''; // Clear the value to show all options
+  });
+  
+
+  // Restore the default value if the user navigates away without selecting
+  ebsElevation.addEventListener('blur', () => {
+    if (ebsElevation.value === '') {
+      ebsElevation.value = ebsElevationDefaultValue;
+    }
+  });
+
+  // Update the default value when the user selects a new option
+  ebsElevation.addEventListener('change', () => {
+    ebsElevationDefaultValue = ebsElevation.value;
+  });
+
+
+
+
+
+
+/* ==========================================================*/
 /* ---- Shortcut Buttons ---- */
+/* ==========================================================*/
+
 Object.keys(clubCats).forEach(cat=>{
   const btn=document.createElement('div');
   btn.id=cat + '-shortcut-btn';
@@ -4909,54 +4979,94 @@ infoModal.addEventListener("click", (e) => {
     }
 });
 
-/* ---------- 1. Endbringer School ---------- */
-  const ebsToggleBtn = document.getElementById('btn_endbringer');
-  // Add event listener to the button
-  ebsToggleBtn.addEventListener('click', () => {
-	const ebspanel = document.getElementById("ebs-panel-root");    
-	if (!endbringerMode) {
-	  endbringerMode = true;
-	  ebsToggleBtn.classList.add('selected')
-	  clubsShowingB4EBMode = clubsShowing
-	  if (clubsShowing)
-	     toggleClubsLink.click();
-	  ebspanel.classList.remove('hidden');
-      enableEndbringerSchool();
-	  
-	  // focus wind input and select text
-	  const windObj = document.getElementById("windInput");
-	  windObj.focus();
-	  windObj.select();
 
-    } else {
+
+
+
+
+
+/* ---------- 1. Endbringer School ---------- */
+  const ebsStartBtn = document.getElementById('btn_endbringer');
+  // Add event listener to the button
+  ebsStartBtn.addEventListener('click', () => {
+    const category = "Wedges";
+    if (!state.selected[category] || !state.selected[category].club || !state.selected[category].level){
+      showToast("Please select a Wedge club and level before starting Endbringer School.", 4000);
+      return;
+    }
+
+    ebsStartBtn.classList.add('selected')
+    const ebspanel = document.getElementById("ebs-panel-root");    
+	  endbringerMode = true;
+
+    shortcutBar.classList.add('hidden')
+    bagsPanel.classList.add('hidden')
+    toolsPanel.classList.add('hidden')
+    clubStatsPanel.classList.add('hidden')
+    saPanel.classList.add('hidden')
+    ringsPanel.classList.add('hidden')
+	  
+    clubsShowingB4EBMode = clubsShowing
+    if (clubsShowing)
+     toggleClubsLink.click();
+	  
+    ebsWindInput.value = windInput.value;
+    ebsBallPower.value = ballPowerEl.value;
+    ebsElevation.value = 20; // default elevation for Endbringer School
+
+    ebspanel.classList.remove('hidden');
+
+    enableEndbringerSchool();
+	  
+    // focus wind input and select text
+    const windObj = document.getElementById("ebsWindInput");
+    windObj.focus();
+    windObj.select();
+  }); 
+
+
+  const ebsCloseBtn = document.getElementById("ebsCloseBtn");
+  // Add event listener to the button
+  ebsCloseBtn.addEventListener('click', () => {
+	const ebspanel = document.getElementById("ebs-panel-root");    
+	endbringerMode = false;
+	ebsStartBtn.classList.remove('selected')
+
 	  if (clubsShowingB4EBMode){
 	     if (!clubsShowing)
-		   toggleClubsLink.click();
+		      toggleClubsLink.click();
 	  }
 	  else{
 	    if (clubsShowing)
-		  toggleClubsLink.click();
+		    toggleClubsLink.click();
 	  }
-      ebspanel.classList.add('hidden');
-      endbringerMode = false;
-	  ebsToggleBtn.classList.remove('selected')	  
-    }
+    
+    shortcutBar.classList.remove('hidden')
+    bagsPanel.classList.remove('hidden')
+    toolsPanel.classList.remove('hidden')
+    clubStatsPanel.classList.remove('hidden')
+    saPanel.classList.remove('hidden')
+    ringsPanel.classList.remove('hidden')
+
+    ebspanel.classList.add('hidden');
+    endbringerMode = false;
   });
 
 function enableEndbringerSchool() {
   const category = "Wedges";
-  const club = "Endbringer";
-  const level = 7; // placeholder — can be dynamic later -- we can search the saved bags later for a level
-
   state.activeCategory = category;
+    
+  const club = state.selected[category].club;
+  const level = state.selected[category].level;
+  console.log(`Enabling Endbringer School with club: ${club}, level: ${level}`);
+
   state.selected[category] = { club, level };
   
+  const ebsHeader = document.getElementById("ebsHeader");
+  ebsHeader.textContent = `ENDBRINGER SCHOOL - ${club} (Level ${level})`;
+
   //Update the info in the Club info table
   updateClubInfoTable();
-
-  // set elevation to 20%
-  const elev = document.getElementById("elevation");
-  elev.value = 20;
 
   setActiveShortCutButton(category);
   
@@ -5137,130 +5247,6 @@ function renderNotes(id, tab, tournamentData) {
 }
 
 
-/* /* ---------- 2. Tournament Notes (Local Storage) ---------- 
-const tournNotesBtn1 = document.getElementById("btn_tourn1")
-const tournNotesBtn2 = document.getElementById("btn_tourn2")
-const tournNotesBtn3 = document.getElementById("btn_tourn3")
-tournNotesBtn1.addEventListener('click', () => {
-  openTournamentNotes(1);
-  return;
-  });
-tournNotesBtn2.addEventListener('click', () => {
-  openTournamentNotes(2);
-  return;
-  });
-tournNotesBtn3.addEventListener('click', () => {
-  openTournamentNotes(3);
-  return;
-  });
-
-function openTournamentNotes(id) {
-  // remove any open modal
-  const existing = document.getElementById("tournament_modal");
-  if (existing) existing.remove();
-
-  const modal = document.createElement("div");
-  modal.id = "tournament_modal";
-  modal.style.position = "fixed";
-  modal.style.top = "0";
-  modal.style.left = "0";
-  modal.style.width = "100vw";
-  modal.style.height = "100vh";
-  modal.style.background = "rgba(0,0,0,0.5)";
-  modal.style.display = "flex";
-  modal.style.alignItems = "center";
-  modal.style.justifyContent = "center";
-  modal.style.zIndex = "1000";
-
-  const card = document.createElement("div");
-  card.style.background = "#fff";
-  card.style.padding = "16px";
-  card.style.borderRadius = "10px";
-  card.style.width = "600px";
-  card.style.maxHeight = "80vh";
-  card.style.overflow = "auto";
-  card.innerHTML = `
-    <h3>Tournament ${id} Notes</h3>
-    <label>Tournament Name:
-      <input id="tourn_name" style="width:100%" value="${loadTournamentName(id)}" />
-    </label>
-    <div style="margin-top:8px;">
-      <button id="tab_front" style="margin-bottom=4px">Front 9</button>
-      <button id="tab_back"  style="margin-bottom=4px">Back 9</button>
-      <button id="btn_clear"  style="margin-bottom=4px">Clear Notes</button>
-      <button id="btn_close" style="float:right;margin-bottom=4px">Close</button>
-    </div>
-    <div id="notes_container"></div>
-  `;
-  modal.appendChild(card);
-  document.body.appendChild(modal);
-
-  let activeTab = "front";
-  renderNotes(id, activeTab);
-
-  // button behavior
-  document.getElementById("tab_front").onclick = () => {
-    activeTab = "front";
-    renderNotes(id, activeTab);
-  };
-  document.getElementById("tab_back").onclick = () => {
-    activeTab = "back";
-    renderNotes(id, activeTab);
-  };
-  document.getElementById("btn_clear").onclick = () => clearNotes(id, activeTab);
-  document.getElementById("btn_close").onclick = () => modal.remove();
-  document.getElementById("tourn_name").addEventListener("input", e =>
-    saveTournamentName(id, e.target.value)
-  );
-}
-
-function renderNotes(id, tab) {
-  const container = document.getElementById("notes_container");
-  container.innerHTML = "";
-  for (let i = 1; i <= 9; i++) {
-    const holeNum = tab === "front" ? i : i + 9;
-    const txt = document.createElement("p");
-	txt.style.fontSize = "10px";
-	txt.style.fontWeight = "bold";
-	txt.style.textAlign = "left";
-	txt.style.width = "100%";
-	txt.style.marginBottom = "0px";
-	txt.style.marginTop = "1px";
-	txt.textContent = `Hole ${holeNum}`;
-	const ta = document.createElement("textarea");
-    ta.placeholder = `Hole ${holeNum} Notes`;
-    ta.style.width = "100%";
-    ta.style.height = "40px";
-    ta.style.marginBottom = "6px";
-    ta.value = localStorage.getItem(`tourn${id}_hole${holeNum}`) || "";
-    ta.addEventListener("input", e =>
-      localStorage.setItem(`tourn${id}_hole${holeNum}`, e.target.value)
-    );
-    container.appendChild(txt);
-    container.appendChild(ta);
-  }
-}
-
-function clearNotes(id, tab) {
-  for (let i = 1; i <= 9; i++) {
-    const holeNum = tab === "front" ? i : i + 9;
-    localStorage.removeItem(`tourn${id}_hole${holeNum}`);
-  }
-  renderNotes(id, tab);
-}
-
-function loadTournamentName(id) {
-  return localStorage.getItem(`tourn${id}_name`) || "";
-}
-
-function saveTournamentName(id, name) {
-  localStorage.setItem(`tourn${id}_name`, name);
-}
-
-
- */
-
-
 /* ---------- 3. CPC Mode / Reset Clubs ---------- */
 const resetButton = document.getElementById("btn_reset")
 resetButton.addEventListener('click', resetClubs);
@@ -5307,8 +5293,8 @@ export {
 
 
 
-
-/* init */
+/*
+init 
 (function init(){
   // show datalist (elevation) default already set
   distanceVal.textContent = distanceEl.value + '%';
@@ -5319,3 +5305,50 @@ export {
 
 
 
+/*  old EBS panel HTML structure
+
+			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
+				 <div id="ebsHeader" class="ebsPanelHeader">Endbringer School (Club Distance% --> Rings)</div>
+				 <div class="ebsPanelInfo">(To dismiss, choose a different selected club or click the "Endbringer School" button again.)</div>
+				 <div id="ebsContainer" class="ebsPanelContainer">
+				   <div id="ebsCol1" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
+					 <div class="ebsColRow"><p>140% --> <span id="ebs140">---</span></p></div>
+					 <div class="ebsColRow"><p>135% --> <span id="ebs135">---</span></p></div>
+					 <div class="ebsColRow"><p>130% --> <span id="ebs130">---</span></p></div>
+					 <div class="ebsColRow"><p>125% --> <span id="ebs125">---</span></p></div>
+					 <div class="ebsColRow"><p>120% --> <span id="ebs120">---</span></p></div>
+					 <div class="ebsColRow"><p>115% --> <span id="ebs115">---</span></p></div>
+					 <div class="ebsColRow"><p>110% --> <span id="ebs110">---</span></p></div>
+				  </div>
+				  <div id="ebsCol2" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
+					<div class="ebsColRow"><p>105% --> <span id="ebs105">---</span></p></div>
+					<div class="ebsColRow"><p>100% --> <span id="ebs100">---</span></p></div>
+					<div class="ebsColRow"><p>95% --> <span id="ebs95">---</span></p></div>
+					<div class="ebsColRow"><p>90% --> <span id="ebs90">---</span></p></div>
+					<div class="ebsColRow"><p>85% --> <span id="ebs85">---</span></p></div>
+					<div class="ebsColRow"><p>80% --> <span id="ebs80">---</span></p></div>
+					<div class="ebsColRow"><p>75% --> <span id="ebs75">---</span></p></div>
+				  </div>
+				  <div id="ebsCol3" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
+					<div class="ebsColRow"><p>70% --> <span id="ebs70">---</span></p></div>
+					<div class="ebsColRow"><p>65% --> <span id="ebs65">---</span></p></div>
+					<div class="ebsColRow"><p>60% --> <span id="ebs60">---</span></p></div>
+					<div class="ebsColRow"><p>55% --> <span id="ebs55">---</span></p></div>
+					<div class="ebsColRow"><p>50% --> <span id="ebs50">---</span></p></div>
+					<div class="ebsColRow"><p>45% --> <span id="ebs45">---</span></p></div>
+					<div class="ebsColRow"><p>40% --> <span id="ebs40">---</span></p></div>
+				  </div>
+				  <div id="ebsCol4" class="ebsPanelColumn">
+					<div class="ebsColRow"><p>35% --> <span id="ebs35">---</span></p></div>
+					<div class="ebsColRow"><p>30% --> <span id="ebs30">---</span></p></div>
+					<div class="ebsColRow"><p>25% --> <span id="ebs25">---</span></p></div>
+					<div class="ebsColRow"><p>20% --> <span id="ebs20">---</span></p></div>
+					<div class="ebsColRow"><p>15% --> <span id="ebs15">---</span></p></div>
+					<div class="ebsColRow"><p>10% --> <span id="ebs10">---</span></p></div>
+					<div class="ebsColRow"><p>5% --> <span id="ebs5">---</span></p></div>
+				  </div>
+				</div>
+			</div>
+
+
+*/

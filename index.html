@@ -23,6 +23,9 @@
       <img src="3_in_1.png" alt="Wind Buddy Logo">
     </div>
 
+	<!-- Middle: Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <!-- Right: Account menu -->
     <div class="wb-account">
       <button id="loginBtn" class="auth-btn">Sign In</button>
@@ -131,7 +134,7 @@
     		</div>
 		
 				<!-- TOOL PANEL -->
-      		<div id="left-mid-panel" class="toolsPanel">
+      		<div id="toolsBtnsPanel" class="toolsPanel">
 				<h4 class="headerWithInfoIcon">
 					TOOLS
 					<div class="tooltip-wrapper">
@@ -151,7 +154,7 @@
       		</div>
 	  
 				<!-- CLUB INFORMATION PANEL -->
-    		<div id="left-right-panel" class="clubInfoPanel">
+    		<div id="clubStatsPanel" class="clubInfoPanel">
         		<h4 id="active_club_info_hdr">CLUB INFO</h4>
         		<div class="club-info-grid" id="club_info_table">
             		<div class="club-info-row">Power__<span class="value" id="info-power">______</span></div>
@@ -165,7 +168,7 @@
 
 
 				<!-- SHOT ADJUSTMENTS PANEL -->
-			<div id="shot_adj_panel" class="shotAdjPanel">
+			<div id="saPanel" class="shotAdjPanel">
     		    <h4>Shot Adjustments</h4>
 		
 				<div class="sa_row">
@@ -203,8 +206,8 @@
 				</div>
 			</div>
   
-	  			<!-- RIGHT: Rings card -->
-			<div class="panel ring-card" style="min-width:220px;">
+	  			<!-- RINGS PANEL -->
+			<div id="ringsPanel" class="panel ring-card" style="min-width:220px;">
 			    <h4>Rings to Adjust</h4>
 				<div class="rings-main" id="ringsMain">--</div>
 				<div class="rings-sub">
@@ -221,9 +224,27 @@
 			<!-- Endbringer School panel (hidden initially) -->
 <!--_______________________________________________________________________________			 -->
 			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
-				 <div id="ebsHeader" class="ebsPanelHeader">Endbringer School (Club Distance% --> Rings)</div>
-				 <div class="ebsPanelInfo">(To dismiss, choose a different selected club or click the "Endbringer School" button again.)</div>
-				 <div id="ebsContainer" class="ebsPanelContainer">
+				<h4 class="ebsPanelHeader">
+  					<span id="ebsHeader" class="header-title">ENDBRINGER SCHOOL</span>
+  					<img src="blue_close_btn.png" class="info-icon" id="ebsCloseBtn">
+				</h4>
+				<div class="ebsInputLabelsContainer">
+					<span class="ebsInputLabel">Wind (mph)</span> 	
+					<span class="ebsInputLabel">Ball Power</span> 	
+					<span class="ebsInputLabel">Elevation (%)</span> 	
+				</div>
+				<div class="ebsInputsContainer">
+					<input id="ebsWindInput" type="number" step="0.1" value="0.0" class="ebsInput"> 	
+					<select id="ebsBallPower" class="ebsInput">
+						<option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option>
+					</select>
+					<input list="ebsElevList" id="ebsElevation" type="number" value="20" step="5" class="ebsInput">
+					<datalist id="ebsElevList">
+						<option value="-65">-65</option><option value="-60">-60</option><option value="-55">-55</option><option value="-50">-50</option><option value="-45">-45</option><option value="-40">-40</option><option value="-35">-35</option><option value="-30">-30</option><option value="-25">-25</option><option value="-20">-20</option><option value="-15">-15</option><option value="-10">-10</option><option value="-5">-5</option><option value="0">0</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option><option value="60">60</option><option value="65">65</option>
+					</datalist>
+				</div>
+				<span class="ebsPanelSubHeader">Club Distance % --> Rings to Adjust</span>
+				<div id="ebsContainer" class="ebsPanelContainer">
 				   <div id="ebsCol1" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
 					 <div class="ebsColRow"><p>140% --> <span id="ebs140">---</span></p></div>
 					 <div class="ebsColRow"><p>135% --> <span id="ebs135">---</span></p></div>
@@ -300,13 +321,15 @@ _______________________________________________________________________________	
 			<h2 style="margin-top: 0;">Tools Information</h2>
 
 			<p><strong>Endbringer School</strong><br>
-			Automatically selects the Endbringer club at the level it was last saved at within your golf bags. It also sets the elevation to 20%, puts keyboard focus on the wind input box, and displays the extended 5%–140% ring adjustment table. The extended ring adjustment table updates in real time if any input (wind, ball power, or elevation) impacting the ring adjustment calculation is changed. If the app is unable to determine the level of your Endbringer club it will default to level 5.</p>
+			Endbringer School mode is based on the Youtube video titled "Golf Clash - EndBringer School" by Jared A. Please watch that video for more information about the Endbringer School method. Although this tool is specifically designed for use with the Endbringer club (level 6-8), it may also be effective with any wedge club with an accuracy rating of atleast 90.<br><br>
+			Selecting this tool automatically sets the current wedge club as the active club and displays the Endbringer School panel. The user can then input the wind, ball power, and elevation values into the panel. The tool will then calculate and display the recommended ring adjustments for club distance percentages ranging from 140% down to 5%.<br><br>
+			To exit Endbringer School mode, simply click the blue close button (X) at the top right of the panel. This will hide the panel and return the app to its previous state prior to entering Endbringer School mode.</p>
 
 			<p><strong>Tournament Notes</strong><br>
-			Opens simple note-taking pages for front/back 9. Notes are saved locally and auto-restored the next time you open them.</p>
+			Opens simple note-taking pages for the front and back 9. Notes are securely saved to the user account and restored automatically when the user logs in. If you do not have a user account, you can create one using the Sign In button at the top right of the application. It's free and only takes a moment.</p>
 
 			<p><strong>CPC Mode / Reset</strong><br>
-			Clears all selected clubs and levels, returns the interface to a clean state, and removes active ring calculations. This can be utilized before starting a Checkpoint Challenge match.</p>
+			Clears all selected clubs and levels, and returns the interface to a clean state. This can be utilized before starting a Checkpoint Challenge match.</p>
 
 			<p style="font-style: italic; margin-top: 18px;">
 				More tools are planned for future versions of Wind-Buddy.
@@ -314,8 +337,6 @@ _______________________________________________________________________________	
 		</div>
 	</div>
 
-	
-	
 	
 <!-- ______________________________________________________________________________________ -->
 			<!-- Shortcut Buttons Info panel (hidden initially) -->
@@ -341,7 +362,7 @@ _______________________________________________________________________________	
 
 
 <!-- ______________________________________________________________________________________ -->
-			<!-- Shortcut Buttons Info panel (hidden initially) -->
+			<!-- Golf Bags Info panel (hidden initially) -->
 <!--_______________________________________________________________________________			 -->
 	<div id="gb-info-modal">
 		<div id="gb-info-box">
@@ -372,3 +393,5 @@ _______________________________________________________________________________	
 
 </body>
 </html>
+
+
