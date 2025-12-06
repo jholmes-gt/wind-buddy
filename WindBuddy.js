@@ -223,7 +223,7 @@ const clubCats = {
   Woods: ["Horizon","Viper","Big_Dawg","Hammerhead","Guardian","Sniper","Cataclysm"],
   Long_Irons: ["Grim_Reaper","Backbone","Goliath","Saturn","B52","Grizzly","Tsunami"],
   Short_Irons: ["Apache","Kingfisher","Runner","Thorn","Hornet","Claw","Falcon"],
-  Wedges: ["Dart","FireFly","Boomerang","Down_In_One","Skewer","Endbringer","Rapier"],
+  Wedges: ["Dart","Firefly","Boomerang","Down_In_One","Skewer","Endbringer","Rapier"],
   Rough_Irons: ["Roughcutter","Junglist","Machete","Off_Roader","Razor","Amazon","Nirvana"],
   Sand_Wedges: ["Castaway","Desert_Storm","Malibu","Sahara","Sand_Lizard","Houdini","Spitfire"]
 };
@@ -268,7 +268,7 @@ const windData = {
   },
   Wedges: {
 	"Dart": {1:"3.36|6.73|13.46", 2:"3.08|6.15|12.30", 3:"2.91|5.82|11.64", 4:"2.73|5.46|10.91", 5:"2.59|5.18|10.35", 6:"2.31|4.62|9.23", 7:"2.31|4.62|9.23", 8:"2.11|4.23|8.45", 9:"1.85|3.69|7.39", 10:"1.76|3.53|7.06"},
-	"FireFly": {1:"2.67|5.34|10.67", 2:"2.67|5.34|10.67", 3:"2.32|4.64|9.28", 4:"2.32|4.64|9.28", 5:"2.21|4.41|8.82", 6:"2.15|4.29|8.59", 7:"1.77|3.54|7.08", 8:"1.29|2.59|5.18"},
+	"Firefly": {1:"2.67|5.34|10.67", 2:"2.67|5.34|10.67", 3:"2.32|4.64|9.28", 4:"2.32|4.64|9.28", 5:"2.21|4.41|8.82", 6:"2.15|4.29|8.59", 7:"1.77|3.54|7.08", 8:"1.29|2.59|5.18"},
 	"Boomerang": {1:"2.26|4.53|9.06", 2:"2.15|4.31|8.62", 3:"1.97|3.94|7.88", 4:"1.92|3.85|7.69", 5:"1.60|3.20|6.41", 6:"1.53|3.06|6.12", 7:"1.20|2.39|4.79", 8:"0.97|1.94|3.89"},
 	"Down_In_One": {1:"1.44|2.87|5.74", 2:"1.37|2.74|5.48", 3:"1.17|2.33|4.66", 4:"1.17|2.33|4.66", 5:"0.96|1.91|3.82", 6:"0.96|1.91|3.82", 7:"0.96|1.91|3.82", 8:"0.96|1.91|3.82", 9:"0.93|1.87|3.74"},
 	"Skewer": {1:"2.92|5.84|11.68", 2:"2.83|5.65|11.31", 3:"2.68|5.36|10.71", 4:"2.35|4.70|9.40", 5:"2.35|4.70|9.40", 6:"2.16|4.31|8.63", 7:"2.10|4.21|8.41", 8:"1.84|3.68|7.37", 9:"1.84|3.68|7.37", 10:"1.58|3.16|6.33"},
@@ -3914,7 +3914,7 @@ const clubStats = {
   }
 };  
 
-const epics = new Set(["Big_Topper","Thors_Hammer","Apocalypse","Horizon","Hammerhead","Cataclysm","Grim_Reaper","B52","Tsunami","Kingfisher","Falcon","FireFly","Boomerang","Endbringer","Junglist","Off_Roader","Amazon","Castaway","Sahara","Spitfire"]);
+const epics = new Set(["Big_Topper","Thors_Hammer","Apocalypse","Horizon","Hammerhead","Cataclysm","Grim_Reaper","B52","Tsunami","Kingfisher","Falcon","Firefly","Boomerang","Endbringer","Junglist","Off_Roader","Amazon","Castaway","Sahara","Spitfire"]);
 
 const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Grizzly","Apache","Thorn","Hornet","Down_In_One","Rapier","Roughcutter","Razor","Nirvana","Malibu","Houdini"]);
 
