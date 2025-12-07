@@ -154,6 +154,10 @@ onAuthStateChanged(auth, (user) => {
     for (let i = 1; i <= bagCount; i++) {
       loadButtons[i - 1].disabled = true;
     }
+    for (let i = 1; i <= 3; i++) {
+      tournButtons[i - 1].disabled = true;
+}
+
     accountMenuContainer.style.display = "none";
     loadBallPower(0);
     return;
@@ -180,7 +184,9 @@ onAuthStateChanged(auth, (user) => {
   loadBallPower(user.uid);
   loadLastBag(user.uid);
   checkWhichBagsExist(user.uid);
-
+  for (let i = 1; i <= 3; i++) {
+      tournButtons[i - 1].disabled = false;
+}
 });
 
 
@@ -3939,6 +3945,11 @@ const r_mid = document.getElementById('r_mid');
 const r_min = document.getElementById('r_min');
 const r_25 = document.getElementById('r_25');
 const r_75 = document.getElementById('r_75');
+const tournButtons = [];
+for (let i = 1; i <= 3; i++) {
+    tournButtons.push(document.getElementById(`btn_tourn${i}`));
+}
+
 
 const clientWidth = document.documentElement.clientWidth;
 const clientHeight = document.documentElement.clientHeight;
@@ -4152,9 +4163,6 @@ function setActiveShortCutButton(cat){
   if(btn)btn.classList.add('active');
   state.activeCategory=cat;
 }
-function saveLastClubDetails(cat, club){
-
-}
 
 
 //------------------------------------------------------
@@ -4167,6 +4175,11 @@ const loadButtons = [];
 let activeBagNumber = null;
 let loadingGolfBag = false;
 
+// Create save/load arrays
+for (let i = 1; i <= bagCount; i++) {
+    loadButtons.push(document.getElementById(`btn_bag${i}`));
+    saveButtons.push(document.getElementById(`btn_bag${i}_save`));
+}
 
 // Golf Bag Info Modal
 const gbinfoBtn = document.getElementById("gb-info-btn");
@@ -4199,11 +4212,6 @@ bagSavedInfoPanel.addEventListener("click", () => {
     bagSavedInfoPanel.classList.remove("show");
 });
 
-// Create save/load arrays
-for (let i = 1; i <= bagCount; i++) {
-    loadButtons.push(document.getElementById(`btn_bag${i}`));
-    saveButtons.push(document.getElementById(`btn_bag${i}_save`));
-}
 
 
 // Disable all bag buttons unless signed in
@@ -4982,16 +4990,13 @@ infoModal.addEventListener("click", (e) => {
 
 
 
-
-
-
 /* ---------- 1. Endbringer School ---------- */
   const ebsStartBtn = document.getElementById('btn_endbringer');
   // Add event listener to the button
   ebsStartBtn.addEventListener('click', () => {
     const category = "Wedges";
     if (!state.selected[category] || !state.selected[category].club || !state.selected[category].level){
-      showToast("Please select a Wedge club and level before starting Endbringer School.", 4000);
+      showToast("Please select a Wedge club and level before starting Endbringer School.", 5000);
       return;
     }
 

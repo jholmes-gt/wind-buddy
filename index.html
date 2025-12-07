@@ -8,19 +8,23 @@
 <head>
  <meta charset="utf-8" />
  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta
+  name="description"
+  content="WindBuddy is a web application designed to assist Golf Clash players in calculating shot adjustments based on wind conditions, club selections, and other factors. It features user authentication, golf bag management, and various tools to enhance and improve gameplay.">
  <title>WindBuddy</title>
  <link rel="stylesheet" href="styles.css">
  <link rel="icon" type="ico" href="windSymbol_round.ico">
 </head>
 <body class="linear-gradient">
-  <div class="app">
+
+<div class="app">
 
 <header class="wb-header">
   <div class="wb-header-inner">
 
     <!-- Left: Logo -->
     <div class="wb-logo">
-      <img src="3_in_1.png" alt="Wind Buddy Logo">
+    	<img src="3_in_1.png" alt="Wind Buddy Logo">
     </div>
 
 	<!-- Middle: Toast Container -->
@@ -71,9 +75,7 @@
 		</div>
 	</div>
 
-
-
-			<!-- CATEGORY/SHOW CLUBS TOGGLE WRAPPER -->
+	<!-- CATEGORY/SHOW CLUBS TOGGLE WRAPPER -->
     <div class="clubs-wrap">
     	<div class="clubs-top">
         	<!-- toggle is outside the collapsing element so it remains visible -->
@@ -85,16 +87,10 @@
 	    </div>
     </div>
 
-
-
-
-
-		<!-- MAIN CONTROL ROW -->
+	<!-- MAIN CONTROL ROW -->
 	<div class="main">
-
-		<!-- <div class="leftMainPanels"> -->
 			
-					<!-- GOLF BAG PANEL -->
+				<!-- GOLF BAG PANEL -->
 			<div id="golfBagsPanel" class="bagsPanel">
 				
 				<h4 class="headerWithInfoIcon" style="gap:1.07rem">
@@ -133,7 +129,7 @@
     		    <div id="bag-toast" class="bag-toast"></div>
     		</div>
 		
-				<!-- TOOL PANEL -->
+			<!-- TOOL PANEL -->
       		<div id="toolsBtnsPanel" class="toolsPanel">
 				<h4 class="headerWithInfoIcon">
 					TOOLS
@@ -153,7 +149,7 @@
         		</div>
       		</div>
 	  
-				<!-- CLUB INFORMATION PANEL -->
+			<!-- CLUB INFORMATION PANEL -->
     		<div id="clubStatsPanel" class="clubInfoPanel">
         		<h4 id="active_club_info_hdr">CLUB INFO</h4>
         		<div class="club-info-grid" id="club_info_table">
@@ -167,7 +163,7 @@
     		</div>
 
 
-				<!-- SHOT ADJUSTMENTS PANEL -->
+			<!-- SHOT ADJUSTMENTS PANEL -->
 			<div id="saPanel" class="shotAdjPanel">
     		    <h4>Shot Adjustments</h4>
 		
@@ -206,7 +202,7 @@
 				</div>
 			</div>
   
-	  			<!-- RINGS PANEL -->
+	  		<!-- RINGS PANEL -->
 			<div id="ringsPanel" class="panel ring-card" style="min-width:220px;">
 			    <h4>Rings to Adjust</h4>
 				<div class="rings-main" id="ringsMain">--</div>
@@ -220,9 +216,7 @@
 				<div class="active-club" id="active_club">--</div>
 			</div>
 
-<!-- ______________________________________________________________________________________ -->
 			<!-- Endbringer School panel (hidden initially) -->
-<!--_______________________________________________________________________________			 -->
 			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
 				<h4 class="ebsPanelHeader">
   					<span id="ebsHeader" class="header-title">ENDBRINGER SCHOOL</span>
@@ -284,8 +278,7 @@
 				</div>
 			</div>
 
-  		
-		<!-- SHORTCUT BUTTONS -->
+			<!-- SHORTCUT BUTTONS -->
 			<div class="shortcut-bar" id="shortcutBar">
 				<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
 					<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">
@@ -298,22 +291,12 @@
 
 	</div>   <!-- end of Main Panel -->
 
+		    <!-- FOOTER -->
+			<!-- <footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer> -->
 
+</div>		<!-- End of div.App -->
 
-	
-
-		       <!-- FOOTER -->
-	<!-- <footer>© 2025 Wind-Buddy by Justin Holmes. Inspired by the late great Wind Chum. May it rest in peace.</footer> -->
-  
-
-	</div>		<!-- End of div.App -->
-
-
-
-<!-- /* ______________________________________________________________________________________ 
-		 Tools Info panel (hidden initially) 
-_______________________________________________________________________________		*/
- -->
+	<!-- Tools Info panel (hidden initially)  -->
 	<div id="tools-info-modal">
 		<div id="tools-info-box">
 			<div id="tools-info-close">✖</div>
@@ -326,7 +309,7 @@ _______________________________________________________________________________	
 			To exit Endbringer School mode, simply click the blue close button (X) at the top right of the panel. This will hide the panel and return the app to its previous state prior to entering Endbringer School mode.</p>
 
 			<p><strong>Tournament Notes</strong><br>
-			Opens simple note-taking pages for the front and back 9. Notes are securely saved to the user account and restored automatically when the user logs in. If you do not have a user account, you can create one using the Sign In button at the top right of the application. It's free and only takes a moment.</p>
+			Opens simple note-taking pages for the front and back 9 for up to three different tournaments. Notes are securely saved to your user account and restored automatically when you log in. If you do not have a user account, you can create one using the Sign In button at the top of the application. It's free and only takes a moment.</p>
 
 			<p><strong>CPC Mode / Reset</strong><br>
 			Clears all selected clubs and levels, and returns the interface to a clean state. This can be utilized before starting a Checkpoint Challenge match.</p>
@@ -336,11 +319,8 @@ _______________________________________________________________________________	
 			</p>
 		</div>
 	</div>
-
 	
-<!-- ______________________________________________________________________________________ -->
-			<!-- Shortcut Buttons Info panel (hidden initially) -->
-<!--_______________________________________________________________________________			 -->
+	<!-- Shortcut Buttons Info panel (hidden initially) -->
 	<div id="sc-info-modal">
 		<div id="sc-info-box">
 			<div id="sc-info-close">✖</div>
@@ -348,22 +328,19 @@ _______________________________________________________________________________	
 			<h3 style="margin-top: 0;">Current Club Selections (Shortcut Buttons)</h3>
 
 			<p>
-			These 'shortcut' buttons only become enabled when both a club and a level are selected for the corresponding button's club type (Driver, Wood, Long Iron etc). If no club or no level is selected for said club type, the button will be disabled. The idea behind these buttons is for the user to have a quick and easy way to switch between clubs after selections have been made or loaded into the app via a golf bag button.  When a shortcut button is enabled, clicking it makes that club the active club in the application and the ring adjustment values being displayed are based on that club. The active club's shortcut button will also change colors to provide a visual confirmation that it is the active club. 
+			These 'shortcut' buttons only become enabled when both a club and a level are selected for the corresponding button's club type (Driver, Wood, Long Iron etc). If no club or no level is selected for a club type, that shortcut button will be disabled. The idea behind these buttons is for the user to have a quick and easy way to switch between clubs after selections have been made from the club panels at the top of the app or loaded into the app via a saved golf bag.  When a shortcut button is enabled, clicking it makes that club the active club in the application and the ring adjustment values being displayed are based on that club. The active club's shortcut button will also change colors to provide a visual confirmation that it is the active club. 
 			</p>
 			<p>
-			In addition to making that club active and recalculating the ring adjustment, clicking on a club shortcut button also sets the keyboard focus to the wind input field in the Shot Adjustments panel. This happens automatically and should assist the user in getting the new wind value in to the application quickly by eliminating the need for repetitive mouse activity. The current contents of the wind input field will be selected (as if the user had clicked in the field and then pressed CTRL-A on the keyboard), so that the user can type in the new wind value and remove the old value simultaineously.  
+			In addition to making that club active and recalculating the ring adjustment, clicking on a shortcut button also sets the keyboard focus to the wind input field in the Shot Adjustments panel. This happens automatically and should assist the user in getting the new wind value into the app quickly by eliminating the need for repetitive pointing and clicking activity. The current contents of the wind input field will be selected (as if the user had clicked in the field and then pressed CTRL-A on the keyboard), so that the user can type in the new wind value and remove the old value simultaineously.  
 			</p>
 			<p>
-			Also note that when you select a saved golf bag by clicking on a golf bag button, the driver for that bag is automatically selected and becomes the active club.  All of the shortcut buttons will update to reflect the clubs and levels that were saved for that bag number. The driver shortcut button will change colors to reflect that it is now the active club, and keyboard focus will go to the wind input field as if the user had actually clicked on the driver shortcut button.
+			Also note that when you select a saved golf bag by clicking on a golf bag button, the driver for that bag is automatically selected and becomes the active club.  All of the shortcut buttons will update to reflect the clubs and levels that were saved for that bag. The driver shortcut button will change colors to reflect that it is now the active club, and keyboard focus will go to the wind input field as if the user had clicked on the driver shortcut button.
 			</p>
 
 		</div>
 	</div>
 
-
-<!-- ______________________________________________________________________________________ -->
-			<!-- Golf Bags Info panel (hidden initially) -->
-<!--_______________________________________________________________________________			 -->
+	<!-- Golf Bags Info panel (hidden initially) -->
 	<div id="gb-info-modal">
 		<div id="gb-info-box">
 			<div id="gb-info-close">✖</div>
@@ -374,7 +351,7 @@ _______________________________________________________________________________	
 			The Golf Bags panel allows you to save and load up to 5 different sets of club selections and levels. This is useful because various courses require different club setups. To save your current club selections and levels into a golf bag, simply click the "Save Current" button next to the desired bag number. The "Save Current" buttons only become enabled when a club and a level are selected for each club category. Saving a golf bag will overwrite any previously saved data in that bag. To load a saved golf bag, click on the corresponding bag button (e.g., "Bag1", "Bag2", etc.). The app will then update the club selections and levels to match those saved in the selected bag.
 			</p>
 			<p>
-			To utilize the Golf Bags feature, you must be signed in to your account. This ensures that your saved bags are securely stored and can be accessed across different devices. If you are not signed in, the golf bag buttons will be disabled. If you do not have a user account, you can create one using the Sign In button at the top right of the application. It's free and only takes a moment.
+			To utilize the Golf Bags feature, you must be signed in to your account. This ensures that your saved bags are securely stored and can be accessed across different devices. If you are not signed in, the golf bag buttons will be disabled. If you do not have a user account, you can create one using the Sign In button at the top of the application. It's free and only takes a moment.
 			</p>
 
 		</div>
@@ -389,7 +366,6 @@ _______________________________________________________________________________	
 
 <!-- Your app code (imports firebase-init & auth) -->
 <script type="module" src="WindBuddy.js"></script>
-
 
 </body>
 </html>
