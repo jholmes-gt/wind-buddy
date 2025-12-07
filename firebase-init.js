@@ -11,15 +11,20 @@ import {
     createUserWithEmailAndPassword,
     signInWithPopup,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
 import { 
     getFirestore, 
     doc, 
     getDoc, 
+    getDocs,
     setDoc,
-    collection
+    collection,
+    deleteDoc,
+    updateDoc,
+    deleteField
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 // ----------------------------------------
@@ -59,6 +64,11 @@ export {
     onAuthStateChanged,
     doc,
     getDoc,
+    getDocs,
     setDoc,
-    collection
+    collection,
+    sendPasswordResetEmail,
+    deleteDoc,
+    updateDoc,
+    deleteField
 };

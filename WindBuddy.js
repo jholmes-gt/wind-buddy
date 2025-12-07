@@ -7,18 +7,22 @@ import {
     db,
     doc,
     getDoc,
+    getDocs,
     setDoc,
     onAuthStateChanged,
-    collection
+    collection,
+    sendPasswordResetEmail,
+    deleteDoc,
+    updateDoc,
+    deleteField
 } from "./firebase-init.js";
 
 import {
     showToast
+
 } from "./firebase-auth.js";
 
-//import { getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// Select element for ball power
 const ballPowerEl = document.getElementById("ballPower");
 
 
@@ -133,6 +137,7 @@ const accountMenuTrigger = document.getElementById("accountMenuTrigger");
 const accountDropdown = document.getElementById("accountDropdown");
 const accountUserName = document.getElementById("accountUserName");
 const menuChangePassword = document.getElementById("menuChangePassword");
+const menuResetAppData = document.getElementById("menuResetAppData");
 const menuSignOut = document.getElementById("menuSignOut");
 
 // Toggle dropdown
@@ -205,19 +210,75 @@ menuSignOut.addEventListener("click", async () => {
 
 // Change Password (email/password users only)
 menuChangePassword.addEventListener("click", async () => {
-  const email = auth.currentUser?.email;
-  if (!email) return;
-
-  try {
-    await sendPasswordResetEmail(auth, email);
-    alert("A password reset email has been sent to " + email);
-    accountDropdown.classList.add("hidden");
-  } catch (err) {
-    console.error("Password reset error:", err);
-    alert("Error sending password reset email.");
+  
+  const email = auth.currentUser.email;
+  if (!email) {
+    console.error("Email retrieval error: no email found for current user.");
+    alert("Error retrieving email for password reset.");
+    accountDropdown.classList.add("hidden");    
+    return;
   }
+
+    sendPasswordResetEmail(auth, email)
+    .then(() => {
+       showToast("A password reset email has been sent to " + email, 5000);
+       accountDropdown.classList.add("hidden");
+    })
+    .catch((error) => {
+      console.error("Password reset error:", error);
+      alert("Error sending password reset email.");
+  });
 });
 
+menuResetAppData.addEventListener("click", async () => {
+  if (confirm("Are you sure you want to reset all app data? This will clear your saved settings, golf bags, and tournament notes.")) {
+    accountDropdown.classList.add("hidden");
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        // Delete user settings
+        //Get collections references: Tourn notes, bags, settings
+        const settingsRef = collection(db, "users", user.uid, "settings");
+        const bagsRef = collection(db, "users", user.uid, "bags");
+        const tournRef = collection(db, "users", user.uid, "tournamentNotes");
+
+        //Get the docs in each collection and delete them
+        const settingsSnap = await getDocs(settingsRef); 
+        const bagsSnap = await getDocs(bagsRef);
+        const tournSnap = await getDocs(tournRef);
+        for (const docSnap of settingsSnap.docs) { 
+          await deleteDoc(doc(db, "users", user.uid, "settings", docSnap.id));
+        }
+        for (const docSnap of bagsSnap.docs) { 
+          await deleteDoc(doc(db, "users", user.uid, "bags", docSnap.id));
+        }
+        for (const docSnap of tournSnap.docs) { 
+          await deleteDoc(doc(db, "users", user.uid, "tournamentNotes", docSnap.id));
+        }
+
+        // Remove the 'lastBag' and 'hideClubBtns' fields from the document
+        const thisUser = doc(db, "users", user.uid);
+        await updateDoc(thisUser, {
+          lastBag: deleteField(),
+          hideClubBtns: deleteField()
+        });
+        
+        // Show confirmation
+        showToast("All app data has been reset.", 5000);
+
+        // Reset UI elements
+        setBallPower(0);
+        resetClubs();
+        checkWhichBagsExist(user.uid);
+        updateSaveButtons();
+      }
+      catch (error) {
+        console.error("Error resetting app data:", error);
+        alert("An error occurred while resetting app data.");
+      }
+    }
+  }
+});
 
 
 
@@ -4996,7 +5057,7 @@ infoModal.addEventListener("click", (e) => {
   ebsStartBtn.addEventListener('click', () => {
     const category = "Wedges";
     if (!state.selected[category] || !state.selected[category].club || !state.selected[category].level){
-      showToast("Please select a Wedge club and level before starting Endbringer School.", 5000);
+      showToast("You must select a Wedge club and level before starting Endbringer School mode.", 5000);
       return;
     }
 
