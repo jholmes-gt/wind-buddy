@@ -350,6 +350,9 @@ color: black
 	margin-bottom:0.625rem;
 	border-radius:0.375rem;
 	cursor:pointer;
+	background: var(--gradientTopColor);
+	font-size: var(--normalFontSize);
+
 }
 
 /* Divider */
@@ -396,10 +399,11 @@ header{
 	flex-direction: column;
 }
 
-.reauthBtnsRow {
+#reauthBtnsRow {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-evenly;
+	gap: 5%;
 }
 
 
