@@ -56,24 +56,34 @@
 		<div class="modal-content">
 			<span id="loginClose" class="close">&times;</span>
 			<h2>Sign in to Wind-Buddy</h2>
-
 			<label>Email</label>
 			<input type="email" id="loginEmail" class="auth-input">
-
 			<label>Password</label>
 			<input type="password" id="loginPassword" class="auth-input">
-
-			<button id="emailLoginBtn" class="auth-action">Sign In</button>
-			<button id="emailSignupBtn" class="auth-action">Create New Account</button>
-
+				<button id="emailLoginBtn" class="auth-action">Sign In</button>
+				<button id="emailSignupBtn" class="auth-action">Create New Account</button>
 			<div class="divider"><span>OR</span></div>
-
 			<button id="googleLoginBtn" class="google-btn">
 				<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
 				Sign In with Google
 			</button>
 		</div>
 	</div>
+
+	<!-- small modal for reauthentication info -->
+	<div id="reauthModal" class="modal hidden">
+		<div class="modal-content">
+			<h2>Reauthentication Required</h2>
+			<p>For security reasons, please enter your account password to proceed.</p>
+			<input type="password" id="reauthPassword" class="auth-input">
+			<div id="reauthBtnsRow" class="reauth-btns-row">
+				<button id="reauthCancelBtn" class="auth-action">Cancel</button>
+				<button id="reauthSubmitBtn" class="auth-action">Submit</button>
+			</div>
+		</div>
+	</div>
+
+
 
 	<!-- CATEGORY/SHOW CLUBS TOGGLE WRAPPER -->
     <div class="clubs-wrap">

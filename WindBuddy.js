@@ -14,7 +14,14 @@ import {
     sendPasswordResetEmail,
     deleteDoc,
     updateDoc,
-    deleteField
+    deleteField,
+    deleteUser,
+    googleProvider,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    reauthenticateWithCredential,
+    reauthenticateWithPopup,
+    EmailAuthProvider
 } from "./firebase-init.js";
 
 import {
@@ -136,9 +143,87 @@ const accountMenuContainer = document.getElementById("accountMenuContainer");
 const accountMenuTrigger = document.getElementById("accountMenuTrigger");
 const accountDropdown = document.getElementById("accountDropdown");
 const accountUserName = document.getElementById("accountUserName");
+
+const reauthSubmitBtn = document.getElementById("reauthSubmitBtn");
+const reauthCancelBtn = document.getElementById("reauthCancelBtn");
+const reauthModal = document.getElementById("reauthModal");
+
 const menuChangePassword = document.getElementById("menuChangePassword");
 const menuResetAppData = document.getElementById("menuResetAppData");
+const menuDeleteAccount = document.getElementById("menuDeleteAccount");
 const menuSignOut = document.getElementById("menuSignOut");
+let reauthAction = ""; // To track which action requires reauthentication
+
+/*
+// Create event listeners for reauth buttons 
+reauthEmailLoginBtn.addEventListener("click", async () => {
+  reauthEmailLoginBtn.classList.add("hidden");
+  reauthGoogleLoginBtn.classList.add("hidden");
+  googleLoginBtn.classList.remove("hidden");
+  emailLoginBtn.classList.remove("hidden");
+  emailSignupBtn.classList.remove("hidden");
+  loginModal.classList.add("hidden");
+  try {
+    await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
+    showToast("Sign in successful", 2000);
+    
+    if (reauthAction === "deleteAccount") {
+      deleteAccountHandler(auth.currentUser);
+      return;
+    };
+    
+    if (reauthAction === "changePassword") {
+      changePasswordHandler(auth.currentUser);
+      return;
+    };
+    
+    if (reauthAction === "resetAppData") {
+      resetUserDataAsyncHandler(auth.currentUser);
+      return;
+    };
+  }
+  catch (error) {
+      console.error("Error performing the following action: " + reauthAction, error);
+      alert("An error occurred while attempting to perform the action: " + reauthAction + ". Please try again.");
+  };
+});
+  
+reauthGoogleLoginBtn.addEventListener("click", async () => {
+  reauthEmailLoginBtn.classList.add("hidden");
+  reauthGoogleLoginBtn.classList.add("hidden");
+  googleLoginBtn.classList.remove("hidden");
+  emailLoginBtn.classList.remove("hidden");
+  emailSignupBtn.classList.remove("hidden");
+  loginModal.classList.add("hidden");
+  try {
+    await signInWithPopup(auth, googleProvider);
+    showToast("Sign in successful", 2000);
+    
+    if (reauthAction === "deleteAccount") {
+      deleteAccountHandler(auth.currentUser);
+      return;
+    };
+    
+    if (reauthAction === "changePassword") {
+      changePasswordHandler(auth.currentUser);
+      return;
+    };
+    
+    if (reauthAction === "resetAppData") {
+      resetUserDataAsyncHandler(auth.currentUser);
+      return;
+    };
+  }
+  catch (error) {
+      console.error("Error performing the following action: " + reauthAction, error);
+      alert("An error occurred while attempting to perform the action: " + reauthAction + ". Please try again.");
+  };
+});
+
+*/
+
+
+
 
 // Toggle dropdown
 accountMenuTrigger?.addEventListener("click", () => {
@@ -207,77 +292,202 @@ menuSignOut.addEventListener("click", async () => {
   }
 });
 
-
 // Change Password (email/password users only)
 menuChangePassword.addEventListener("click", async () => {
+  accountDropdown.classList.add("hidden");
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      //first determine which kind of user it is (google or email/password)
+      const provider = user.providerData[0]?.providerId;
+      if (provider === "password") {
+        reauthModal.classList.remove("hidden");
+        reauthAction = "changePassword";
+        return;
+      } 
+      if (provider === "google.com") {
+        await reauthenticateWithPopup(user, googleProvider);
+        await changePasswordHandler(user);
+        // showToast("Your password has been changed.", 5000);
+      }
+    }
+    catch (error) {
+        console.error("Error during password change process:", error);
+        alert("An error occurred while attempting to change your password. Please try again.");
+    };
+  };
+});
   
+
+function changePasswordHandler(user) {
   const email = auth.currentUser.email;
   if (!email) {
     console.error("Email retrieval error: no email found for current user.");
     alert("Error retrieving email for password reset.");
-    accountDropdown.classList.add("hidden");    
     return;
   }
-
-    sendPasswordResetEmail(auth, email)
-    .then(() => {
-       showToast("A password reset email has been sent to " + email, 5000);
-       accountDropdown.classList.add("hidden");
-    })
-    .catch((error) => {
-      console.error("Password reset error:", error);
-      alert("Error sending password reset email.");
+  
+  sendPasswordResetEmail(auth, email)
+  .then(() => {
+    showToast("A password reset email has been sent to " + email, 5000);
+  })
+  .catch((error) => {
+    console.error("Password reset error:", error);
+    alert("Error sending password reset email. Please try again.");
   });
-});
+};
 
-menuResetAppData.addEventListener("click", async () => {
+
+// Reset App Data
+menuResetAppData.addEventListener("click",  async () => {
+  accountDropdown.classList.add("hidden");
   if (confirm("Are you sure you want to reset all app data? This will clear your saved settings, golf bags, and tournament notes.")) {
-    accountDropdown.classList.add("hidden");
     const user = auth.currentUser;
     if (user) {
       try {
-        // Delete user settings
-        //Get collections references: Tourn notes, bags, settings
-        const settingsRef = collection(db, "users", user.uid, "settings");
-        const bagsRef = collection(db, "users", user.uid, "bags");
-        const tournRef = collection(db, "users", user.uid, "tournamentNotes");
+        //first determine which kind of user it is (google or email/password)
+        const provider = user.providerData[0]?.providerId;
+        if (provider === "password") {
+          reauthModal.classList.remove("hidden");
+          reauthAction = "resetAppData";
+          return;
+        }else 
+          if (provider === "google.com") {
+            await reauthenticateWithPopup(user, googleProvider);
+            await resetUserDataAsyncHandler(user);
+          }
+        showToast("Your account has been reset.", 5000);
+      } catch (error) {
+          console.error("Error during account reset process:", error);
+          alert("An error occurred while attempting to reset your account. Please try again.");
+      };
+    };
+  };
+});
 
-        //Get the docs in each collection and delete them
-        const settingsSnap = await getDocs(settingsRef); 
-        const bagsSnap = await getDocs(bagsRef);
-        const tournSnap = await getDocs(tournRef);
-        for (const docSnap of settingsSnap.docs) { 
-          await deleteDoc(doc(db, "users", user.uid, "settings", docSnap.id));
-        }
-        for (const docSnap of bagsSnap.docs) { 
-          await deleteDoc(doc(db, "users", user.uid, "bags", docSnap.id));
-        }
-        for (const docSnap of tournSnap.docs) { 
-          await deleteDoc(doc(db, "users", user.uid, "tournamentNotes", docSnap.id));
-        }
 
-        // Remove the 'lastBag' and 'hideClubBtns' fields from the document
-        const thisUser = doc(db, "users", user.uid);
-        await updateDoc(thisUser, {
-          lastBag: deleteField(),
-          hideClubBtns: deleteField()
-        });
-        
-        // Show confirmation
-        showToast("All app data has been reset.", 5000);
+async function resetUserDataAsyncHandler(user) {
+    
+        if (!user) {
+          console.error("No user is currently signed in.");
+          alert("Error: No user is currently signed in.");
+          return;
+        }
+        else
+          console.log(user)
+        try {
+          // Delete user settings
+          //Get collections references: Tourn notes, bags, settings
+          const settingsRef = collection(db, "users", user.uid, "settings");
+          const bagsRef = collection(db, "users", user.uid, "bags");
+          const tournRef = collection(db, "users", user.uid, "tournamentNotes");
 
-        // Reset UI elements
-        setBallPower(0);
-        resetClubs();
-        checkWhichBagsExist(user.uid);
-        updateSaveButtons();
-      }
-      catch (error) {
+          //Get the docs in each collection and delete them
+          const settingsSnap = await getDocs(settingsRef); 
+          const bagsSnap = await getDocs(bagsRef);
+          const tournSnap = await getDocs(tournRef);
+          for (const docSnap of settingsSnap.docs) { 
+            await deleteDoc(doc(db, "users", user.uid, "settings", docSnap.id));
+          }
+          for (const docSnap of bagsSnap.docs) { 
+            await deleteDoc(doc(db, "users", user.uid, "bags", docSnap.id));
+          }
+          for (const docSnap of tournSnap.docs) { 
+            await deleteDoc(doc(db, "users", user.uid, "tournamentNotes", docSnap.id));
+          }
+
+          // Remove the 'lastBag' and 'hideClubBtns' fields from the document
+          const thisUserDoc = doc(db, "users", user.uid);
+          await updateDoc(thisUserDoc, {
+            lastBag: deleteField(),
+            hideClubBtns: deleteField()
+          });
+
+          // Reset UI elements
+          setBallPower(0);
+          resetClubs();
+          checkWhichBagsExist(user.uid);
+          updateSaveButtons();
+        }
+        catch (error) {
         console.error("Error resetting app data:", error);
         alert("An error occurred while resetting app data.");
-      }
+      };
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log("Reset App Data Handler finished.");
+};
+
+
+// Delete Account
+menuDeleteAccount.addEventListener("click", async () => {
+  accountDropdown.classList.add("hidden");
+  accountDropdown.classList.add("hidden");
+  if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        //first determine which kind of user it is (google or email/password)
+        const provider = user.providerData[0]?.providerId;
+        if (provider === "password") {
+          reauthModal.classList.remove("hidden");
+          reauthAction = "deleteAccount";
+          return;
+        }else 
+          if (provider === "google.com") {
+            await reauthenticateWithPopup(user, googleProvider);
+            await deleteUser(user);
+          }
+        showToast("Your account has been deleted.", 5000);
+        resetClubs();
+      } catch (error) {
+          console.error("Error during account deletion process:", error);
+          alert("An error occurred while attempting to delete your account. Please try again.");
+      };
+    };
+  };
+});
+
+
+reauthSubmitBtn.addEventListener("click", async () => {
+  try {
+    const passwordInput = document.getElementById("reauthPassword");
+    const password = passwordInput.value;
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("No user is currently signed in.");
+      alert("Error: No user is currently signed in.");
+      return;
     }
+    const userEmail = user.email;
+    if (!userEmail) {
+      console.error("User email is not available.");
+      alert("Error: User email is not available.");
+      return;
+    }
+    const credential = EmailAuthProvider.credential(userEmail, password);
+    await reauthenticateWithCredential(user, credential); 
+    passwordInput.value = ""; // Clear password field
+    reauthModal.classList.add("hidden");
+    if (reauthAction === "deleteAccount") {
+      await resetUserDataAsyncHandler(user);
+      await deleteUser(user);
+      showToast("Your account has been deleted.", 5000);
+    }else if (reauthAction === "resetAppData") {
+      await resetUserDataAsyncHandler(user);
+      showToast("Your account has been reset.", 5000);
+    }else if (reauthAction === "changePassword") {
+      changePasswordHandler(user);
+    };
+  } catch (error) {
+    console.error("Error during reauthentication:", error);
+    alert("An error occurred during reauthentication. Please try again.");
   }
+});
+
+
+
+reauthCancelBtn.addEventListener("click", async () => {
+  reauthModal.classList.add("hidden");
 });
 
 

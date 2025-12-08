@@ -12,7 +12,11 @@ import {
     signInWithPopup,
     signOut,
     onAuthStateChanged,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    deleteUser,
+    reauthenticateWithCredential,
+    reauthenticateWithPopup,
+    EmailAuthProvider
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
 import { 
@@ -70,5 +74,9 @@ export {
     sendPasswordResetEmail,
     deleteDoc,
     updateDoc,
-    deleteField
+    deleteField,
+    deleteUser,
+    reauthenticateWithCredential,
+    reauthenticateWithPopup,
+    EmailAuthProvider
 };

@@ -317,12 +317,18 @@ color: black
 	margin-bottom:1.125rem;
 }
 
+
+
 /* CLOSE X */
 .close {
-	position:absolute;
-	margin-left: 17.1875rem;
-	font-size:var(--hdrFontSize);
+	font-size: calc(1.7 * var(--hdrFontSize));
+	font-weight: 900;
 	cursor: pointer;
+	text-align: right;
+	width: 100%;
+	height: 1rem;
+	display: flow;
+	padding: 0;
 }
 
 /* INPUTS */
@@ -382,6 +388,24 @@ header{
 	padding:0.75rem 0;
 	color:#fff
 }
+
+.reauthInfoModal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.reauthBtnsRow {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+
+
+
+
 
 /* TOGGLE */
 #toggleClubs{
