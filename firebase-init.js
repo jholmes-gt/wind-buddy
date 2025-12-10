@@ -16,7 +16,8 @@ import {
     deleteUser,
     reauthenticateWithCredential,
     reauthenticateWithPopup,
-    EmailAuthProvider
+    EmailAuthProvider,
+    sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
 import { 
@@ -78,5 +79,6 @@ export {
     deleteUser,
     reauthenticateWithCredential,
     reauthenticateWithPopup,
-    EmailAuthProvider
+    EmailAuthProvider,
+    sendEmailVerification
 };

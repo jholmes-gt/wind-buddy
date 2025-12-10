@@ -25,12 +25,11 @@ import {
 } from "./firebase-init.js";
 
 import {
-    showToast
-
+    showToast,
+    resendVerificationEmail
 } from "./firebase-auth.js";
 
 
-const ballPowerEl = document.getElementById("ballPower");
 
 
 
@@ -134,8 +133,8 @@ async function selectLastClub(uid) {
 
 function setBallPower(value) {
     value = Math.max(0, Math.min(10, Number(value)));
-    ballPowerEl.value = String(value);
-    ballPowerEl.dispatchEvent(new Event("change", { bubbles: true }));
+    ballPowerCV.value = String(value);
+    ballPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 // UI Elements
@@ -148,79 +147,12 @@ const reauthSubmitBtn = document.getElementById("reauthSubmitBtn");
 const reauthCancelBtn = document.getElementById("reauthCancelBtn");
 const reauthModal = document.getElementById("reauthModal");
 
+const menuResendVerify = document.getElementById("menuResendVerify");
 const menuChangePassword = document.getElementById("menuChangePassword");
 const menuResetAppData = document.getElementById("menuResetAppData");
 const menuDeleteAccount = document.getElementById("menuDeleteAccount");
 const menuSignOut = document.getElementById("menuSignOut");
 let reauthAction = ""; // To track which action requires reauthentication
-
-/*
-// Create event listeners for reauth buttons 
-reauthEmailLoginBtn.addEventListener("click", async () => {
-  reauthEmailLoginBtn.classList.add("hidden");
-  reauthGoogleLoginBtn.classList.add("hidden");
-  googleLoginBtn.classList.remove("hidden");
-  emailLoginBtn.classList.remove("hidden");
-  emailSignupBtn.classList.remove("hidden");
-  loginModal.classList.add("hidden");
-  try {
-    await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
-    showToast("Sign in successful", 2000);
-    
-    if (reauthAction === "deleteAccount") {
-      deleteAccountHandler(auth.currentUser);
-      return;
-    };
-    
-    if (reauthAction === "changePassword") {
-      changePasswordHandler(auth.currentUser);
-      return;
-    };
-    
-    if (reauthAction === "resetAppData") {
-      resetUserDataAsyncHandler(auth.currentUser);
-      return;
-    };
-  }
-  catch (error) {
-      console.error("Error performing the following action: " + reauthAction, error);
-      alert("An error occurred while attempting to perform the action: " + reauthAction + ". Please try again.");
-  };
-});
-  
-reauthGoogleLoginBtn.addEventListener("click", async () => {
-  reauthEmailLoginBtn.classList.add("hidden");
-  reauthGoogleLoginBtn.classList.add("hidden");
-  googleLoginBtn.classList.remove("hidden");
-  emailLoginBtn.classList.remove("hidden");
-  emailSignupBtn.classList.remove("hidden");
-  loginModal.classList.add("hidden");
-  try {
-    await signInWithPopup(auth, googleProvider);
-    showToast("Sign in successful", 2000);
-    
-    if (reauthAction === "deleteAccount") {
-      deleteAccountHandler(auth.currentUser);
-      return;
-    };
-    
-    if (reauthAction === "changePassword") {
-      changePasswordHandler(auth.currentUser);
-      return;
-    };
-    
-    if (reauthAction === "resetAppData") {
-      resetUserDataAsyncHandler(auth.currentUser);
-      return;
-    };
-  }
-  catch (error) {
-      console.error("Error performing the following action: " + reauthAction, error);
-      alert("An error occurred while attempting to perform the action: " + reauthAction + ". Please try again.");
-  };
-});
-
-*/
 
 
 
@@ -239,48 +171,56 @@ document.addEventListener("click", (e) => {
 
 
 // ---- AUTH STATE HANDLER ----
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async () => {
+   const user = auth.currentUser
+  // USER SIGNED OUT
   if (!user) {
-    for (let i = 1; i <= bagCount; i++) {
-      loadButtons[i - 1].disabled = true;
-    }
-    for (let i = 1; i <= 3; i++) {
-      tournButtons[i - 1].disabled = true;
-}
+    for (let i = 1; i <= bagCount; i++) loadButtons[i - 1].disabled = true;
+    for (let i = 1; i <= 3; i++) tournButtons[i - 1].disabled = true;
 
     accountMenuContainer.style.display = "none";
+    resetClubs();
     loadBallPower(0);
     return;
   }
 
-  // Show menu container
+  // REFRESH USER (can update verification)
+  await user.reload();
+
+  let username = "";
+  let provider = user.providerData[0]?.providerId;
   accountMenuContainer.style.display = "inline-block";
   accountMenuContainer.classList.remove("hidden");
 
-  // Determine username display
-  let username = "";
-  const provider = user.providerData[0]?.providerId;
-
   if (provider === "password") {
-    username = user.email;                                  // Email login
-    menuChangePassword.style.display = "block";             // Allow password change
+    username = user.email;
+    menuChangePassword.style.display = "block";
+    if (!user.emailVerified) {
+      menuResendVerify.style.display = "block"; // Email users must be VERIFIED
+      return;
+    }
+    else
+       menuResendVerify.style.display = "none"; // Email has been verified
   } else if (provider === "google.com") {
-    username = user.displayName || user.email;              // Google login
-    menuChangePassword.style.display = "none";              // No password change
+    username = user.displayName || user.email;
+    menuChangePassword.style.display = "none";
+    menuResendVerify.style.display = "none"; // Google never needs verify
   }
-
   accountUserName.textContent = username;
-
+  // USER VERIFIED → Load app data
   loadBallPower(user.uid);
   loadLastBag(user.uid);
-  checkWhichBagsExist(user.uid);
-  for (let i = 1; i <= 3; i++) {
-      tournButtons[i - 1].disabled = false;
-}
+  checkWhichBagsExist();
+  for (let i = 1; i <= 3; i++) tournButtons[i - 1].disabled = false;
 });
 
 
+
+
 // ---- Menu Item Actions ----
+
+menuResendVerify.onclick = resendVerificationEmail;
+
 
 // Sign Out
 menuSignOut.addEventListener("click", async () => {
@@ -319,7 +259,7 @@ menuChangePassword.addEventListener("click", async () => {
 });
   
 
-function changePasswordHandler(user) {
+async function changePasswordHandler(user) {
   const email = auth.currentUser.email;
   if (!email) {
     console.error("Email retrieval error: no email found for current user.");
@@ -327,6 +267,9 @@ function changePasswordHandler(user) {
     return;
   }
   
+  resetClubs();
+  await auth.signOut();
+  await checkWhichBagsExist();
   sendPasswordResetEmail(auth, email)
   .then(() => {
     showToast("A password reset email has been sent to " + email, 5000);
@@ -373,8 +316,7 @@ async function resetUserDataAsyncHandler(user) {
           alert("Error: No user is currently signed in.");
           return;
         }
-        else
-          console.log(user)
+
         try {
           // Delete user settings
           //Get collections references: Tourn notes, bags, settings
@@ -406,7 +348,7 @@ async function resetUserDataAsyncHandler(user) {
           // Reset UI elements
           setBallPower(0);
           resetClubs();
-          checkWhichBagsExist(user.uid);
+          checkWhichBagsExist();
           updateSaveButtons();
         }
         catch (error) {
@@ -476,7 +418,7 @@ reauthSubmitBtn.addEventListener("click", async () => {
       await resetUserDataAsyncHandler(user);
       showToast("Your account has been reset.", 5000);
     }else if (reauthAction === "changePassword") {
-      changePasswordHandler(user);
+      await changePasswordHandler(user);
     };
   } catch (error) {
     console.error("Error during reauthentication:", error);
@@ -504,6 +446,149 @@ const clubCats = {
   Rough_Irons: ["Roughcutter","Junglist","Machete","Off_Roader","Razor","Amazon","Nirvana"],
   Sand_Wedges: ["Castaway","Desert_Storm","Malibu","Sahara","Sand_Lizard","Houdini","Spitfire"]
 };
+
+const clubShortNames = {
+  // ---- Drivers ----
+  Rocket: "RT",
+  Extra_Mile: "EM",
+  Big_Topper: "BT",
+  Quarterback: "QB",
+  Rock: "RK",
+  Thors_Hammer: "TH",
+  Apocalypse: "AP",
+
+  // ---- Woods ----
+  Horizon: "HZ",
+  Viper: "VP",
+  Big_Dawg: "BD",
+  Hammerhead: "HH",
+  Guardian: "GN",
+  Sniper: "SN",
+  Cataclysm: "CL",
+
+  // ---- Long Irons ----
+  Grim_Reaper: "GE",
+  Backbone: "BB",
+  Goliath: "GL",
+  Saturn: "ST",
+  B52: "B5",
+  Grizzly: "GZ",
+  Tsunami: "TS",
+
+  // ---- Short Irons ----
+  Apache: "AC",
+  Kingfisher: "KF",
+  Runner: "RN",
+  Thorn: "TN",
+  Hornet: "HN",
+  Claw: "CW",
+  Falcon: "FC",
+
+  // ---- Wedges ----
+  Dart: "DT",
+  Firefly: "FF",
+  Boomerang: "BG",
+  Down_In_One: "DO",
+  Skewer: "SK",
+  Endbringer: "EB",
+  Rapier: "RP",
+
+  // ---- Rough Irons ----
+  Roughcutter: "RC",
+  Junglist: "JG",
+  Machete: "MH",
+  Off_Roader: "OR",
+  Razor: "RZ",
+  Amazon: "AZ",
+  Nirvana: "NV",
+
+  // ---- Sand Wedges ----
+  Castaway: "CA",
+  Desert_Storm: "DS",
+  Malibu: "MB",
+  Sahara: "SA",
+  Sand_Lizard: "SL",
+  Houdini: "HD",
+  Spitfire: "SF"
+};
+
+const shortToFull = {
+  // ---- Drivers ----
+  RT: "Rocket",
+  EM: "Extra_Mile",
+  BT: "Big_Topper",
+  QB: "Quarterback",
+  RK: "Rock",
+  TH: "Thors_Hammer",
+  AP: "Apocalypse",
+
+  // ---- Woods ----
+  HZ: "Horizon",
+  VP: "Viper",
+  BD: "Big_Dawg",
+  HH: "Hammerhead",
+  GN: "Guardian",
+  SN: "Sniper",
+  CL: "Cataclysm",
+
+  // ---- Long Irons ----
+  GE: "Grim_Reaper",
+  BB: "Backbone",
+  GL: "Goliath",
+  ST: "Saturn",
+  B5: "B52",
+  GZ: "Grizzly",
+  TS: "Tsunami",
+
+  // ---- Short Irons ----
+  AC: "Apache",
+  KF: "Kingfisher",
+  RN: "Runner",
+  TN: "Thorn",
+  HN: "Hornet",
+  CW: "Claw",
+  FC: "Falcon",
+
+  // ---- Wedges ----
+  DT: "Dart",
+  FF: "Firefly",
+  BG: "Boomerang",
+  DO: "Down_In_One",
+  SK: "Skewer",
+  EB: "Endbringer",
+  RP: "Rapier",
+
+  // ---- Rough Irons ----
+  RC: "Roughcutter",
+  JG: "Junglist",
+  MH: "Machete",
+  OR: "Off_Roader",
+  RZ: "Razor",
+  AZ: "Amazon",
+  NV: "Nirvana",
+
+  // ---- Sand Wedges ----
+  CA: "Castaway",
+  DS: "Desert_Storm",
+  MB: "Malibu",
+  SA: "Sahara",
+  SL: "Sand_Lizard",
+  HD: "Houdini",
+  SF: "Spitfire"
+};
+
+// Mapping of long category names → short 2–letter minimal labels
+const minIntLabels = {
+  Drivers: "DR",
+  Woods: "WD",
+  Long_Irons: "LI",
+  Short_Irons: "SI",
+  Wedges: "WG",
+  Rough_Irons: "RI",
+  Sand_Wedges: "SW"
+};
+
+
 
 /* wind values for clubs */
 const windData = {
@@ -4202,13 +4287,19 @@ const rares = new Set(["Extra_Mile","Rock","Big_Dawg","Guardian","Goliath","Griz
 /* ----------------------------
    UI elements & helpers
    ---------------------------- */
-const windInput = document.getElementById('windInput');
-const distanceEl = document.getElementById('clubDistance');
-const distanceVal = document.getElementById('clubDistanceVal');
-const elevationEl = document.getElementById('elevation');
-const ebsWindInput = document.getElementById("ebsWindInput");
-const ebsBallPower = document.getElementById("ebsBallPower");
-const ebsElevation = document.getElementById("ebsElevation");
+const windInputCV = document.getElementById('windInput');
+const ballPowerCV = document.getElementById("ballPower");
+const distanceSliderCV = document.getElementById('clubDistance');
+const distanceInputCV = document.getElementById('clubDistanceVal');
+const elevationCV = document.getElementById('elevation');
+const ebsWindInputCV = document.getElementById("ebsWindInput");
+const ebsBallPowerCV = document.getElementById("ebsBallPower");
+const ebsElevationCV = document.getElementById("ebsElevation");
+const minIntWindInputCV = document.getElementById('minIntWindInput');
+const minIntBallPowerCV = document.getElementById("minIntBallPower");
+const minIntElevationCV = document.getElementById('minIntElevation');
+
+
 
 const ringsMain = document.getElementById('ringsMain');
 const r_max = document.getElementById('r_max');
@@ -4216,14 +4307,22 @@ const r_mid = document.getElementById('r_mid');
 const r_min = document.getElementById('r_min');
 const r_25 = document.getElementById('r_25');
 const r_75 = document.getElementById('r_75');
+const minInt_r_max = document.getElementById('minInt_r_max');
+const minInt_r_mid = document.getElementById('minInt_r_mid');
+const minInt_r_min = document.getElementById('minInt_r_min');
+const minInt_r_25 = document.getElementById('minInt_r_25');
+const minInt_r_75 = document.getElementById('minInt_r_75');
 const tournButtons = [];
 for (let i = 1; i <= 3; i++) {
     tournButtons.push(document.getElementById(`btn_tourn${i}`));
 }
 
 
-const clientWidth = document.documentElement.clientWidth;
-const clientHeight = document.documentElement.clientHeight;
+let clientWidth = document.documentElement.clientWidth;
+let clientHeight = document.documentElement.clientHeight;
+console.log("Viewport width " + clientWidth)
+console.log("Viewport height " + clientHeight)
+
 
 let endbringerMode = false;
 let clubsShowing = true;
@@ -4307,10 +4406,6 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
 	catContainer.appendChild(panel);
 	clubGrid.appendChild(catContainer);
 }
-
-
-
-
 
 
 
@@ -4472,11 +4567,6 @@ gbinfoModal.addEventListener("click", (e) => {
     }
 });
 
-
-
-// Tooltip for "Please sign in"
-const bagTooltip = document.getElementById("bag-signin-tooltip");
-
 // Toast panel
 const bagSavedInfoPanel = document.getElementById("bag-toast");
 bagSavedInfoPanel.addEventListener("click", () => {
@@ -4485,7 +4575,11 @@ bagSavedInfoPanel.addEventListener("click", () => {
 
 
 
+// Tooltip for "Please sign in"
+//const bagTooltip = document.getElementById("bag-signin-tooltip");
+
 // Disable all bag buttons unless signed in
+/*
 function updateBagButtonAccess(user) {
     const signedIn = !!user;
 
@@ -4506,9 +4600,16 @@ function updateBagButtonAccess(user) {
         bagTooltip.style.display = "none";
     }
 }
+*/
 
-
-async function checkWhichBagsExist(uid) {
+async function checkWhichBagsExist() {
+    const user = auth.currentUser;
+    if (!user) {
+      for (let i = 1; i <= bagCount; i++) loadButtons[i - 1].disabled = true;
+      for (let i = 1; i <= 3; i++) tournButtons[i - 1].disabled = true;
+      return;
+    }
+    const uid = user.uid; 
     for (let i = 1; i <= bagCount; i++) {
         const ref = doc(db, "users", uid, "bags", `bag${i}`);
         const snap = await getDoc(ref);
@@ -4520,8 +4621,6 @@ async function checkWhichBagsExist(uid) {
         }
     }
 }
-
-
 function updateSaveButtons() {
     const user = auth.currentUser;
     if (!user) {
@@ -4540,7 +4639,6 @@ function updateSaveButtons() {
 
 //document.addEventListener("click", updateSaveButtons);
 document.addEventListener("change", updateSaveButtons);
-
 
 async function saveBagToFirestore(bagIndex) {
     const user = auth.currentUser;
@@ -4571,7 +4669,7 @@ async function saveBagToFirestore(bagIndex) {
     document.querySelectorAll(".smaller-btn").forEach(b => b.classList.remove("selected"));
     document.getElementById("btn_bag" + bagIndex).classList.add("selected");
 
-    checkWhichBagsExist(uid)
+    checkWhichBagsExist();
 
     //save new bag as last bag used
     saveLastBagIndex(uid, bagIndex)
@@ -4579,9 +4677,6 @@ async function saveBagToFirestore(bagIndex) {
     const driversScBtn = document.getElementById(`Drivers-shortcut-btn`);
     if (driversScBtn) driversScBtn.click();
 }
-
-
-
 
 function showBagToast(message, duration = 5000) {
   const toast = document.getElementById('bag-toast');
@@ -4594,8 +4689,6 @@ function showBagToast(message, duration = 5000) {
     toast.classList.remove('show');
   }, duration);
 }
-
-
 
 async function loadBagFromFirestore(bagIndex) {
     const user = auth.currentUser;
@@ -4642,8 +4735,7 @@ async function loadBagFromFirestore(bagIndex) {
 
 }
 
-
-
+//Event Listeners for Load and Save bag buttons
 for (let i = 1; i <= bagCount; i++) {
     const loadBtn = loadButtons[i - 1];
     const saveBtn = saveButtons[i - 1];
@@ -4651,10 +4743,6 @@ for (let i = 1; i <= bagCount; i++) {
     loadBtn.addEventListener("click", () => loadBagFromFirestore(i));
     saveBtn.addEventListener("click", () => saveBagToFirestore(i));
 }
-
-
-
-
 
 //-----------------------------------------
 //Club Info Panel
@@ -4770,7 +4858,6 @@ function updateClubInfoTable(){
 }
 
 
-
 //-----------------------------------------
 //Ring Calculation/Displaying functions
 //-----------------------------------------
@@ -4780,9 +4867,9 @@ function triggerCalcIfReady(category){
   if (!sel || !sel.club || !sel.level) return;
 
   if (endbringerMode){
-    const wind = parseFloat(ebsWindInput.value);
-    const elevation = parseFloat(ebsElevation.value);
-    const ballPower = parseInt(ebsBallPower.value);
+    const wind = parseFloat(ebsWindInputCV.value);
+    const elevation = parseFloat(ebsElevationCV.value);
+    const ballPower = parseInt(ebsBallPowerCV.value);
     const catData = windData[category];
     const club = sel.club
     const level = sel.level
@@ -4804,10 +4891,10 @@ function triggerCalcIfReady(category){
 		return;
 	};
     
-  const wind = parseFloat(windInput.value) || 0;
-  const elevation = parseFloat(elevationEl.value) || 0;
-  const ballPower = parseInt(ballPowerEl.value)
-  const club_distance = parseFloat(distanceEl.value) || 100;
+  const wind = parseFloat(windInputCV.value) || 0;
+  const elevation = parseFloat(elevationCV.value) || 0;
+  const ballPower = parseInt(ballPowerCV.value)
+  const club_distance = parseFloat(distanceSliderCV.value) || 100;
   const catData = windData[category];
   const club = sel.club
   const level = sel.level
@@ -4871,44 +4958,59 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
     ringsMain.textContent = fixed_main;
   }
   
-  if (isNaN(max))
-     r_max.textContent = max;
+  if (isNaN(max)){
+    r_max.textContent = max;
+    minInt_r_max.textContent = max;
+  }
   else{
     varry = parseFloat(max);
     const fixed_max = varry.toFixed(1);
     r_max.textContent = fixed_max;
+    minInt_r_max.textContent = fixed_max;
   };
   
-  if (isNaN(mid))
+  if (isNaN(mid)) {
      r_mid.textContent = mid;
+     minInt_r_mid.textContent = mid;
+  }
   else{
-	varry = parseFloat(mid);
-	const fixed_mid = varry.toFixed(1);
-	r_mid.textContent = fixed_mid;
+    varry = parseFloat(mid);
+    const fixed_mid = varry.toFixed(1);
+    r_mid.textContent = fixed_mid;
+    minInt_r_mid.textContent = fixed_mid;
   };
 
-  if (isNaN(min))
+  if (isNaN(min)) {
      r_min.textContent = min;
+     minInt_r_min.textContent = min;
+  }
   else{
-	varry = parseFloat(min);
-	const fixed_min = varry.toFixed(1);
-	r_min.textContent = fixed_min;
+    varry = parseFloat(min);
+    const fixed_min = varry.toFixed(1);
+    r_min.textContent = fixed_min;
+    minInt_r_min.textContent = fixed_min;
   };
 
-  if (isNaN(p25))
+  if (isNaN(p25)) {
      r_25.textContent = p25;
+     minInt_r_25.textContent = p25;
+  }
   else{
-	varry = parseFloat(p25);
-	const fixed_p25 = varry.toFixed(1);
-	r_25.textContent = fixed_p25;
+    varry = parseFloat(p25);
+    const fixed_p25 = varry.toFixed(1);
+    r_25.textContent = fixed_p25;
+    minInt_r_25.textContent = fixed_p25;
   };
 
-  if (isNaN(p75))
+  if (isNaN(p75)) {
      r_75.textContent = p75;
+     minInt_r_75.textContent = p75;
+  }
   else{
-	varry = parseFloat(p75);
-	const fixed_p75 = varry.toFixed(1);
-	r_75.textContent = fixed_p75;
+    varry = parseFloat(p75);
+    const fixed_p75 = varry.toFixed(1);
+    r_75.textContent = fixed_p75;
+    minInt_r_75.textContent = fixed_p75;
   };
   
   if (activeClubLabel) {
@@ -4927,8 +5029,8 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
 // 			WIRE EVENTS
 // ----------------------------
 /*
-ballPowerEl.addEventListener("change", () => {
-    const value = Number(ballPowerEl.value);
+ballPowerCV.addEventListener("change", () => {
+    const value = Number(ballPowerCV.value);
     const user = auth.currentUser;
 
     if (user) {
@@ -4937,11 +5039,11 @@ ballPowerEl.addEventListener("change", () => {
 });
 */
 
-ballPowerEl.addEventListener("change", async () => {
+ballPowerCV.addEventListener("change", async () => {
     const user = auth.currentUser;
     if (!user) return;
 
-    const bp = parseInt(ballPowerEl.value);
+    const bp = parseInt(ballPowerCV.value);
 
     try {
         await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
@@ -4952,11 +5054,13 @@ ballPowerEl.addEventListener("change", async () => {
     }
 });
 
-ebsBallPower.addEventListener("change", async () => {
+ebsBallPowerCV.addEventListener("change", async () => {
+    ballPowerCV.value = ebsBallPowerCV.value
+
     const user = auth.currentUser;
     if (!user) return;
 
-    const bp = parseInt(ebsBallPower.value);
+    const bp = parseInt(ebsBallPowerCV.value);
     try {
         await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
             ballPower: bp
@@ -4967,9 +5071,9 @@ ebsBallPower.addEventListener("change", async () => {
 });
 
 
-distanceEl.addEventListener('input', (e)=> {
-  distanceVal.value = e.target.value;
-  if (distanceEl.value !== 0)
+distanceSliderCV.addEventListener('input', (e)=> {
+  distanceInputCV.value = e.target.value;
+  if (distanceSliderCV.value !== 0)
 	 triggerCalcIfReady(state.activeCategory);
   else{
 	const minRings = r_min.textContent;
@@ -4979,35 +5083,35 @@ distanceEl.addEventListener('input', (e)=> {
   
 });
 
-distanceVal.addEventListener('input', (e)=> {
+distanceInputCV.addEventListener('input', (e)=> {
   if (e.target.value <= 0){
-	  distanceVal.value = 0;
-	  distanceEl.value = 0;
+	  distanceInputCV.value = 0;
+	  distanceSliderCV.value = 0;
 	  const minRings = r_min.textContent;
       ringsMain.textContent = minRings;
 	  return;
   };
   if (e.target.value > 100){
-	  distanceVal.value = 100;
-	  distanceEl.value = 100;
+	  distanceInputCV.value = 100;
+	  distanceSliderCV.value = 100;
 	  triggerCalcIfReady(state.activeCategory);
 	  return;
   };
   
-  distanceEl.value = e.target.value;
+  distanceSliderCV.value = e.target.value;
   triggerCalcIfReady(state.activeCategory);
 });
 
-distanceVal.addEventListener('focus', (e)=> {
+distanceInputCV.addEventListener('focus', (e)=> {
      // Select all the text in the input
-     distanceVal.select();
+     distanceInputCV.select();
 });
 
 // wind input rule: while user is still typing (input), convert integers to tenths (7 -> 0.7)
 // goal is for user to never have to type a decimal
-windInput.addEventListener('input', () => {
+windInputCV.addEventListener('input', () => {
   const cat = state.activeCategory;
-  const v = windInput.value;
+  const v = windInputCV.value;
   if (v === '') return;
   const vLength = v.length;
   
@@ -5019,7 +5123,7 @@ windInput.addEventListener('input', () => {
   if (!v.includes('.')) {
     const n = parseFloat(v);
     if (isNaN(n)) return 
-    windInput.value = (n/10).toFixed(1);    
+    windInputCV.value = (n/10).toFixed(1);    
   } else {
     // has decimal: use string length logic to determine where decimal should be 
     const n = v;
@@ -5028,19 +5132,19 @@ windInput.addEventListener('input', () => {
     const nLength = nAsString.length;
 	if (nLength === 3)
 	    if (n < 10)
-          windInput.value = (n*10).toFixed(1);
+          windInputCV.value = (n*10).toFixed(1);
 		else
-		    windInput.value = n.toFixed(1);
+		    windInputCV.value = n.toFixed(1);
         
 	if (nLength === 4)
 	    if (n < 10)
-          windInput.value = (n*10).toFixed(1);
+          windInputCV.value = (n*10).toFixed(1);
 		else
-		    windInput.value = n.toFixed(1);
+		    windInputCV.value = n.toFixed(1);
         
 	if (nLength === 5){
 		const m = (n % 10) * 10
-		windInput.value = m.toFixed(1);
+		windInputCV.value = m.toFixed(1);
 	  }
   }
   // recalc
@@ -5051,10 +5155,11 @@ windInput.addEventListener('input', () => {
 
 
 /* ebs version of wind input rule*/
-ebsWindInput.addEventListener('input', () => {
+ebsWindInputCV.addEventListener('input', () => {
   const cat = state.activeCategory;
-  const v = ebsWindInput.value;
+  const v = ebsWindInputCV.value;
   if (v === '') return;
+  
   const vLength = v.length;
   
   if (vLength === 1) {
@@ -5065,7 +5170,7 @@ ebsWindInput.addEventListener('input', () => {
   if (!v.includes('.')) {
     const n = parseFloat(v);
     if (isNaN(n)) return 
-    ebsWindInput.value = (n/10).toFixed(1);    
+    ebsWindInputCV.value = (n/10).toFixed(1);    
   } else {
     // has decimal: use string length logic to determine where decimal should be 
     const n = v;
@@ -5074,19 +5179,19 @@ ebsWindInput.addEventListener('input', () => {
     const nLength = nAsString.length;
 	if (nLength === 3)
 	    if (n < 10)
-          ebsWindInput.value = (n*10).toFixed(1);
+          ebsWindInputCV.value = (n*10).toFixed(1);
 		else
-		    ebsWindInput.value = n.toFixed(1);
+		    ebsWindInputCV.value = n.toFixed(1);
         
 	if (nLength === 4)
 	    if (n < 10)
-          ebsWindInput.value = (n*10).toFixed(1);
+          ebsWindInputCV.value = (n*10).toFixed(1);
 		else
-		    ebsWindInput.value = n.toFixed(1);
+		    ebsWindInputCV.value = n.toFixed(1);
         
 	if (nLength === 5){
 		const m = (n % 10) * 10
-		ebsWindInput.value = m.toFixed(1);
+		ebsWindInputCV.value = m.toFixed(1);
 	  }
   }
   // recalc
@@ -5097,26 +5202,26 @@ ebsWindInput.addEventListener('input', () => {
 
 
 
-windInput.addEventListener('focus', () => {
+windInputCV.addEventListener('focus', () => {
      // Select all the text in the input
-     windInput.select();
+     windInputCV.select();
 });
 
-ebsWindInput.addEventListener('focus', () => {
+ebsWindInputCV.addEventListener('focus', () => {
      // Select all the text in the input
-     ebsWindInput.select();
+     ebsWindInputCV.select();
 });
 
 
 
 /*  run calc when ball power or elevation changes */
-[ballPowerEl, elevationEl].forEach(el => el.addEventListener('input', ()=> {
+[ballPowerCV, elevationCV].forEach(el => el.addEventListener('input', ()=> {
   const cat = state.activeCategory
   if (cat)
     triggerCalcIfReady(cat); 
 }));
 
-[ebsBallPower, ebsElevation].forEach(el => el.addEventListener('input', ()=> {
+[ebsBallPowerCV, ebsElevationCV].forEach(el => el.addEventListener('input', ()=> {
   const cat = state.activeCategory
   if (cat === "Wedges")
     triggerCalcIfReady(cat); 
@@ -5143,46 +5248,46 @@ toggleClubsLink.addEventListener('click', ()=>{
 //-----------------------------------------------------------------------------------------
 	// Event Listeners to show all elevation options when user interacts with the input field 
 //-----------------------------------------------------------------------------------------
-let elevationDefaultValue = elevationEl.value;
+let elevationDefaultValue = elevationCV.value;
   // Save the default value to a placeholder on focus
-  elevationEl.addEventListener('focus', () => {
-    elevationEl.placeholder = elevationDefaultValue;
-    elevationEl.value = ''; // Clear the value to show all options
+  elevationCV.addEventListener('focus', () => {
+    elevationCV.placeholder = elevationDefaultValue;
+    elevationCV.value = ''; // Clear the value to show all options
   });
   
 
   // Restore the default value if the user navigates away without selecting
-  elevationEl.addEventListener('blur', () => {
-    if (elevationEl.value === '') {
-      elevationEl.value = elevationDefaultValue;
+  elevationCV.addEventListener('blur', () => {
+    if (elevationCV.value === '') {
+      elevationCV.value = elevationDefaultValue;
     }
   });
 
   // Update the default value when the user selects a new option
-  elevationEl.addEventListener('change', () => {
-    elevationDefaultValue = elevationEl.value;
+  elevationCV.addEventListener('change', () => {
+    elevationDefaultValue = elevationCV.value;
   });
 
 
 //EBS Version of above
-let ebsElevationDefaultValue = ebsElevation.value;
+let ebsElevationDefaultValue = ebsElevationCV.value;
   // Save the default value to a placeholder on focus
-  ebsElevation.addEventListener('focus', () => {
-    ebsElevation.placeholder = ebsElevationDefaultValue;
-    ebsElevation.value = ''; // Clear the value to show all options
+  ebsElevationCV.addEventListener('focus', () => {
+    ebsElevationCV.placeholder = ebsElevationDefaultValue;
+    ebsElevationCV.value = ''; // Clear the value to show all options
   });
   
 
   // Restore the default value if the user navigates away without selecting
-  ebsElevation.addEventListener('blur', () => {
-    if (ebsElevation.value === '') {
-      ebsElevation.value = ebsElevationDefaultValue;
+  ebsElevationCV.addEventListener('blur', () => {
+    if (ebsElevationCV.value === '') {
+      ebsElevationCV.value = ebsElevationDefaultValue;
     }
   });
 
   // Update the default value when the user selects a new option
-  ebsElevation.addEventListener('change', () => {
-    ebsElevationDefaultValue = ebsElevation.value;
+  ebsElevationCV.addEventListener('change', () => {
+    ebsElevationDefaultValue = ebsElevationCV.value;
   });
 
 
@@ -5206,8 +5311,8 @@ Object.keys(clubCats).forEach(cat=>{
     setActiveShortCutButton(cat);
     triggerCalcIfReady(cat);
     updateClubInfoTable();
-	document.getElementById('windInput').focus();
-	document.getElementById('windInput').select();
+	  windInputCV.focus();
+	  windInputCV.select();
   });
   shortcutBar.appendChild(btn);
 });
@@ -5233,6 +5338,38 @@ scinfoModal.addEventListener("click", (e) => {
 });
 
 
+/* ==========================================================*/
+/* ---- Min Interface Shortcut Buttons ---- */
+/* ==========================================================*/
+
+// Container to attach the buttons
+const minRow = document.getElementById("minIntSCBtnsRow");
+
+// Build buttons dynamically
+Object.entries(minIntLabels).forEach(([cat, label]) => {
+  const btn = document.createElement("button");
+  btn.className = "min-sc-btn";
+  btn.dataset.cat = cat;  
+  btn.textContent = label;
+  btn.id=cat + '-minInt-shortcut-btn';
+
+  // Click behavior (mirrors main shortcut buttons)
+  btn.addEventListener("click", () => {
+    if(!btn.classList.contains('enabled'))return;
+    state.activeCategory=cat;
+    // Remove active from all mini-int buttons
+    document.querySelectorAll(".min-sc-btn").forEach(b => 
+      b.classList.remove("active")
+    );
+    // Mark this one active
+    btn.classList.add("active");
+    triggerCalcIfReady(cat);
+	  minIntWindInputCV.focus();
+	  minIntWindInputCV.select();
+  });
+
+  minRow.appendChild(btn);
+});
 
 
 
@@ -5286,18 +5423,18 @@ infoModal.addEventListener("click", (e) => {
     if (clubsShowing)
      toggleClubsLink.click();
 	  
-    ebsWindInput.value = windInput.value;
-    ebsBallPower.value = ballPowerEl.value;
-    ebsElevation.value = 20; // default elevation for Endbringer School
+    ebsWindInputCV.value = windInputCV.value;
+    ebsBallPowerCV.value = ballPowerCV.value;
+    ebsElevationCV.value = 20; // default elevation for Endbringer School
+    ebsElevationDefaultValue = 20;
 
     ebspanel.classList.remove('hidden');
 
     enableEndbringerSchool();
 	  
     // focus wind input and select text
-    const windObj = document.getElementById("ebsWindInput");
-    windObj.focus();
-    windObj.select();
+    ebsWindInputCV.focus();
+    ebsWindInputCV.select();
   }); 
 
 
@@ -5317,6 +5454,16 @@ infoModal.addEventListener("click", (e) => {
 		    toggleClubsLink.click();
 	  }
     
+    windInputCV.value = ebsWindInputCV.value
+    // Create and dispatch a new 'change' event
+    windInputCV.dispatchEvent(new Event('change')); // Fix applied here
+    if (ballPowerCV.value !== ebsBallPowerCV.value) {
+      ballPowerCV.value = ebsBallPowerCV.value
+      // Create and dispatch a new 'change' event
+      ballPowerCV.dispatchEvent(new Event('change')); // Fix applied here
+    }
+    triggerCalcIfReady("Wedges");
+
     shortcutBar.classList.remove('hidden')
     bagsPanel.classList.remove('hidden')
     toolsPanel.classList.remove('hidden')
@@ -5561,6 +5708,49 @@ function resetClubs() {
   saveButtons.forEach(btn => btn.disabled = true);
 }
 
+/* ---------- 4. Minimal Interface ---------- */
+// const minIntModeBt/n = document.getElementById("btn_min_interface")
+// minIntModeBtn.addEvent/Listener('click', startMinInt);
+function startMinInt() {
+
+  shortcutBar.classList.add('hidden');
+  bagsPanel.classList.add('hidden');
+  toolsPanel.classList.add('hidden');
+  clubStatsPanel.classList.add('hidden');
+  saPanel.classList.add('hidden');
+  ringsPanel.classList.add('hidden');
+  const header = document.getElementById('wbHeader');
+  const clubsWrap = document.getElementById('clubsWrap');
+  header.classList.add('hidden');
+  clubsWrap.classList.add('hidden');
+  
+  const minIntPanel = document.getElementById("minIntPanel")
+  minIntPanel.classList.remove("hidden")
+}
+
+const minIntExitBtn = document.getElementById("minIntExitBtn")
+minIntExitBtn.addEventListener('click', exitMinInt);
+function exitMinInt() {
+
+  updateClubInfoTable();
+  setActiveShortCutButton(state.activeCategory);
+  
+  shortcutBar.classList.remove('hidden')
+  bagsPanel.classList.remove('hidden')
+  toolsPanel.classList.remove('hidden')
+  clubStatsPanel.classList.remove('hidden')
+  saPanel.classList.remove('hidden')
+  ringsPanel.classList.remove('hidden')
+  const header = document.getElementById('wbHeader');
+  const clubsWrap = document.getElementById('clubsWrap');
+  header.classList.remove('hidden');
+  clubsWrap.classList.remove('hidden');
+  
+
+  const minIntPanel = document.getElementById("minIntPanel")
+  minIntPanel.classList.add("hidden")
+}
+
 
 
 export {
@@ -5568,63 +5758,3 @@ export {
 };
 
 
-
-/*
-init 
-(function init(){
-  // show datalist (elevation) default already set
-  distanceVal.textContent = distanceEl.value + '%';
-  ballPowerEl.value = 0
-  setRingsDisplay('--','--','--','--','--','--','--','--');
-  
-})();
-
-
-
-/*  old EBS panel HTML structure
-
-			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
-				 <div id="ebsHeader" class="ebsPanelHeader">Endbringer School (Club Distance% --> Rings)</div>
-				 <div class="ebsPanelInfo">(To dismiss, choose a different selected club or click the "Endbringer School" button again.)</div>
-				 <div id="ebsContainer" class="ebsPanelContainer">
-				   <div id="ebsCol1" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-					 <div class="ebsColRow"><p>140% --> <span id="ebs140">---</span></p></div>
-					 <div class="ebsColRow"><p>135% --> <span id="ebs135">---</span></p></div>
-					 <div class="ebsColRow"><p>130% --> <span id="ebs130">---</span></p></div>
-					 <div class="ebsColRow"><p>125% --> <span id="ebs125">---</span></p></div>
-					 <div class="ebsColRow"><p>120% --> <span id="ebs120">---</span></p></div>
-					 <div class="ebsColRow"><p>115% --> <span id="ebs115">---</span></p></div>
-					 <div class="ebsColRow"><p>110% --> <span id="ebs110">---</span></p></div>
-				  </div>
-				  <div id="ebsCol2" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-					<div class="ebsColRow"><p>105% --> <span id="ebs105">---</span></p></div>
-					<div class="ebsColRow"><p>100% --> <span id="ebs100">---</span></p></div>
-					<div class="ebsColRow"><p>95% --> <span id="ebs95">---</span></p></div>
-					<div class="ebsColRow"><p>90% --> <span id="ebs90">---</span></p></div>
-					<div class="ebsColRow"><p>85% --> <span id="ebs85">---</span></p></div>
-					<div class="ebsColRow"><p>80% --> <span id="ebs80">---</span></p></div>
-					<div class="ebsColRow"><p>75% --> <span id="ebs75">---</span></p></div>
-				  </div>
-				  <div id="ebsCol3" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-					<div class="ebsColRow"><p>70% --> <span id="ebs70">---</span></p></div>
-					<div class="ebsColRow"><p>65% --> <span id="ebs65">---</span></p></div>
-					<div class="ebsColRow"><p>60% --> <span id="ebs60">---</span></p></div>
-					<div class="ebsColRow"><p>55% --> <span id="ebs55">---</span></p></div>
-					<div class="ebsColRow"><p>50% --> <span id="ebs50">---</span></p></div>
-					<div class="ebsColRow"><p>45% --> <span id="ebs45">---</span></p></div>
-					<div class="ebsColRow"><p>40% --> <span id="ebs40">---</span></p></div>
-				  </div>
-				  <div id="ebsCol4" class="ebsPanelColumn">
-					<div class="ebsColRow"><p>35% --> <span id="ebs35">---</span></p></div>
-					<div class="ebsColRow"><p>30% --> <span id="ebs30">---</span></p></div>
-					<div class="ebsColRow"><p>25% --> <span id="ebs25">---</span></p></div>
-					<div class="ebsColRow"><p>20% --> <span id="ebs20">---</span></p></div>
-					<div class="ebsColRow"><p>15% --> <span id="ebs15">---</span></p></div>
-					<div class="ebsColRow"><p>10% --> <span id="ebs10">---</span></p></div>
-					<div class="ebsColRow"><p>5% --> <span id="ebs5">---</span></p></div>
-				  </div>
-				</div>
-			</div>
-
-
-*/

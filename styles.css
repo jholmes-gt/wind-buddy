@@ -15,8 +15,8 @@
 	--gradientTopColor:#012c42;
 	--gradientBottomColor:#03b8f5;
 	--clubCardBG:#d1edf6;
-	--normalFontSize:clamp(0.5rem, 1rem, 2rem);
-	--hdrFontSize:clamp(0.6rem, 1.1rem, 2.2rem);
+	--normalFontSize:calc(0.9*clamp(0.9rem, 0.9vw, 1.1rem));
+	--hdrFontSize:calc(0.9*clamp(1.1rem, 1.1vw, 1.3rem));
 	--hdrHeight:calc(var(--hdrFontSize) * 1.2);
 }
 
@@ -42,6 +42,7 @@ body {
 	overflow-y: visible;
 	align-content:center;
 	font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+	height:100vh;
 }
 
 /* html, body {
@@ -229,7 +230,7 @@ border:0.0625rem solid var(--border);
 padding: 0.375rem 0.875rem;
 border-radius: 0.375rem;
 cursor: pointer;
-font-size: var(--normalFontSize);
+font-size: large;
 background:var(--gradientTopColor);
 user-select: none;
 }
@@ -451,7 +452,7 @@ header{
 
 
 .club-grid {
-	height: 90%;
+	/* height: fit-content; */
 	display: flex;
 	overflow-x: auto;
 	overflow-y: clip;
@@ -779,15 +780,13 @@ header{
 
 
 .toolsInnerPanel{
-	display:flex;
-	flex-direction:column;
+	display: contents;
+	/* flex-direction:column; */
 	background:var(--card);
 	border-radius:0.5rem;
 	border:0.0625rem solid var(--card);
-	flex-grow:1;
-	/* overflow:auto; */
-	align-items:center;
-	margin-bottom:0.1875rem;
+	align-items: baseline;
+	/* margin-bottom:0.1875rem; */
 }
 
 
@@ -852,14 +851,14 @@ tool-row{
 }
 .btn{
 	width:90%;
-	padding: 0.125rem;
-	margin: 0.375rem;
+	padding: 0px 2px 0px 2px;
+	margin: 0.3rem;
 	border-radius:0.25rem;
 	border:0.0625rem solid #c9c9c9;
 	background:#f3f4f6;
 	cursor:pointer;
 	font-size:var(--normalFontSize);
-	height:75%;
+	height: 80%;
 	white-space: nowrap;
 }
 .active{
@@ -877,7 +876,7 @@ tool-row{
 .clubInfoPanel{
 	min-width:12.5rem;
 	/* height:100%; */
-	display:flex;
+	display: flex;
 	flex-direction:column;
 	background:var(--card);
 	border-radius:0.5rem;
@@ -891,20 +890,18 @@ tool-row{
 	text-transform:uppercase;
 	font-weight:700;
 	text-align:center;
-	padding: 0 0.25rem 0 0.25rem;
+	padding: 0.1rem 0.25rem 0 0.25rem;
 	background:var(--gradientTopColor);
 	color:var(--card);
 	border-radius:0.5rem;
 }
 .club-info-grid{
-	display:flex;
-	flex-direction:column;
+	display: grid;
 	margin-left:0.75rem;
 	margin-bottom:0.3125rem;
 	background:var(--card);
 	border-radius:0.5rem;
 	border:0.0625rem solid var(--card);
-	flex-grow:1;
 	overflow:auto;
 	font-size:var(--normalFontSize);
 	padding: 0;
@@ -975,7 +972,7 @@ tool-row{
 input[type=number],select,input[list]{
 	border-radius:0.375rem;
 	border:0.0625rem solid var(--border);
-	font-size:var(--normalFontSize);
+	font-size: calc(1.3*var(--normalFontSize));
 	padding:0.25rem;
 	max-width:3.75rem;
 }
@@ -997,7 +994,7 @@ input[type=range]{
 	padding: 0.375rem 0.5rem;
 	border-radius: 0.375rem;
 	border: 0.0625rem solid var(--border);
-	min-width: 4rem;
+	width: clamp(2rem, 6vw, 3.7rem);
 }
 
 
@@ -1279,9 +1276,357 @@ input[type=number] { -moz-appearance: textfield; }
 
 
 /* <!-- _________________________________________________________________________________________________________ --> */
+								/* <!-- MINIMAL INTERFACE PANEL --> */
+/* <!-- _________________________________________________________________________________________________________   --> */
+
+.min-int-panel,
+.min-int-panel * {
+	box-sizing: border-box;
+}
+
+.min-int-panel {
+	display:flex;
+	flex-direction:column;
+	height:47.8vh;
+	background:var(--gradientTopColor);
+}
+
+.min-Int-Outside-Cont {
+	display:flex;
+	flex-direction:row;
+	flex-wrap: nowrap;
+	height:82.9%;
+	width: 100vw;
+	gap: 0.5rem;
+	padding: 2vw;
+}
+
+.minInt-SC-Btns-Row {
+	display:flex;
+	flex-direction: row;
+	height: 17.1%;
+	width: 100vw;
+	justify-content:space-evenly;
+	gap: 0.4rem;
+	margin-bottom: 0.4rem;
+	/* margin-left: 0.4rem; */
+	/* margin-right: 0.4rem; */
+}
+
+.min-Int-Left-Col, .min-Int-Right-Col {
+	display:flex;
+	flex-direction:column;
+	height: 100%;
+	width: 50%;
+	gap: 2vw;
+}
+
+.min-Int-Bags-Cont {
+	display:flex;
+	flex-direction: column;
+	border: 1px solid var(--border);
+	width:100%;
+	height:33.4%;
+	border-radius: 0.375rem;
+	/* margin/-top: 3.2%; */
+	/* margin-lef/t: 0.4%; */
+}
+
+.minInt-Bags-Label {
+    font-size: calc(1.4*var(--normalFontSize));
+    height: 40%;
+    width:98%;
+    text-decoration: underline;
+    color: var(--bg);
+    text-align: center;
+    padding:2px;
+}
+.minInt-Bags-Btns-Cont {
+	display:flex;
+	flex-wrap: nowrap;
+	justify-content:space-evenly;
+	padding: 1px;
+	gap: 2px;
+	height: 50%;
+}
+
+.minInt-Btn_bag {
+  padding: 1px;
+  border-radius: 0.1rem;
+  font-size: var(--normalFontSize);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);            /* your inactive shortcut bg */
+  color: var(--gradientTopColor);
+  user-select: none;
+  transition: 0.15s ease;
+  width:17.5%;
+  height: 92%;
+}
+
+.minInt-Btn_bag.active {
+	background: var(--gradientTopColor);
+	color:#fff;
+	border-color: #f3f4f6;
+}
+
+.minInt-SA-Inputs {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--border);
+	border-radius: 0.375rem;
+	width:100%;
+	height:66.6%;
+	justify-content:space-evenly;
+	/* margin-top: 3.2%; */
+	/* margin-left: 0.4%;/ */
+}
+
+.minInt-Wind-Row, .minInt-Elevation-Row, .minInt-BallPower-Row {
+	display:flex;
+	height:31%;
+	width: 98%;
+	justify-content: right;
+	color: var(--bg);
+	font-size: calc(1.4*var(--normalFontSize));
+	gap:1rem;
+	align-items: center;
+}
+
+.minInt-Exit-Btn {
+	border: 1px solid black;
+	border-radius: 0.375rem;
+	width:90%;
+	height:15.5%;
+	justify-self: center;
+	align-self:center;
+	background:#a3a3a5;
+	color:var(--gradientTopColor);
+    font-size: calc(1.3*var(--normalFontSize));
+	padding:2px;
+}
+
+.minInt-Rings-Display {
+	display:flex;
+	flex-direction:column;
+	height: 80.7%;
+	text-align:center;
+	justify-content:center;
+	align-content:center;
+	border:1px solid var(--border);
+	border-radius:0.5rem;
+	color:var(--border);
+	font-size: calc(1.43*var(--hdrFontSize));
+	font-weight: 700;
+	gap: 1vh;
+}
+
+#minInt_r_max, #minInt_r_75, #minInt_r_mid, #minInt_r_25, #minInt_r_min {
+	height: 20%;
+	padding: 3px;
+	width: 98%;
+	color:var(--border);
+	font-size: calc(1.43*var(--hdrFontSize));
+	font-weight: 700;
+}
+
+
+.min-sc-btn {
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: var(--normalFontSize);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);            /* your inactive shortcut bg */
+  color: var(--gradientTopColor);
+  user-select: none;
+  transition: 0.15s ease;
+  width:14vw;
+  height: 98%;
+}
+
+.min-sc-btn.active {
+	background: var(--gradientTopColor);
+	color:#fff;
+	border-color: #f3f4f6;
+	padding: 0.375rem;
+}
+
+@media (orientation: landscape) {
+.min-int-panel {
+	display:flex;
+	flex-direction:column;
+	height:47.8vh;
+	background:var(--gradientTopColor);
+}
+
+.min-Int-Outside-Cont {
+	display:flex;
+	flex-direction:row;
+	flex-wrap: nowrap;
+	height:82.9%;
+	width: 100vw;
+	gap: 0.5rem;
+	padding: 2vw;
+}
+
+.minInt-SC-Btns-Row {
+	display:flex;
+	flex-direction: row;
+	height: 17.1%;
+	width: 100vw;
+	justify-content:space-evenly;
+	gap: 0.4rem;
+	margin-bottom: 0.4rem;
+	/* margin-left: 0.4rem; */
+	/* margin-right: 0.4rem; */
+}
+
+.min-Int-Left-Col, .min-Int-Right-Col {
+	display:flex;
+	flex-direction:column;
+	height: 100%;
+	width: 50%;
+	gap: 2vw;
+}
+
+.min-Int-Bags-Cont {
+	display:flex;
+	flex-direction: column;
+	border: 1px solid var(--border);
+	width:100%;
+	height:33.4%;
+	border-radius: 0.375rem;
+	/* margin/-top: 3.2%; */
+	/* margin-lef/t: 0.4%; */
+}
+
+.minInt-Bags-Label {
+    font-size: calc(1.4*var(--normalFontSize));
+    height: 40%;
+    width:98%;
+    text-decoration: underline;
+    color: var(--bg);
+    text-align: center;
+    padding:2px;
+}
+.minInt-Bags-Btns-Cont {
+	display:flex;
+	flex-wrap: nowrap;
+	justify-content:space-evenly;
+	padding: 1px;
+	gap: 2px;
+	height: 50%;
+}
+
+.minInt-Btn_bag {
+  padding: 1px;
+  border-radius: 0.1rem;
+  font-size: var(--normalFontSize);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);            /* your inactive shortcut bg */
+  color: var(--gradientTopColor);
+  user-select: none;
+  transition: 0.15s ease;
+  width:17.5%;
+  height: 92%;
+}
+
+.minInt-Btn_bag.active {
+	background: var(--gradientTopColor);
+	color:#fff;
+	border-color: #f3f4f6;
+}
+
+.minInt-SA-Inputs {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	border: 1px solid var(--border);
+	border-radius: 0.375rem;
+	width:100%;
+	height:66.6%;
+	justify-content:space-evenly;
+	/* margin-top: 3.2%; */
+	/* margin-left: 0.4%;/ */
+}
+
+.minInt-Wind-Row, .minInt-Elevation-Row, .minInt-BallPower-Row {
+	display: flex;
+	height: 9%;
+	/* width: 98%; */
+	justify-content: center;
+	color: var(--bg);
+	font-size: calc(1.3*var(--normalFontSize));
+	gap:1rem;
+	align-items: center;
+}
+
+.minInt-Exit-Btn {
+	border: 1px solid black;
+	border-radius: 0.375rem;
+	width:90%;
+	height:15.5%;
+	justify-self: center;
+	align-self:center;
+	background:#a3a3a5;
+	color:var(--gradientTopColor);
+    font-size: calc(1.3*var(--normalFontSize));
+	padding:2px;
+}
+
+.minInt-Rings-Display {
+	display:flex;
+	flex-direction:column;
+	height: 80.7%;
+	text-align:center;
+	justify-content:center;
+	align-content:center;
+	border:1px solid var(--border);
+	border-radius:0.5rem;
+	color:var(--border);
+	font-size: calc(1*var(--hdrFontSize));
+	font-weight: 700;
+	gap: 1vh;
+}
+
+#minInt_r_max, #minInt_r_75, #minInt_r_mid, #minInt_r_25, #minInt_r_min {
+	height: 20%;
+	padding: 3px;
+	width: 98%;
+	color:var(--border);
+	font-size: calc(1*var(--hdrFontSize));
+	font-weight: 700;
+}
+
+
+.min-sc-btn {
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: var(--normalFontSize);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg);            /* your inactive shortcut bg */
+  color: var(--gradientTopColor);
+  user-select: none;
+  transition: 0.15s ease;
+  width:14vw;
+  height: 98%;
+}
+
+.min-sc-btn.active {
+	background: var(--gradientTopColor);
+	color:#fff;
+	border-color: #f3f4f6;
+	padding: 0.375rem;
+}
+
+}
+
+/* <!-- _________________________________________________________________________________________________________ --> */
 								/* <!-- MISC. --> */
 /* <!-- _________________________________________________________________________________________________________   --> */
-/* responsive / aesthetics */
 
 
 .club-grid::-webkit-scrollbar{

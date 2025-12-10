@@ -10,7 +10,8 @@ import {
     createUserWithEmailAndPassword,
     signInWithPopup,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    sendEmailVerification
 } from "./firebase-init.js";
 
 import {
@@ -41,33 +42,116 @@ const passwordField = document.getElementById("loginPassword");
 loginBtn.onclick = () => loginModal.classList.remove("hidden");
 loginClose.onclick = () => loginModal.classList.add("hidden");
 
-// ----------------------------------------
-// Email Login
-// ----------------------------------------
 
-emailLoginBtn.onclick = async () => {
-    try {
-        await signInWithEmailAndPassword(auth, emailField.value, passwordField.value);
-        loginModal.classList.add("hidden");
-        showToast("Signed in!", 5000);
-    } catch (err) {
-        showToast(err.message, 5000);
-    }
-};
-
-// ----------------------------------------
-// Email Signup
-// ----------------------------------------
+// ------------------------------
+// FIREBASE EMAIL/PASSWORD SIGNUP
+// ------------------------------
 
 emailSignupBtn.onclick = async () => {
-    try {
-        await createUserWithEmailAndPassword(auth, emailField.value, passwordField.value);
-        loginModal.classList.add("hidden");
-        showToast("Account created!", 5000);
-    } catch (err) {
-        showToast(err.message, 5000);
-    }
+  try {
+    const userCred = await createUserWithEmailAndPassword(
+      auth,
+      emailField.value,
+      passwordField.value
+    );
+
+    // Send verification email
+    await sendEmailVerification(userCred.user);
+    loginModal.classList.add("hidden");
+    alert("Account created! Please check your email and verify your account before signing in.");
+    await auth.signOut();
+  } catch (error) {
+    console.error("Create account with user/password error:", error);
+    alert("There was an error creating your account. Please try again.");
+  };
 };
+
+// ------------------------------
+// EMAIL LOGIN (BLOCK IF UNVERIFIED)
+// ------------------------------
+
+emailLoginBtn.onclick = async () => {
+  try {
+    const userCred = await signInWithEmailAndPassword(
+      auth,
+      emailField.value,
+      passwordField.value
+    );
+    
+    loginModal.classList.add("hidden");
+    // REFRESH user data to check verification state
+    await userCred.user.reload();
+
+    if (!userCred.user.emailVerified) {
+      resendVerificationEmail();
+      await auth.signOut();
+      showVerifyModal();
+      return;
+    }
+
+    showToast("Signed in!", 5000);
+
+  } catch (err) {
+    showToast(err.message, 5000);
+  }
+};
+
+// ------------------------------
+// RESEND VERIFICATION EMAIL
+// (called by account menu)
+// ------------------------------
+
+async function resendVerificationEmail() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  await sendEmailVerification(user);
+  showToast("Verification email resent!", 5000);
+}
+
+// ------------------------------
+// VERIFICATION MODAL
+// ------------------------------
+
+function showVerifyModal() {
+  const verifyBox = document.getElementById("verifyModal");
+  verifyBox.classList.remove("hidden");
+}
+
+document.getElementById("verifyModalClose").onclick = () => {
+  document.getElementById("verifyModal").classList.add("hidden");
+};
+
+
+
+
+// ------------------------------
+// AUTH STATE LISTENER
+// ------------------------------
+
+onAuthStateChanged(auth, async () => {
+  const user = auth.currentUser
+  if (!user) {
+    loginBtn.classList.remove("hidden");
+    menuSignOut.classList.add("hidden");
+    return;
+  }
+
+  // Google users are always verified
+//   const provider = user.providerData[0]?.providerId;
+//   if (provider === "password") {
+//     await user.reload();
+//     if (!user.emailVerified) {
+//       await auth.signOut();
+//       showVerifyModal();
+//       return;
+//     }
+//   }
+
+  loginBtn.classList.add("hidden");
+  menuSignOut.classList.remove("hidden");
+});
+
 
 // ----------------------------------------
 // Google Login
@@ -92,20 +176,6 @@ menuSignOut.onclick = async () => {
     showToast("Sign out successful!<br>See you next time!", 5000);
     resetClubs();
 };
-
-// ----------------------------------------
-// Auth State Listener
-// ----------------------------------------
-
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        loginBtn.classList.add("hidden");
-        menuSignOut.classList.remove("hidden");
-    } else {
-        menuSignOut.classList.add("hidden");
-        loginBtn.classList.remove("hidden");
-    }
-});
 
 
 /* ----------------------------
@@ -142,6 +212,7 @@ function showToast(message, duration = 3000) {
 
 
 export {
-  showToast
+  showToast,
+  resendVerificationEmail
 };
 
