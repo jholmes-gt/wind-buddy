@@ -206,9 +206,9 @@
 				</div>
 				<!-- CLUB DISTANCE -->
 				<div class="sa_row">
-					<label for="clubDistance" style="margin-left:5px;width:28%">Club Distance</label>
-					<div class="tooltip-wrapper" style="width:63%">
-						<input id="clubDistance" type="range" style="width:100%" min="1" max="100" value="100">
+					<label for="clubDistance" style="margin-left:5px;margin-right:0.5rem;width:28%">Club Distance</label>
+					<div class="tooltip-wrapper" style="width:57%">
+						<input id="clubDistance" type="range" style="width: 95%; margin-left:2px" min="1" max="100" value="100">
 						<div class="tooltip" role="status" aria-hidden="true">
 							Club distance can be set by the slider or entering a value between 0 - 100 in the input box beside the slider.
 						</div>
@@ -226,17 +226,19 @@
 			</div>
   
 	  		<!-- RINGS PANEL -->
-			<div id="ringsPanel" class="panel ring-card" style="min-width:220px;">
+			<div id="ringsPanel" class="panel ring-card">
 			    <h4>Rings to Adjust</h4>
-				<div class="rings-main" id="ringsMain">--</div>
-				<div class="rings-sub">
-					<div>Max: <span id="r_max">--</span></div>
-					<div>75%: <span id="r_75">--</span></div>
-					<div>Mid: <span id="r_mid">--</span></div>
-					<div>25%: <span id="r_25">--</span></div>
-					<div>Min: <span id="r_min">--</span></div>
+				<div class="rings-Info-Cont">
+					<div class="rings-main" id="ringsMain">--</div>
+					<div class="rings-sub">
+						<div>Max: <span id="r_max">--</span></div>
+						<div>75%: <span id="r_75">--</span></div>
+						<div>Mid: <span id="r_mid">--</span></div>
+						<div>25%: <span id="r_25">--</span></div>
+						<div>Min: <span id="r_min">--</span></div>
+					</div>
+					<div class="active-club" id="active_club">--</div>
 				</div>
-				<div class="active-club" id="active_club">--</div>
 			</div>
 
 			<!-- Endbringer School panel (hidden initially) -->

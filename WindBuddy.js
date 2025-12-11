@@ -4351,9 +4351,9 @@ const clubGrid = document.getElementById('clubGrid');
 for (const [cat, clubs] of Object.entries(clubCats)) {
   const catContainer = document.createElement('div');
   catContainer.className = 'category-container';
-  const title = document.createElement('div');
+  const title = document.createElement('h4');
   title.textContent = cat.replace(/_/g,' ');
-  title.className = 'category-header'
+  title.className = 'cat-H4s';
   catContainer.appendChild(title);
 	
   const panel = document.createElement('div');
@@ -5404,6 +5404,7 @@ infoModal.addEventListener("click", (e) => {
   ebsStartBtn.addEventListener('click', () => {
     const category = "Wedges";
     if (!state.selected[category] || !state.selected[category].club || !state.selected[category].level){
+      window.scrollTo(0,0);
       showToast("You must select a Wedge club and level before starting Endbringer School mode.", 5000);
       return;
     }
