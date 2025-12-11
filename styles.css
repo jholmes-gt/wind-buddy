@@ -811,7 +811,7 @@ tool-row{
 /* <!-- _________________________________________________________________________________________________________ --> */
 
 .clubInfoPanel{
-	/* min-width:12.5rem; */
+	min-width: 10rem;
 	/* height:100%; */
 	display: flex;
 	flex-direction:column;
@@ -823,14 +823,14 @@ tool-row{
 	display: flex;
 	flex-direction: column;
 	/* margin-left: 1px; */
-	margin-top: 0.4125rem;
+	/* margin-top: 0.4125rem; */
 	background:var(--card);
 	/* border-radius:0.5rem; */
-	font-size: calc(1.05*var(--normalFontSize));
+	font-size: calc(1.01*var(--normalFontSize));
 	text-align: center;
 	gap: clamp(0.25rem, 1vh, 0.75rem);
 	align-items: center;
-	padding: 0.3rem;
+	padding: 0.7rem;
 	justify-content: space-evenly;
 	/* height:98%; */
 	/* width: 98%; */
