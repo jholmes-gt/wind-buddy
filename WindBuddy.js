@@ -206,7 +206,7 @@ onAuthStateChanged(auth, async () => {
     menuChangePassword.style.display = "none";
     menuResendVerify.style.display = "none"; // Google never needs verify
   }
-  accountUserName.textContent = username;
+  accountUserName.textContent = username + " ▼";
   // USER VERIFIED → Load app data
   loadBallPower(user.uid);
   loadLastBag(user.uid);
@@ -272,6 +272,7 @@ async function changePasswordHandler(user) {
   await checkWhichBagsExist();
   sendPasswordResetEmail(auth, email)
   .then(() => {
+    window.scroll(0,0)
     showToast("A password reset email has been sent to " + email, 5000);
   })
   .catch((error) => {
@@ -299,6 +300,7 @@ menuResetAppData.addEventListener("click",  async () => {
             await reauthenticateWithPopup(user, googleProvider);
             await resetUserDataAsyncHandler(user);
           }
+        window.scroll(0,0)
         showToast("Your account has been reset.", 5000);
       } catch (error) {
           console.error("Error during account reset process:", error);
@@ -379,6 +381,7 @@ menuDeleteAccount.addEventListener("click", async () => {
             await reauthenticateWithPopup(user, googleProvider);
             await deleteUser(user);
           }
+        window.scroll(0,0)
         showToast("Your account has been deleted.", 5000);
         resetClubs();
       } catch (error) {
@@ -413,9 +416,11 @@ reauthSubmitBtn.addEventListener("click", async () => {
     if (reauthAction === "deleteAccount") {
       await resetUserDataAsyncHandler(user);
       await deleteUser(user);
+      window.scroll(0,0)
       showToast("Your account has been deleted.", 5000);
     }else if (reauthAction === "resetAppData") {
       await resetUserDataAsyncHandler(user);
+      window.scroll(0,0)
       showToast("Your account has been reset.", 5000);
     }else if (reauthAction === "changePassword") {
       await changePasswordHandler(user);
@@ -4701,6 +4706,7 @@ async function loadBagFromFirestore(bagIndex) {
     const snap = await getDoc(ref);
 
     if (!snap.exists()) {
+        window.scroll(0,0)
         showToast(`No saved clubs found for Bag ${bagIndex}.`, 4000);
         loadingGolfBag = false;
         return;
@@ -5559,6 +5565,7 @@ async function clearTournamentNotes(uid, id, tab) {
 
 async function openTournamentNotes(id) {
     if (!auth.currentUser) {
+        window.scroll(0,0)
         showToast("Please sign in to use Tournament Notes.", 4000);
         return;
     }
@@ -5629,6 +5636,7 @@ async function openTournamentNotes(id) {
         await clearTournamentNotes(uid, id, activeTab);
         const newData = await loadTournamentData(uid, id);
         renderNotes(id, activeTab, newData);
+        window.scroll(0,0)
         showToast("Notes cleared.", 2000);
     };
 
@@ -5725,7 +5733,7 @@ function startMinInt() {
   header.classList.add('hidden');
   clubsWrap.classList.add('hidden');
   
-  const minIntPanel = document.getElementById("minIntPanel")
+  const minIntPanelCont = document.getElementById("minIntPanelCont")
   minIntPanel.classList.remove("hidden")
 }
 

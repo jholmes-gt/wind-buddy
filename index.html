@@ -19,38 +19,42 @@
 
 <div class="app">
 
-<header id="wbHeader" class="wb-header">
-  <div class="wb-header-inner">
+	<header id="wbHeader" class="wb-header">
+	<div class="wb-header-inner">
 
-    <!-- Left: Logo -->
-    <div class="wb-logo">
-    	<img src="3_in_1_with_subtitle.png" alt="Wind Buddy Logo">
-    </div>
+		<!-- Left: Logo -->
+		<div class="wb-logo">
+			<img src="wbLogo.png" alt="Wind Buddy Logo">
+		</div>
 
-	<!-- Middle: Toast Container -->
-    <div id="toastContainer" class="toast-container"></div>
+		<!-- Middle: Page Subtitle and Toast Container -->
+		<div id="headerMid" class="header-Mid">
+			<span id="subTitle" class="sub-Title">The #1 browser based Golf Clash ring calculator on the web!</span>
+			<div id="toastContainer" class="toast-container"></div>
+		</div>
 
-    <!-- Right: Account menu -->
-    <div class="wb-account">
-      <button id="loginBtn" class="auth-btn">Sign In</button>
+		<!-- Right: Account menu -->
+		<div class="wb-account">
+		<button id="loginBtn" class="auth-btn">Sign In</button>
 
-      <div id="accountMenuContainer" class="account-wrapper hidden">
-        <div id="accountMenuTrigger" class="account-trigger">
-          Logged in as: <br><span id="accountUserName"></span> ▼
-        </div>
+		<div id="accountMenuContainer" class="account-wrapper hidden">
+			<div id="accountMenuTrigger" class="account-trigger">
+				<span>Logged in as:&nbsp</span>
+				<span id="accountUserName"></span>
+			</div>
 
-        <div id="accountDropdown" class="dropdown hidden">
-			<div id="menuResendVerify" class="dropdown-item">Resend verification email</div>
-			<div id="menuChangePassword" class="dropdown-item">Change Password</div>
-        	<div id="menuResetAppData" class="dropdown-item danger">Reset All App Data</div>
-        	<div id="menuDeleteAccount" class="dropdown-item danger">Delete Account</div>
-        	<div id="menuSignOut" class="dropdown-item signout">Sign Out</div>
-        </div>
-      </div>
-    </div>
+			<div id="accountDropdown" class="dropdown hidden">
+				<div id="menuResendVerify" class="dropdown-item">Resend verification email</div>
+				<div id="menuChangePassword" class="dropdown-item">Change Password</div>
+				<div id="menuResetAppData" class="dropdown-item danger">Reset All App Data</div>
+				<div id="menuDeleteAccount" class="dropdown-item danger">Delete Account</div>
+				<div id="menuSignOut" class="dropdown-item signout">Sign Out</div>
+			</div>
+		</div>
+		</div>
 
-  </div>
-</header>
+	</div>
+	</header>
 
 	<!-- LOGIN MODAL -->
 	<div id="loginModal" class="modal hidden">
@@ -304,86 +308,54 @@
 			</div>
 
 			<!-- MINIMAL INTERFACE PANEL (hidden initially)-->
-			<div id="minIntPanel" class="min-int-panel hidden">
-				<div id="minIntOutsideCont" class="min-Int-Outside-Cont">
-					<div id="minIntLeftCol" class="min-Int-Left-Col">
-						<div id="minIntBagsCont" class="min-Int-Bags-Cont">
-							<span id="minIntBagsLabel" class="minInt-Bags-Label">Golf Bags</span>
-							<div id="minIntBagsBtnsCont" class="minInt-Bags-Btns-Cont">
-								<button id="minIntBtn_bag1" class="minInt-Btn_bag">1</button>
-								<button id="minIntBtn_bag2" class="minInt-Btn_bag">2</button>
-								<button id="minIntBtn_bag3" class="minInt-Btn_bag">3</button>
-								<button id="minIntBtn_bag4" class="minInt-Btn_bag">4</button>
-								<button id="minIntBtn_bag5" class="minInt-Btn_bag">5</button>
+			<div id="minIntPanelCont" class="hidden">
+				<div id="minIntPanel" class="min-int-panel hidden">
+					<div id="minIntOutsideCont" class="min-Int-Outside-Cont">
+						<div id="minIntLeftCol" class="min-Int-Left-Col">
+							<div id="minIntBagsCont" class="min-Int-Bags-Cont">
+								<span id="minIntBagsLabel" class="minInt-Bags-Label">Golf Bags</span>
+								<div id="minIntBagsBtnsCont" class="minInt-Bags-Btns-Cont">
+									<button id="minIntBtn_bag1" class="minInt-Btn_bag">1</button>
+									<button id="minIntBtn_bag2" class="minInt-Btn_bag">2</button>
+									<button id="minIntBtn_bag3" class="minInt-Btn_bag">3</button>
+									<button id="minIntBtn_bag4" class="minInt-Btn_bag">4</button>
+									<button id="minIntBtn_bag5" class="minInt-Btn_bag">5</button>
+								</div>
+							</div>
+							<div id="minIntSAInputs" class="minInt-SA-Inputs">
+								<div id="minIntWindRow" class="minInt-Wind-Row">
+									<label for="minIntWindInput">Wind</label>
+									<input id="minIntWindInput" type="number" step="0.1" value="0.0">
+								</div>	
+								<div id="minIntBallPowerRow" class="minInt-BallPower-Row">
+									<label for="minIntBallPower">Ball Power</label>
+									<select id="minIntBallPower"><option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select>
+								</div>	
+								<div id="minIntElevationRow" class="minInt-Elevation-Row">
+									<label for="minIntElevation">Elevation</label>
+									<input id="minIntElevation" type="number" value="10" step="5">
+									<!-- <datalist id="minIntElevList">
+										<option value="-65">-65</option><option value="-60">-60</option><option value="-55">-55</option><option value="-50">-50</option><option value="-45">-45</option><option value="-40">-40</option><option value="-35">-35</option><option value="-30">-30</option><option value="-25">-25</option><option value="-20">-20</option><option value="-15">-15</option><option value="-10">-10</option><option value="-5">-5</option><option value="0">0</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option><option value="60">60</option><option value="65">65</option>
+									</datalist> -->
+								</div>
 							</div>
 						</div>
-						<div id="minIntSAInputs" class="minInt-SA-Inputs">
-							<div id="minIntWindRow" class="minInt-Wind-Row">
-								<label for="minIntWindInput">Wind</label>
-								<input id="minIntWindInput" type="number" step="0.1" value="0.0">
-							</div>	
-							<div id="minIntBallPowerRow" class="minInt-BallPower-Row">
-								<label for="minIntBallPower">Ball Power</label>
-								<select id="minIntBallPower"><option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select>
-							</div>	
-							<div id="minIntElevationRow" class="minInt-Elevation-Row">
-								<label for="minIntElevation">Elevation</label>
-								<input id="minIntElevation" type="number" value="10" step="5">
-								<!-- <datalist id="minIntElevList">
-									<option value="-65">-65</option><option value="-60">-60</option><option value="-55">-55</option><option value="-50">-50</option><option value="-45">-45</option><option value="-40">-40</option><option value="-35">-35</option><option value="-30">-30</option><option value="-25">-25</option><option value="-20">-20</option><option value="-15">-15</option><option value="-10">-10</option><option value="-5">-5</option><option value="0">0</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option><option value="60">60</option><option value="65">65</option>
-								</datalist> -->
+						<div id="minIntRightCol" class="min-Int-Right-Col">
+							<button id="minIntExitBtn" class="minInt-Exit-Btn">Exit Min Interface</button>
+							<div id="minIntRingsDisplay" class="minInt-Rings-Display">
+								<div>Max: <span id="minInt_r_max">--</span></div>
+								<div>75%: <span id="minInt_r_75">--</span></div>
+								<div>Mid: <span id="minInt_r_mid">--</span></div>
+								<div>25%: <span id="minInt_r_25">--</span></div>
+								<div>Min: <span id="minInt_r_min">--</span></div>
 							</div>
 						</div>
 					</div>
-					<div id="minIntRightCol" class="min-Int-Right-Col">
-						<button id="minIntExitBtn" class="minInt-Exit-Btn">Exit Min Interface</button>
-						<div id="minIntRingsDisplay" class="minInt-Rings-Display">
-							<div>Max: <span id="minInt_r_max">--</span></div>
-							<div>75%: <span id="minInt_r_75">--</span></div>
-							<div>Mid: <span id="minInt_r_mid">--</span></div>
-							<div>25%: <span id="minInt_r_25">--</span></div>
-							<div>Min: <span id="minInt_r_min">--</span></div>
-						</div>
+					<div id="minIntSCBtnsRow" class="minInt-SC-Btns-Row">
+					
 					</div>
-				</div>
-				<div id="minIntSCBtnsRow" class="minInt-SC-Btns-Row">
-				
 				</div>
 			</div>	
-					<!-- <label for="windInput">Wind (mph)</label> -->
-					<!-- <div class="tooltip-wrapper">
-						<input id="windInput" type="number" step="0.1" value="0.0">
-						<div class="tooltip windTooltip" role="status" aria-hidden="true" style="font-weight: normal;">
-							Type 3 digits (no dot) for the wind (example: type 087 for 8.7 and 125 for 12.5)
-						</div>
-					</div>
-				</div>
-				!-- BALL POWER 
-				<div class="sa_row">
-				<label for="ballPower">Ball Power</label>
-				<select id="ballPower"><option value=0 selected>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option></select>
-				</div>
-				!-- CLUB DISTANCE --
-				<div class="sa_row">
-					<label for="clubDistance" style="margin-left:5px;width:28%">Club Distance</label>
-					<div class="tooltip-wrapper" style="width:63%">
-						<input id="clubDistance" type="range" style="width:100%" min="1" max="100" value="100">
-						<div class="tooltip" role="status" aria-hidden="true">
-							Club distance can be set by the slider or entering a value between 0 - 100 in the input box beside the slider.
-						</div>
-					</div>
-					<input id="clubDistanceVal" type="number" step="1" value="100" style="margin-right:2px;width:9%">
-				</div>
-				!-- ELEVATION --
-				<div class="sa_row">
-					<label for="elevation">Elevation (%)</label>
-					<input list="elevList" id="elevation" type="number" value="10" step="5" style="width:82px">
-					<datalist id="elevList">
-						<option value="-65">-65</option><option value="-60">-60</option><option value="-55">-55</option><option value="-50">-50</option><option value="-45">-45</option><option value="-40">-40</option><option value="-35">-35</option><option value="-30">-30</option><option value="-25">-25</option><option value="-20">-20</option><option value="-15">-15</option><option value="-10">-10</option><option value="-5">-5</option><option value="0">0</option><option value="5">5</option><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="35">35</option><option value="40">40</option><option value="45">45</option><option value="50">50</option><option value="55">55</option><option value="60">60</option><option value="65">65</option>
-					</datalist>
-				</div>
-			</div> -->
-
 
 			<!-- SHORTCUT BUTTONS -->
 			<div class="shortcut-bar" id="shortcutBar">

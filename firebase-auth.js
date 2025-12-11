@@ -88,10 +88,11 @@ emailLoginBtn.onclick = async () => {
       showVerifyModal();
       return;
     }
-
+    window.scroll(0,0)
     showToast("Signed in!", 5000);
 
   } catch (err) {
+    window.scroll(0,0)
     showToast(err.message, 5000);
   }
 };
@@ -106,6 +107,7 @@ async function resendVerificationEmail() {
   if (!user) return;
 
   await sendEmailVerification(user);
+  window.scroll(0,0)
   showToast("Verification email resent!", 5000);
 }
 
@@ -161,8 +163,10 @@ googleLoginBtn.onclick = async () => {
     try {
         await signInWithPopup(auth, googleProvider);
         loginModal.classList.add("hidden");
+        window.scroll(0,0)
         showToast("Signed in with Google!", 5000);
     } catch (err) {
+        window.scroll(0,0)
         showToast(err.message, 5000);
     }
 };
@@ -173,6 +177,7 @@ googleLoginBtn.onclick = async () => {
 
 menuSignOut.onclick = async () => {
     await signOut(auth);
+    window.scroll(0,0)
     showToast("Sign out successful!<br>See you next time!", 5000);
     resetClubs();
 };
