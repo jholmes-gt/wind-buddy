@@ -135,6 +135,8 @@ function setBallPower(value) {
     value = Math.max(0, Math.min(10, Number(value)));
     ballPowerCV.value = String(value);
     ballPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
+    minIntBallPowerCV.value = String(value);
+    minIntBallPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 // UI Elements
@@ -4312,11 +4314,16 @@ const r_mid = document.getElementById('r_mid');
 const r_min = document.getElementById('r_min');
 const r_25 = document.getElementById('r_25');
 const r_75 = document.getElementById('r_75');
-const minInt_r_max = document.getElementById('minInt_r_max');
-const minInt_r_mid = document.getElementById('minInt_r_mid');
-const minInt_r_min = document.getElementById('minInt_r_min');
-const minInt_r_25 = document.getElementById('minInt_r_25');
-const minInt_r_75 = document.getElementById('minInt_r_75');
+const minInt_r_max_Port = document.getElementById('minInt_r_max_Port');
+const minInt_r_mid_Port = document.getElementById('minInt_r_mid_Port');
+const minInt_r_min_Port = document.getElementById('minInt_r_min_Port');
+const minInt_r_25_Port = document.getElementById('minInt_r_25_Port');
+const minInt_r_75_Port = document.getElementById('minInt_r_75_Port');
+const minInt_r_max_Land = document.getElementById('minInt_r_max_Land');
+const minInt_r_mid_Land = document.getElementById('minInt_r_mid_Land');
+const minInt_r_min_Land = document.getElementById('minInt_r_min_Land');
+const minInt_r_25_Land = document.getElementById('minInt_r_25_Land');
+const minInt_r_75_Land = document.getElementById('minInt_r_75_Land');
 const tournButtons = [];
 for (let i = 1; i <= 3; i++) {
     tournButtons.push(document.getElementById(`btn_tourn${i}`));
@@ -4330,6 +4337,7 @@ console.log("Viewport height " + clientHeight)
 
 
 let endbringerMode = false;
+let  minIntMode=false;
 let clubsShowing = true;
 let clubsShowingB4EBMode;
 
@@ -4496,14 +4504,20 @@ function selectLevel(cat,level){
 }
 function updateShortcut(cat){
   const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
+  const minIntbtn=document.querySelector(`.min-sc-btn[data-cat="${cat}"]`);
   const sel=state.selected[cat];
   if(sel && sel.club && sel.level){
     btn.classList.add('enabled');
+    minIntbtn.classList.add('enabled');
     btn.textContent=`${sel.club.replace(/_/g,' ')} (Level ${sel.level})`;
+    minIntbtn.textContent=`${clubShortNames[sel.club]}`;
   }else{
     btn.classList.remove('active');
     btn.textContent=cat.replace(/_/g,' ');
     btn.classList.remove('enabled');
+    minIntbtn.classList.remove('active');
+    minIntbtn.textContent=minIntLabels[cat];
+    minIntbtn.classList.remove('enabled');
   }
 }
 function refreshLevelButtons(cat){
@@ -4530,8 +4544,11 @@ function refreshLevelButtons(cat){
 }
 function setActiveShortCutButton(cat){
   document.querySelectorAll('.shortcut-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.min-sc-btn').forEach(x=>x.classList.remove('active'));
   const btn=document.querySelector(`.shortcut-btn[data-cat="${cat}"]`);
+  const minIntbtn=document.querySelector(`.min-sc-btn[data-cat="${cat}"]`);
   if(btn)btn.classList.add('active');
+  if(minIntbtn)minIntbtn.classList.add('active');
   state.activeCategory=cat;
 }
 
@@ -4543,12 +4560,14 @@ function setActiveShortCutButton(cat){
 const bagCount = 5;
 const saveButtons = [];
 const loadButtons = [];
+const minIntloadButtons = [];
 let activeBagNumber = null;
 let loadingGolfBag = false;
 
 // Create save/load arrays
 for (let i = 1; i <= bagCount; i++) {
     loadButtons.push(document.getElementById(`btn_bag${i}`));
+    minIntloadButtons.push(document.getElementById(`minIntBtn_bag${i}`));
     saveButtons.push(document.getElementById(`btn_bag${i}_save`));
 }
 
@@ -4621,8 +4640,10 @@ async function checkWhichBagsExist() {
 
         if (snap.exists()) {
             loadButtons[i - 1].disabled = false;
+            minIntloadButtons[i - 1].disabled = false;
         } else {
             loadButtons[i - 1].disabled = true;
+            minIntloadButtons[i - 1].disabled = true;
         }
     }
 }
@@ -4728,6 +4749,8 @@ async function loadBagFromFirestore(bagIndex) {
     activeBagNumber = bagIndex;
     document.querySelectorAll(".smaller-btn").forEach(b => b.classList.remove("selected"));
     document.getElementById("btn_bag" + bagIndex).classList.add("selected");
+    document.querySelectorAll(".minInt-Btn_bag").forEach(b => b.classList.remove("selected"));
+    document.getElementById("minIntBtn_bag" + bagIndex).classList.add("selected");
 
     saveLastBagIndex(uid, bagIndex)
     saveButtons.forEach(btn => btn.disabled = false);
@@ -4736,6 +4759,8 @@ async function loadBagFromFirestore(bagIndex) {
 
     const driversScBtn = document.getElementById(`Drivers-shortcut-btn`);
     if (driversScBtn) driversScBtn.click();
+    const minIntdriversScBtn = document.getElementById(`Drivers-minInt-shortcut-btn`);
+    if (minIntdriversScBtn) minIntdriversScBtn.click();
     //triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
     //updateClubInfoTable();
 
@@ -4744,9 +4769,11 @@ async function loadBagFromFirestore(bagIndex) {
 //Event Listeners for Load and Save bag buttons
 for (let i = 1; i <= bagCount; i++) {
     const loadBtn = loadButtons[i - 1];
+    const minIntloadBtn = minIntloadButtons[i - 1];
     const saveBtn = saveButtons[i - 1];
 
     loadBtn.addEventListener("click", () => loadBagFromFirestore(i));
+    minIntloadBtn.addEventListener("click", () => loadBagFromFirestore(i));
     saveBtn.addEventListener("click", () => saveBagToFirestore(i));
 }
 
@@ -4896,24 +4923,41 @@ function triggerCalcIfReady(category){
 	  }
 		return;
 	};
-    
-  const wind = parseFloat(windInputCV.value) || 0;
-  const elevation = parseFloat(elevationCV.value) || 0;
-  const ballPower = parseInt(ballPowerCV.value)
-  const club_distance = parseFloat(distanceSliderCV.value) || 100;
+  
   const catData = windData[category];
   const club = sel.club
   const level = sel.level
-  
-  if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
-    const wind_per_ring = catData[sel.club][sel.level];
-    const res = calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring });
-    setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
-	  return;
+
+  if (minIntMode){
+    const wind = parseFloat(minIntWindInputCV.value);
+    const elevation = parseFloat(minIntElevationCV.value);
+    const ballPower = parseInt(minIntBallPowerCV.value);
+	  const club_distance = 100;
+    if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
+      const wind_per_ring = catData[sel.club][sel.level];
+       const res = calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring });
+       setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
+	     return;
+    }
+    else
+        setRingsDisplay('--','--','--','--','--','--','--','--');
+    return
+  }
+  else{
+    const wind = parseFloat(windInputCV.value) || 0;
+    const elevation = parseFloat(elevationCV.value) || 0;
+    const ballPower = parseInt(ballPowerCV.value)
+    const club_distance = parseFloat(distanceSliderCV.value) || 100;
+    if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
+        const wind_per_ring = catData[sel.club][sel.level];
+        const res = calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring });
+        setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
+	       return;
+    }
+    else
+         setRingsDisplay('--','--','--','--','--','--','--','--');
+    return
   };
-  
-  setRingsDisplay('--','--','--','--','--','--','--','--');
-	return
 }
 
 function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
@@ -4966,57 +5010,67 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
   
   if (isNaN(max)){
     r_max.textContent = max;
-    minInt_r_max.textContent = max;
+    minInt_r_max_Port.textContent = max;
+    minInt_r_max_Land.textContent = max;
   }
   else{
     varry = parseFloat(max);
     const fixed_max = varry.toFixed(1);
     r_max.textContent = fixed_max;
-    minInt_r_max.textContent = fixed_max;
+    minInt_r_max_Port.textContent = fixed_max;
+    minInt_r_max_Land.textContent = fixed_max;
   };
   
   if (isNaN(mid)) {
      r_mid.textContent = mid;
-     minInt_r_mid.textContent = mid;
+    minInt_r_mid_Port.textContent = mid;
+    minInt_r_mid_Land.textContent = mid;
   }
   else{
     varry = parseFloat(mid);
     const fixed_mid = varry.toFixed(1);
     r_mid.textContent = fixed_mid;
-    minInt_r_mid.textContent = fixed_mid;
+    minInt_r_mid_Port.textContent = fixed_mid;
+    minInt_r_mid_Land.textContent = fixed_mid;
   };
 
   if (isNaN(min)) {
      r_min.textContent = min;
-     minInt_r_min.textContent = min;
+     minInt_r_min_Port.textContent = min;
+     minInt_r_min_Land.textContent = min;
   }
   else{
     varry = parseFloat(min);
     const fixed_min = varry.toFixed(1);
     r_min.textContent = fixed_min;
-    minInt_r_min.textContent = fixed_min;
+    minInt_r_min_Port.textContent = fixed_min;
+    minInt_r_min_Land.textContent = fixed_min;
   };
 
   if (isNaN(p25)) {
      r_25.textContent = p25;
-     minInt_r_25.textContent = p25;
+     minInt_r_25_Port.textContent = p25;
+     minInt_r_25_Land.textContent = p25;
   }
   else{
     varry = parseFloat(p25);
     const fixed_p25 = varry.toFixed(1);
     r_25.textContent = fixed_p25;
-    minInt_r_25.textContent = fixed_p25;
+    minInt_r_25_Land.textContent = fixed_p25;
+    minInt_r_25_Port.textContent = fixed_p25;
   };
 
   if (isNaN(p75)) {
      r_75.textContent = p75;
-     minInt_r_75.textContent = p75;
+     minInt_r_75_Port.textContent = p75;
+     minInt_r_75_Land.textContent = p75;
   }
   else{
     varry = parseFloat(p75);
     const fixed_p75 = varry.toFixed(1);
     r_75.textContent = fixed_p75;
-    minInt_r_75.textContent = fixed_p75;
+    minInt_r_75_Port.textContent = fixed_p75;
+    minInt_r_75_Land.textContent = fixed_p75;
   };
   
   if (activeClubLabel) {
@@ -5062,6 +5116,22 @@ ballPowerCV.addEventListener("change", async () => {
 
 ebsBallPowerCV.addEventListener("change", async () => {
     ballPowerCV.value = ebsBallPowerCV.value
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const bp = parseInt(ebsBallPowerCV.value);
+    try {
+        await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
+            ballPower: bp
+        }, { merge: true });
+    } catch (err) {
+        console.error("Failed to save ball power:", err);
+    }
+});
+
+minIntBallPowerCV.addEventListener("change", async () => {
+    ballPowerCV.value = minIntBallPowerCV.value
 
     const user = auth.currentUser;
     if (!user) return;
@@ -5157,6 +5227,7 @@ windInputCV.addEventListener('input', () => {
   if (cat && state.selected[cat] && state.selected[cat].club && state.selected[cat].level) {
     triggerCalcIfReady(cat);
   }  
+  minIntWindInputCV.value = windInputCV.value
 });
 
 
@@ -5207,6 +5278,54 @@ ebsWindInputCV.addEventListener('input', () => {
 });
 
 
+/* minInt version of wind input rule*/
+minIntWindInputCV.addEventListener('input', () => {
+  const cat = state.activeCategory;
+  const v = minIntWindInputCV.value;
+  if (v === '') return;
+  
+  const vLength = v.length;
+  
+  if (vLength === 1) {
+	triggerCalcIfReady(cat);
+	return;
+  };
+  
+  if (!v.includes('.')) {
+    const n = parseFloat(v);
+    if (isNaN(n)) return 
+    minIntWindInputCV.value = (n/10).toFixed(1);    
+  } else {
+    // has decimal: use string length logic to determine where decimal should be 
+    const n = v;
+	const nAsString = n.toString()
+    if (isNaN(n)) return
+    const nLength = nAsString.length;
+	if (nLength === 3)
+	    if (n < 10)
+          minIntWindInputCV.value = (n*10).toFixed(1);
+		else
+		    minIntWindInputCV.value = n.toFixed(1);
+        
+	if (nLength === 4)
+	    if (n < 10)
+          minIntWindInputCV.value = (n*10).toFixed(1);
+		else
+		    minIntWindInputCV.value = n.toFixed(1);
+        
+	if (nLength === 5){
+		const m = (n % 10) * 10
+		minIntWindInputCV.value = m.toFixed(1);
+	  }
+  }
+  // recalc
+  if (cat && state.selected[cat] && state.selected[cat].club && state.selected[cat].level) {
+    triggerCalcIfReady(cat);
+  };
+  windInputCV.value = minIntWindInputCV.value;
+});
+
+
 
 windInputCV.addEventListener('focus', () => {
      // Select all the text in the input
@@ -5218,6 +5337,11 @@ ebsWindInputCV.addEventListener('focus', () => {
      ebsWindInputCV.select();
 });
 
+minIntWindInputCV.addEventListener('focus', () => {
+     // Select all the text in the input
+     minIntWindInputCV.select();
+});
+
 
 
 /*  run calc when ball power or elevation changes */
@@ -5225,12 +5349,24 @@ ebsWindInputCV.addEventListener('focus', () => {
   const cat = state.activeCategory
   if (cat)
     triggerCalcIfReady(cat); 
+  minIntBallPowerCV.value = ballPowerCV.value;
+  minIntElevationCV.value = elevationCV.value;
 }));
 
 [ebsBallPowerCV, ebsElevationCV].forEach(el => el.addEventListener('input', ()=> {
   const cat = state.activeCategory
   if (cat === "Wedges")
     triggerCalcIfReady(cat); 
+}));
+
+[minIntBallPowerCV, minIntElevationCV].forEach(el => el.addEventListener('input', ()=> {
+  const cat = state.activeCategory
+  if (cat)
+    triggerCalcIfReady(cat); 
+  
+  ballPowerCV.value = minIntBallPowerCV.value;
+  elevationCV.value = minIntElevationCV.value;
+
 }));
 
 
@@ -5718,8 +5854,8 @@ function resetClubs() {
 }
 
 /* ---------- 4. Minimal Interface ---------- */
-// const minIntModeBt/n = document.getElementById("btn_min_interface")
-// minIntModeBtn.addEvent/Listener('click', startMinInt);
+const minIntModeBtn = document.getElementById("btn_min_interface")
+minIntModeBtn.addEventListener('click', startMinInt);
 function startMinInt() {
 
   shortcutBar.classList.add('hidden');
@@ -5733,8 +5869,9 @@ function startMinInt() {
   header.classList.add('hidden');
   clubsWrap.classList.add('hidden');
   
-  const minIntPanelCont = document.getElementById("minIntPanelCont")
-  minIntPanel.classList.remove("hidden")
+  const minIntPanelCont = document.getElementById("minIntPanelCont");
+  minIntPanelCont.classList.remove("hidden");
+  minIntMode=true;
 }
 
 const minIntExitBtn = document.getElementById("minIntExitBtn")
@@ -5756,8 +5893,9 @@ function exitMinInt() {
   clubsWrap.classList.remove('hidden');
   
 
-  const minIntPanel = document.getElementById("minIntPanel")
-  minIntPanel.classList.add("hidden")
+  const minIntPanelCont = document.getElementById("minIntPanelCont")
+  minIntPanelCont.classList.add("hidden")
+  minIntMode=false;
 }
 
 
