@@ -5629,7 +5629,7 @@ function enableEndbringerSchool() {
   state.selected[category] = { club, level };
   
   const ebsHeader = document.getElementById("ebsHeader");
-  ebsHeader.textContent = `ENDBRINGER SCHOOL - ${club} (Level ${level})`;
+  ebsHeader.textContent = `\u0020\u0020\u0020ENDBRINGER SCHOOL - ${club} (Level ${level})\u0020\u0020\u0020`;
 
   //Update the info in the Club info table
   updateClubInfoTable();
