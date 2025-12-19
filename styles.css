@@ -26,7 +26,7 @@
 html {
 	padding: 0;
 	margin: 0;
-    overflow-x: hidden;/
+    overflow-x: hidden;
     max-width: 100%;
 }
 
@@ -880,7 +880,7 @@ input[type=range]{
 /* hide number spinners */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-input[type=number] { -moz-appearance: textfield; }
+input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 
 
 /* <!-- _________________________________________________________________________________________________________ --> */
@@ -1381,7 +1381,7 @@ h4 {
 	height: 82.5%;
 	}
 
-	.minInt-Btn_bag.active {
+	.minInt-Btn_bag.selected {
 		background: var(--gradientTopColor);
 		color:#fff;
 		border-color: #f3f4f6;
@@ -1436,10 +1436,11 @@ h4 {
 		height: 17.5%;
 		justify-self: center;
 		align-self:center;
+		align-content:center;
 		background:#a3a3a5;
 		color:var(--gradientTopColor);
 		font-size: clamp(1.4rem, 5vw, 5rem);
-		padding:2px;
+		padding-bottom: 1.5%;
 	}
 
 	.minInt-Rings-Display-Port {
@@ -1481,7 +1482,7 @@ h4 {
 	 .minInt-Mids_Cont-Land {
 		display:flex;
 		flex-direction: column;
-		width: 48%
+		width: 48%;
 		font-size: clamp(1.4rem, 5vw, 6rem);
 		font-weight: 700;
 		align-items:center;
@@ -1668,7 +1669,7 @@ h4 {
 		background:#a3a3a5;
 		color:var(--gradientTopColor);
 		font-size: clamp(0.9rem, 5vw, 6rem);
-		padding:2px;
+		padding:1%;
 	}
 
 	.minInt-Rings-Display-Land{

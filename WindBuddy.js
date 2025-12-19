@@ -4899,13 +4899,16 @@ function triggerCalcIfReady(category){
   const sel = state.selected[category];
   if (!sel || !sel.club || !sel.level) return;
 
+  const catData = windData[category];
+  const club = sel.club
+  const level = sel.level
+
+  console.log(catData);
+  
   if (endbringerMode){
     const wind = parseFloat(ebsWindInputCV.value);
     const elevation = parseFloat(ebsElevationCV.value);
     const ballPower = parseInt(ebsBallPowerCV.value);
-    const catData = windData[category];
-    const club = sel.club
-    const level = sel.level
     const wind_per_ring = catData[sel.club][sel.level];
 
     for (let pct = 140; pct >= 5; pct -= 5) {
@@ -4924,9 +4927,6 @@ function triggerCalcIfReady(category){
 		return;
 	};
   
-  const catData = windData[category];
-  const club = sel.club
-  const level = sel.level
 
   if (minIntMode){
     const wind = parseFloat(minIntWindInputCV.value);
