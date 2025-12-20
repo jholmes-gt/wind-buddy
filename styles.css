@@ -657,7 +657,7 @@ header{
 	border-radius: 0.75rem;
 	box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.25);
 	font-size:var(--normalFontSize);
-	line-height: 1.45;
+	line-height: 1.15;
 	color: #003f66;
 	position: relative;
 }
@@ -721,7 +721,7 @@ header{
 	border-radius: 0.75rem;
 	box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.25);
 	font-size:var(--normalFontSize);
-	line-height: 1.45;
+	line-height: 1.05;
 	color: #003f66;
 	position: relative;
 }
@@ -986,7 +986,7 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 	border-radius: 0.75rem;
 	box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.25);
 	font-size:var(--normalFontSize);
-	line-height: 1.45;
+	line-height: 1.15;
 	color: #003f66;
 	position: relative;
 }
@@ -1525,7 +1525,7 @@ h4 {
 		display:flex;
 		flex-direction: column;
 		width: 50%;
-		font-size: clamp(2rem, 6vw, 8rem);
+		font-size: clamp(0.8rem, 4.3vw, 2.5rem);
 		font-weight: 900;
 		align-items:center;
 		justify-content: center;
@@ -1537,7 +1537,7 @@ h4 {
 		padding: 3px;
 		width: 95%;
 		color:var(--border);
-		font-size: clamp(2rem, 6vw, 8rem);
+		font-size: clamp(0.8rem, 4.3vw, 2.5rem);
 		font-weight: 900;
 	}
 
@@ -1545,7 +1545,7 @@ h4 {
 		display:flex;
 		flex-direction: column;
 		width: 48%;
-		font-size: clamp(1.4rem, 5vw, 6rem);
+		font-size: calc(0.77*clamp(0.8rem, 4vw, 2.5rem));
 		font-weight: 700;
 		align-items:center;
 		justify-content: center;
@@ -1557,7 +1557,7 @@ h4 {
 		padding: 3px;
 		width: 95%;
 		color:var(--border);
-		font-size: clamp(1.4rem, 5vw, 6rem);
+		font-size: calc(0.77*clamp(0.8rem, 4vw, 2.5rem));
 		font-weight: 700;
 	}
 
