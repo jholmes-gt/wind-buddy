@@ -1026,7 +1026,7 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 
 .ebsPanelHeader {
 	display: flex;
-	justify-content: center;       /* Center the title horizontally */
+	justify-content: right;       /* Center the title horizontally */
 	align-items: center;           /* Vertically align items */
 	position: relative;            /* Allows absolute positioning of the close button */
 	font-size:var(--hdrFontSize);
@@ -1036,6 +1036,18 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 	margin: 0;
 	padding-right:2vw;
 	padding-left: 2vw;
+	height: 1.3rem;
+	gap: 21%;
+}
+
+
+#ebsCurrWedgeClubText {
+	width:100%;
+	font-size: var(--hdrFontSize);
+	text-transform: uppercase;
+	font-weight: 700;
+	text-align: center;
+	border-bottom: 2px solid black;
 }
 
 .header-title {
@@ -1045,9 +1057,11 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 }
 
 #ebsCloseBtn {
-  position: absolute;
-  right: 0.75rem;                /* Pushes it to the far right */
+  /* position: absolute; */
+  /* right: 0.75rem; */                /* Pushes it to the far right */
   cursor: pointer;
+  margin-bottom: 1.9px;
+  margin-right: -1.5vw;
 }
 
 
@@ -1127,11 +1141,11 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 }
 
 .ebsPanelSubHeader {
-	font-size: var(--normalFontSize);
-	font-weight: 700;
-    text-decoration: underline;
+	font-size: calc(1.065*var(--normalFontSize));
+	font-weight: normal;
+	/* text-decoration: underline; */
 	text-align: center;
-	margin-top: 0.125rem;
+	margin-top: 0.525rem;
 	margin-bottom: 0.125rem;
 }
 
@@ -1149,25 +1163,26 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 .ebsPanelColumn {
 	display: flex;
 	flex-direction:column;
-	flex: 1;
+	flex: auto;
 	margin-top:0.125rem;
 	margin-bottom:0.125rem;
-	margin-left: 0.125rem;
-	margin-right: 0.125rem;
-	padding: 0.25rem;
+	/* margin-left: 0.125rem; */
+	/* margin-right: 0.125rem; */
+	/* padding: 0.25rem; */
 	gap: 0px;
-	align-items:center;
-	justify-content:center;
+	/* align-items:center; */
+	justify-content: center;
+	/* width: 58%; */
 }
 
 
 .ebsColRow {
 	display:flex;
 	flex-direction:column;
-	margin:0.0625rem;
-	padding:0.0625rem;
-	font-size:var(--normalFontSize);
-	/* min-width: 6.25rem; */
+	/* margin:0.0625rem; */
+	/* padding: 0.0625rem; */
+	font-size: calc(0.85*var(--normalFontSize));
+	width: 97%;
 	font-weight: 700;
 	text-align:center;
 	white-space: nowrap;
@@ -1175,8 +1190,12 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 	text-overflow: ellipsis;
 	gap: 0px;
 	justify-content:center;
+	max-height: 2.2rem;
 }
 
+.ebsRingVal {
+	font-weight: 400;
+}
 
 
 
@@ -1217,14 +1236,6 @@ footer{
 
 
 
-.headerWithInfoIcon {
-    display: flex;
-    text-align: center;
-    gap: 1.7rem;
-    justify-items: center;
-    justify-content: flex-end;
-    max-height: 1.3rem;
-}
 
 
 .info-icon{
@@ -1319,7 +1330,7 @@ footer{
 h4 {
 	display: flex;
 	align-self: stretch;
-	align-items: center;
+	align-items: inherit;
 	justify-content: center;
 	margin-top: 0;
 	font-size:var(--hdrFontSize);
@@ -1333,6 +1344,16 @@ h4 {
 	padding: 0.1vw 0.6vw;
 	max-height: 1.3rem;
 }
+
+.headerWithInfoIcon {
+    display: flex;
+    text-align: center;
+    gap: 1.7rem;
+    justify-items: center;
+    justify-content: flex-end;
+    max-height: 1.3rem;
+}
+
 
 .cat-H4s {
 	border: 1px solid var(--border);

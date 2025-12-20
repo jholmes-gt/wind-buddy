@@ -4906,6 +4906,8 @@ function triggerCalcIfReady(category){
   console.log(catData);
   
   if (endbringerMode){
+    const ebsClubText = document.getElementById("ebsCurrWedgeClubText");
+    ebsClubText.textContent = `${club} (Level ${level})`;
     const wind = parseFloat(ebsWindInputCV.value);
     const elevation = parseFloat(ebsElevationCV.value);
     const ballPower = parseInt(ebsBallPowerCV.value);
@@ -5628,8 +5630,8 @@ function enableEndbringerSchool() {
 
   state.selected[category] = { club, level };
   
-  const ebsHeader = document.getElementById("ebsHeader");
-  ebsHeader.textContent = `\u0020\u0020\u0020ENDBRINGER SCHOOL - ${club} (Level ${level})\u0020\u0020\u0020`;
+  const ebsClubText = document.getElementById("ebsCurrWedgeClubText");
+  ebsClubText.textContent = `${club} (Level ${level})`;
 
   //Update the info in the Club info table
   updateClubInfoTable();

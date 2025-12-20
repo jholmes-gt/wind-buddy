@@ -247,10 +247,10 @@
 
 			<!-- Endbringer School panel (hidden initially) -->
 			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
-				<h4 class="ebsPanelHeader">
-  					<span id="ebsHeader" class="header-title" style="display: flex;">ENDBRINGER SCHOOL</span>
+				<div class="ebsPanelHeader">
+					<h4 style="padding: 0px;">ENDBRINGER SCHOOL</h4>
   					<img src="blue_close_btn.png" class="info-icon" id="ebsCloseBtn">
-				</h4>
+				</div>
 				<div class="ebsInputsContainer">
 					<div class="ebsInputCol">
 						<span class="ebsInputLabel">Wind (mph)</span> 	
@@ -275,43 +275,44 @@
 						</div>
 					</div>
 				</div>
+				<span id="ebsCurrWedgeClubText">Current Wedge Club</span>
 				<span class="ebsPanelSubHeader">Club Distance % --> Rings to Adjust</span>
 				<div id="ebsContainer" class="ebsPanelContainer">
 				   <div id="ebsCol1" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-					 <div class="ebsColRow"><p>140% --> <span id="ebs140">---</span></p></div>
-					 <div class="ebsColRow"><p>135% --> <span id="ebs135">---</span></p></div>
-					 <div class="ebsColRow"><p>130% --> <span id="ebs130">---</span></p></div>
-					 <div class="ebsColRow"><p>125% --> <span id="ebs125">---</span></p></div>
-					 <div class="ebsColRow"><p>120% --> <span id="ebs120">---</span></p></div>
-					 <div class="ebsColRow"><p>115% --> <span id="ebs115">---</span></p></div>
-					 <div class="ebsColRow"><p>110% --> <span id="ebs110">---</span></p></div>
+					 <div class="ebsColRow"><p>140% --> <span class="ebsRingVal" class="ebsRingVal" id="ebs140">---</span></p></div>
+					 <div class="ebsColRow"><p>135% --> <span class="ebsRingVal" id="ebs135">---</span></p></div>
+					 <div class="ebsColRow"><p>130% --> <span class="ebsRingVal" id="ebs130">---</span></p></div>
+					 <div class="ebsColRow"><p>125% --> <span class="ebsRingVal" id="ebs125">---</span></p></div>
+					 <div class="ebsColRow"><p>120% --> <span class="ebsRingVal" id="ebs120">---</span></p></div>
+					 <div class="ebsColRow"><p>115% --> <span class="ebsRingVal" id="ebs115">---</span></p></div>
+					 <div class="ebsColRow"><p>110% --> <span class="ebsRingVal" id="ebs110">---</span></p></div>
 				  </div>
 				  <div id="ebsCol2" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-					<div class="ebsColRow"><p>105% --> <span id="ebs105">---</span></p></div>
-					<div class="ebsColRow"><p>100% --> <span id="ebs100">---</span></p></div>
-					<div class="ebsColRow"><p>95% --> <span id="ebs95">---</span></p></div>
-					<div class="ebsColRow"><p>90% --> <span id="ebs90">---</span></p></div>
-					<div class="ebsColRow"><p>85% --> <span id="ebs85">---</span></p></div>
-					<div class="ebsColRow"><p>80% --> <span id="ebs80">---</span></p></div>
-					<div class="ebsColRow"><p>75% --> <span id="ebs75">---</span></p></div>
+					<div class="ebsColRow"><p>105% --> <span class="ebsRingVal" id="ebs105">---</span></p></div>
+					<div class="ebsColRow"><p>100% --> <span class="ebsRingVal" id="ebs100">---</span></p></div>
+					<div class="ebsColRow"><p>95% --> <span class="ebsRingVal" id="ebs95">---</span></p></div>
+					<div class="ebsColRow"><p>90% --> <span class="ebsRingVal" id="ebs90">---</span></p></div>
+					<div class="ebsColRow"><p>85% --> <span class="ebsRingVal" id="ebs85">---</span></p></div>
+					<div class="ebsColRow"><p>80% --> <span class="ebsRingVal" id="ebs80">---</span></p></div>
+					<div class="ebsColRow"><p>75% --> <span class="ebsRingVal" id="ebs75">---</span></p></div>
 				  </div>
 				  <div id="ebsCol3" class="ebsPanelColumn" style="border-right:solid; border-right-color:#cccccc">
-					<div class="ebsColRow"><p>70% --> <span id="ebs70">---</span></p></div>
-					<div class="ebsColRow"><p>65% --> <span id="ebs65">---</span></p></div>
-					<div class="ebsColRow"><p>60% --> <span id="ebs60">---</span></p></div>
-					<div class="ebsColRow"><p>55% --> <span id="ebs55">---</span></p></div>
-					<div class="ebsColRow"><p>50% --> <span id="ebs50">---</span></p></div>
-					<div class="ebsColRow"><p>45% --> <span id="ebs45">---</span></p></div>
-					<div class="ebsColRow"><p>40% --> <span id="ebs40">---</span></p></div>
+					<div class="ebsColRow"><p>70% --> <span class="ebsRingVal" id="ebs70">---</span></p></div>
+					<div class="ebsColRow"><p>65% --> <span class="ebsRingVal" id="ebs65">---</span></p></div>
+					<div class="ebsColRow"><p>60% --> <span class="ebsRingVal" id="ebs60">---</span></p></div>
+					<div class="ebsColRow"><p>55% --> <span class="ebsRingVal" id="ebs55">---</span></p></div>
+					<div class="ebsColRow"><p>50% --> <span class="ebsRingVal" id="ebs50">---</span></p></div>
+					<div class="ebsColRow"><p>45% --> <span class="ebsRingVal" id="ebs45">---</span></p></div>
+					<div class="ebsColRow"><p>40% --> <span class="ebsRingVal" id="ebs40">---</span></p></div>
 				  </div>
 				  <div id="ebsCol4" class="ebsPanelColumn">
-					<div class="ebsColRow"><p>35% --> <span id="ebs35">---</span></p></div>
-					<div class="ebsColRow"><p>30% --> <span id="ebs30">---</span></p></div>
-					<div class="ebsColRow"><p>25% --> <span id="ebs25">---</span></p></div>
-					<div class="ebsColRow"><p>20% --> <span id="ebs20">---</span></p></div>
-					<div class="ebsColRow"><p>15% --> <span id="ebs15">---</span></p></div>
-					<div class="ebsColRow"><p>10% --> <span id="ebs10">---</span></p></div>
-					<div class="ebsColRow"><p>5% --> <span id="ebs5">---</span></p></div>
+					<div class="ebsColRow"><p>35% --> <span class="ebsRingVal" id="ebs35">---</span></p></div>
+					<div class="ebsColRow"><p>30% --> <span class="ebsRingVal" id="ebs30">---</span></p></div>
+					<div class="ebsColRow"><p>25% --> <span class="ebsRingVal" id="ebs25">---</span></p></div>
+					<div class="ebsColRow"><p>20% --> <span class="ebsRingVal" id="ebs20">---</span></p></div>
+					<div class="ebsColRow"><p>15% --> <span class="ebsRingVal" id="ebs15">---</span></p></div>
+					<div class="ebsColRow"><p>10% --> <span class="ebsRingVal" id="ebs10">---</span></p></div>
+					<div class="ebsColRow"><p>5% --> <span class="ebsRingVal" id="ebs5">---</span></p></div>
 				  </div>
 				</div>
 			</div>
