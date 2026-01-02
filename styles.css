@@ -1468,6 +1468,10 @@ h4 {
 		max-width:30%;
 	}
 
+	.minIntBallPowers {
+		font-size: clamp(1.4rem, 3.5vw, 6rem);	
+	}
+
 	.minInt-Wind-Row, .minInt-Elevation-Row {
 		display: flex;
 		height: 51%;
@@ -1718,7 +1722,12 @@ h4 {
 	
 	#minIntElevation, #minIntWindInput, #minIntBallPower {
 		font-size: clamp(1.4rem, 3.5vw, 6rem);
-		max-width:30%;
+		max-width: 35%;
+		text-align:right;
+	}
+
+	.minIntBallPowers {
+		font-size: clamp(1.4rem, 3.5vw, 6rem);	
 	}
 
 	.minInt-Exit-Btn {
