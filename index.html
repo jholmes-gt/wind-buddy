@@ -1,6 +1,5 @@
 <!-- To do:  -->
 <!-- 2. about, contact, ect pages -->
-<!-- 3. Endbringer mode needs to scan through saved bags to determine the user's level (default to level 5 if not found) -->
 <!-- 4. golf bag hover tooltips that display the clubs and levels saved in that bag -->
 
 <!doctype html>
@@ -67,6 +66,7 @@
 			<input type="password" id="loginPassword" class="auth-input">
 				<button id="emailLoginBtn" class="auth-action">Sign In</button>
 				<button id="emailSignupBtn" class="auth-action">Create New Account</button>
+				<span id="loginModalForgotPassword">Forgot Password?</span>	
 			<div class="divider"><span>OR</span></div>
 			<button id="googleLoginBtn" class="google-btn">
 				<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
@@ -75,13 +75,25 @@
 		</div>
 	</div>
 
-	<!-- EMAIL VERIFICATION MODAL/ -->
+	<!-- EMAIL VERIFICATION MODAL -->
 	<div id="verifyModal" class="hidden modal">
 	<div class="modal-content">
 		<h3>Email Verification Required</h3>
 		<p>Please verify your email before signing in.</p>
 		<p>Check your inbox for the verification link.</p>
 		<button id="verifyModalClose" class="auth-action">OK</button>
+	</div>
+	</div>
+
+
+	<!-- Forgot Password MODAL -->
+	<div id="forgotPasswordModal" class="hidden modal">
+	<div class="modal-content">
+		<h2>Reset Password</h2>
+		<p>Please enter the email address associated with the account and then click OK. A password reset link will be sent to your email.</p>
+		<label>Email</label>
+		<input type="email" id="forgotPasswordEmail" class="auth-input">
+		<button id="forgotPasswordSubmitBtn" class="auth-action">OK</button>
 	</div>
 	</div>
 

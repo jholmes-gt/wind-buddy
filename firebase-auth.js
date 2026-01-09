@@ -8,6 +8,7 @@ import {
     googleProvider,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
     signInWithPopup,
     signOut,
     onAuthStateChanged,
@@ -33,6 +34,7 @@ const googleLoginBtn = document.getElementById("googleLoginBtn");
 
 const emailField = document.getElementById("loginEmail");
 const passwordField = document.getElementById("loginPassword");
+const loginModalForgotPassword = document.getElementById("loginModalForgotPassword");
 
 // ----------------------------------------
 // Modal show/hide
@@ -125,6 +127,24 @@ document.getElementById("verifyModalClose").onclick = () => {
 };
 
 
+// ------------------------------
+// Forgot Password
+// ------------------------------
+
+loginModalForgotPassword.onclick = () => {
+  document.getElementById("loginModal").classList.add("hidden");
+  document.getElementById("forgotPasswordModal").classList.remove("hidden");
+};
+
+document.getElementById("forgotPasswordSubmitBtn").onclick = async () => {
+  try {
+    await sendPasswordResetEmail(auth, forgotPasswordEmail.value);
+    document.getElementById("forgotPasswordModal").classList.add("hidden");
+    showToast("Password reset email sent!", 5000);
+  } catch (err) {
+    showToast(err.message, 5000);
+  }
+};
 
 
 // ------------------------------

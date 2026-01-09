@@ -319,6 +319,16 @@ color: black
 
 }
 
+#loginModalForgotPassword {
+	color: rgb(0, 0, 238);
+	cursor: pointer;
+	font-size: 0.75*var(--normalFontSize);
+	text-align: left;
+	display: block;
+	margin-top: 0rem;
+	margin-bottom: 0rem;
+}
+
 /* Divider */
 .divider {
 	text-align:center;
