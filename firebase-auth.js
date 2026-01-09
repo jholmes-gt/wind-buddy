@@ -44,7 +44,6 @@ const loginModalForgotPassword = document.getElementById("loginModalForgotPasswo
 loginBtn.onclick = () => loginModal.classList.remove("hidden");
 loginClose.onclick = () => loginModal.classList.add("hidden");
 
-
 // ------------------------------
 // FIREBASE EMAIL/PASSWORD SIGNUP
 // ------------------------------
@@ -145,6 +144,12 @@ document.getElementById("forgotPasswordSubmitBtn").onclick = async () => {
     showToast(err.message, 5000);
   }
 };
+
+document.getElementById("forgotPasswordGoBackBtn").onclick = () => {
+  document.getElementById("forgotPasswordModal").classList.add("hidden");
+  document.getElementById("loginModal").classList.remove("hidden");
+}
+
 
 
 // ------------------------------
