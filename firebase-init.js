@@ -32,6 +32,9 @@ import {
     deleteField
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+
 // ----------------------------------------
 // Your Firebase config
 // ----------------------------------------
@@ -53,6 +56,45 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+const analytics = getAnalytics(app);
+
+
+// ----------------------------------------
+// Analytics Event Logging
+// ----------------------------------------
+function trackPageView(path = window.location.pathname) {
+  logEvent(analytics, 'page_view', {
+    page_path: path,
+    page_title: document.title
+  });
+}
+
+// Initial load
+trackPageView();
+
+// Patch pushState to catch SPA navigation
+const originalPushState = history.pushState;
+history.pushState = function () {
+  originalPushState.apply(this, arguments);
+  trackPageView();
+};
+
+// Catch back/forward
+window.addEventListener('popstate', () => {
+  trackPageView();
+});
+
+
+logEvent(analytics, 'signup_started');
+
+logEvent(analytics, 'signup_completed');
+
+logEvent(analytics, 'tool_used');
+
+logEvent(analytics, 'club_changed', {
+  club_type: 'driver'
+});
+
 
 // ----------------------------------------
 // Export everything for import use
