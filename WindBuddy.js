@@ -4436,22 +4436,16 @@ function selectClub(cat,club){
   document.querySelectorAll(`.club-radio[data-cat="${cat}"]`).forEach(b=>b.classList.remove('selected'));
   document.querySelector(`.club-radio[data-cat="${cat}"][data-club="${club}"]`).classList.add('selected');
   
-/*
+
   if (activeBagNumber){
-    const data = localStorage.getItem(`windbuddy_bag_${activeBagNumber}`);
-    const bagData = JSON.parse(data);
-    Object.keys(bagData).forEach(thiscat => {
-      if (thiscat === cat){
-		const thisObj = bagData[thiscat];
+    const thisObj = lastActiveSavedBag[cat];
 		const thisClub = thisObj.club;
 		if (club !== thisClub){
 		  document.getElementById(`btn_bag${activeBagNumber}`).classList.remove('selected');
 		  activeBagNumber = null;
 		}
-      }
-    })
   }
-*/
+
 
   refreshLevelButtons(cat);
   updateShortcut(cat);
@@ -4475,22 +4469,14 @@ function selectLevel(cat,level){
   document.querySelectorAll(`.level-radio[data-cat="${cat}"]`).forEach(b=>b.classList.remove('selected'));
   document.querySelector(`.level-radio[data-cat="${cat}"][data-level="${level}"]`).classList.add('selected');
   
-  /*
   if (activeBagNumber){
-    const data = localStorage.getItem(`windbuddy_bag_${activeBagNumber}`);
-    const bagData = JSON.parse(data);
-    Object.keys(bagData).forEach(thiscat => {
-      if (thiscat === cat){
-		const thisObj = bagData[thiscat];
+    const thisObj = lastActiveSavedBag[cat];
 		const thisLevel = thisObj.level;
 		if (level !== thisLevel){
 		  document.getElementById(`btn_bag${activeBagNumber}`).classList.remove('selected');
 		  activeBagNumber = null;
 		}
-      }
-    })
   }
- */
 
   updateShortcut(cat);
   
@@ -4561,6 +4547,7 @@ const bagCount = 5;
 const saveButtons = [];
 const loadButtons = [];
 const minIntloadButtons = [];
+const lastActiveSavedBag = {};
 let activeBagNumber = null;
 let loadingGolfBag = false;
 
@@ -4677,6 +4664,7 @@ async function saveBagToFirestore(bagIndex) {
     for (const [cat, info] of Object.entries(state.selected)) {
         if (info.club && info.level) {
             bagDoc[cat] = { club: info.club, level: info.level };
+            lastActiveSavedBag[cat] = { club: info.club, level: info.level };
         }
     }
 
@@ -4737,6 +4725,7 @@ async function loadBagFromFirestore(bagIndex) {
       
     for (const [cat, { club, level }] of Object.entries(bagData)) {
         state.selected[cat] = { club, level };
+        lastActiveSavedBag[cat] = { club, level };
 
         const clubBtn = document.querySelector(`[data-cat="${cat}"][data-club="${club}"]`);
         const levelBtn = document.querySelector(`[data-cat="${cat}"][data-level="${level}"]`);
@@ -4903,7 +4892,6 @@ function triggerCalcIfReady(category){
   const club = sel.club
   const level = sel.level
 
-  console.log(catData);
   
   if (endbringerMode){
     const ebsClubText = document.getElementById("ebsCurrWedgeClubText");
