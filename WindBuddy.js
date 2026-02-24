@@ -89,6 +89,28 @@ async function loadBallPower(uid) {
 }
 
 
+async function loadGBHideClubs(uid) {
+    try {
+        const ref = doc(db, "users", uid, "settings", "golfBagsHideClubs");
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            const boolValue = snap.data().enabled ?? false;
+            gbHideClubs = boolValue
+        } else {
+            gbHideClubs = false;
+        }
+        if (gbHideClubs) {
+            gbAutoHideClubs.click();
+        }
+
+    } catch (err) {
+        console.error("Error loading ballPower:", err);
+        setBallPower(0);
+    }
+}
+
+
 async function loadLastBag(uid) {
     try {
         const ref = doc(db, "users", uid);
@@ -105,6 +127,7 @@ async function loadLastBag(uid) {
         console.error("Error loading last bag:", err);
     }
 }
+
 
 async function selectLastClub(uid) {
     try {
@@ -179,6 +202,10 @@ onAuthStateChanged(auth, async () => {
   if (!user) {
     for (let i = 1; i <= bagCount; i++) loadButtons[i - 1].disabled = true;
     for (let i = 1; i <= 3; i++) tournButtons[i - 1].disabled = true;
+    gbAutoHideClubs.disabled = true
+    gbAutoHideClubs.checked = false
+    gbAutoHideClubsLabel.disabled = true
+
 
     accountMenuContainer.style.display = "none";
     resetClubs();
@@ -210,7 +237,10 @@ onAuthStateChanged(auth, async () => {
   }
   accountUserName.textContent = username + " ▼";
   // USER VERIFIED → Load app data
+  gbAutoHideClubs.disabled = false
+  gbAutoHideClubsLabel.disabled = false
   loadBallPower(user.uid);
+  loadGBHideClubs(user.uid);
   loadLastBag(user.uid);
   checkWhichBagsExist();
   for (let i = 1; i <= 3; i++) tournButtons[i - 1].disabled = false;
@@ -354,7 +384,10 @@ async function resetUserDataAsyncHandler(user) {
           resetClubs();
           checkWhichBagsExist();
           updateSaveButtons();
-        }
+          if (gbHideClubs) {
+            gbAutoHideClubs.click();
+          }
+       }
         catch (error) {
         console.error("Error resetting app data:", error);
         alert("An error occurred while resetting app data.");
@@ -4584,35 +4617,6 @@ bagSavedInfoPanel.addEventListener("click", () => {
     bagSavedInfoPanel.classList.remove("show");
 });
 
-
-
-// Tooltip for "Please sign in"
-//const bagTooltip = document.getElementById("bag-signin-tooltip");
-
-// Disable all bag buttons unless signed in
-/*
-function updateBagButtonAccess(user) {
-    const signedIn = !!user;
-
-    loadButtons.forEach(btn => {
-        btn.disabled = !signedIn;
-        btn.classList.toggle("disabled", !signedIn);
-    });
-
-    saveButtons.forEach(btn => {
-        btn.disabled = !signedIn;
-        btn.classList.toggle("disabled", !signedIn);
-    });
-
-    // Tooltip
-    if (!signedIn) {
-        bagTooltip.style.display = "inline-block";
-    } else {
-        bagTooltip.style.display = "none";
-    }
-}
-*/
-
 async function checkWhichBagsExist() {
     const user = auth.currentUser;
     if (!user) {
@@ -4690,6 +4694,12 @@ async function saveBagToFirestore(bagIndex) {
 
     const driversScBtn = document.getElementById(`Drivers-shortcut-btn`);
     if (driversScBtn) driversScBtn.click();
+
+    if (gbHideClubs) {
+      clubGrid.style.display = 'none';
+  	  toggleClubsLink.textContent = 'Show Clubs ▼';
+ 	    clubsShowing = false;
+    }
 }
 
 function showBagToast(message, duration = 5000) {
@@ -4753,6 +4763,11 @@ async function loadBagFromFirestore(bagIndex) {
     //triggerCalcIfReady(state.activeCategory || Object.keys(bagData)[0]);
     //updateClubInfoTable();
 
+    if (gbHideClubs) {
+      clubGrid.style.display = 'none';
+  	  toggleClubsLink.textContent = 'Show Clubs ▼';
+ 	    clubsShowing = false;
+    }
 }
 
 //Event Listeners for Load and Save bag buttons
@@ -4764,7 +4779,53 @@ for (let i = 1; i <= bagCount; i++) {
     loadBtn.addEventListener("click", () => loadBagFromFirestore(i));
     minIntloadBtn.addEventListener("click", () => loadBagFromFirestore(i));
     saveBtn.addEventListener("click", () => saveBagToFirestore(i));
+
 }
+
+//Auto Hide Clubs Checkbox
+const gbAutoHideClubs = document.getElementById("gbAutoHideClubs");
+const gbAutoHideClubsLabel = document.getElementById("gbAutoHideClubsLabel");
+let gbHideClubs = false
+
+gbAutoHideClubs.addEventListener("change", async (event) => {
+    const user = auth.currentUser;
+    if (!user) return;
+  
+    // Check if the checkbox is now checked
+    if (event.target.checked) {
+        gbHideClubs = true;
+        if (activeBagNumber){
+          clubGrid.style.display = 'none';
+	        toggleClubsLink.textContent = 'Show Clubs ▼';
+ 	        clubsShowing = false;
+        }
+        try {
+         await setDoc(doc(db, "users", user.uid, "settings", "golfBagsHideClubs"), {
+            enabled:true
+         }, { merge: true });
+        } catch (err) {
+            console.error("Failed to save golfBagsHideClubs:", err);
+        }
+    } else {
+        gbHideClubs = false;
+        if (activeBagNumber){
+          clubGrid.style.display = 'flex';
+          toggleClubsLink.textContent = 'Hide Clubs ▲';
+  	      clubsShowing = true;
+        }
+        try {
+         await setDoc(doc(db, "users", user.uid, "settings", "golfBagsHideClubs"), {
+            enabled:false
+         }, { merge: true });
+        } catch (err) {
+            console.error("Failed to save golfBagsHideClubs:", err);
+        }
+    }
+}
+)
+
+
+
 
 //-----------------------------------------
 //Club Info Panel
@@ -5813,6 +5874,7 @@ function resetClubs() {
   state.activeCategory = null;
   document.querySelectorAll(".club-radio").forEach(r => r.classList.remove("selected"));
   document.querySelectorAll(".level-radio").forEach(b => b.classList.remove("selected"));
+  document.querySelectorAll(".level-radio").forEach(b => b.classList.remove("disabled"));
   document.querySelectorAll(".shortcut-btn").forEach(a => a.classList.remove("active"));
   const DriversSCB = document.getElementById("Drivers-shortcut-btn")
   DriversSCB.textContent = "Driver";
@@ -5841,6 +5903,9 @@ function resetClubs() {
 	  activeBagNumber = null;
   }
   saveButtons.forEach(btn => btn.disabled = true);
+  clubGrid.style.display = 'flex';
+  toggleClubsLink.textContent = 'Hide Clubs ▲';
+  clubsShowing = true;
 }
 
 /* ---------- 4. Minimal Interface ---------- */
