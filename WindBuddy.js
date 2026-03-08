@@ -5218,6 +5218,8 @@ minIntBallPowerCV.addEventListener("change", async () => {
     } catch (err) {
         console.error("Failed to save ball power:", err);
     }
+
+    setBallPower(bp);
 });
 
 
