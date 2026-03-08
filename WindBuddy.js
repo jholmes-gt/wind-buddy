@@ -156,8 +156,10 @@ async function selectLastClub(uid) {
 
 async function setBallPower(value) {
     value = Math.max(0, Math.min(10, Number(value)));
+    ballPowerCorrection = 1;
     ballPowerCV.value = String(value);
     ballPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
+    minIntballPowerCorrection = 1;
     minIntBallPowerCV.value = String(value);
     minIntBallPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
 
@@ -188,6 +190,7 @@ const menuDeleteAccount = document.getElementById("menuDeleteAccount");
 const menuSignOut = document.getElementById("menuSignOut");
 let reauthAction = ""; // To track which action requires reauthentication
 let ballPowerCorrection = 0;
+let minIntballPowerCorrection = 0;
 
 
 
@@ -5163,6 +5166,11 @@ ballPowerCV.addEventListener("change", async () => {
     const user = auth.currentUser;
     if (!user) return;
 
+    if (ballPowerCorrection === 1){
+      ballPowerCorrection = 0;
+      return
+    }
+
     const bp = parseInt(ballPowerCV.value);
 
     try {
@@ -5196,7 +5204,13 @@ minIntBallPowerCV.addEventListener("change", async () => {
     const user = auth.currentUser;
     if (!user) return;
 
-    const bp = parseInt(ebsBallPowerCV.value);
+    if (minIntballPowerCorrection === 1){
+      minIntballPowerCorrection = 0;
+      return
+    }
+    
+
+    const bp = parseInt(minIntBallPowerCV.value);
     try {
         await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
             ballPower: bp
