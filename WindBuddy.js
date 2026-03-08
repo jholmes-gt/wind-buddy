@@ -77,7 +77,7 @@ async function loadBallPower(uid) {
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
-            const value = snap.data().ballPower ?? 0;
+            const value = snap.data().ballPower;
             setBallPower(value);
         } else {
             setBallPower(0);
@@ -154,12 +154,21 @@ async function selectLastClub(uid) {
 // Helper: update UI + bubble event
 // ----------------------------------------
 
-function setBallPower(value) {
+async function setBallPower(value) {
     value = Math.max(0, Math.min(10, Number(value)));
     ballPowerCV.value = String(value);
     ballPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
     minIntBallPowerCV.value = String(value);
     minIntBallPowerCV.dispatchEvent(new Event("change", { bubbles: true }));
+
+    const user = auth.currentUser;
+    try {
+        await setDoc(doc(db, "users", user.uid, "settings", "shot"), {
+            ballPower: value
+        }, { merge: true });
+    } catch (err) {
+        console.error("Failed to save ball power:", err);
+    }
 }
 
 // UI Elements
@@ -178,7 +187,7 @@ const menuResetAppData = document.getElementById("menuResetAppData");
 const menuDeleteAccount = document.getElementById("menuDeleteAccount");
 const menuSignOut = document.getElementById("menuSignOut");
 let reauthAction = ""; // To track which action requires reauthentication
-
+let ballPowerCorrection = 0;
 
 
 
