@@ -5466,6 +5466,24 @@ toggleClubsLink.addEventListener('click', ()=>{
 //-----------------------------------------------------------------------------------------
 	// Event Listeners to show all elevation options when user interacts with the input field 
 //-----------------------------------------------------------------------------------------
+const elevBtnMinus5 = document.getElementById("btn_elev-5")
+elevBtnMinus5.addEventListener('click', ()=>{
+  const cat = state.activeCategory;
+  elevationCV.value = elevationCV.value - 5;
+  elevationCV.dispatchEvent(new Event('input', { bubbles: true }));
+  elevationDefaultValue = elevationCV.value;
+  triggerCalcIfReady(cat);
+});
+
+const elevBtnPlus5 = document.getElementById("btn_elev+5")
+elevBtnPlus5.addEventListener('click', ()=>{
+  const cat = state.activeCategory;
+  elevationCV.value = (+elevationCV.value) + 5;
+  elevationCV.dispatchEvent(new Event('input', { bubbles: true }));
+  elevationDefaultValue = elevationCV.value;
+  triggerCalcIfReady(cat);
+});
+
 let elevationDefaultValue = elevationCV.value;
   // Save the default value to a placeholder on focus
   elevationCV.addEventListener('focus', () => {
@@ -5931,7 +5949,15 @@ function resetClubs() {
   clubGrid.style.display = 'flex';
   toggleClubsLink.textContent = 'Hide Clubs ▲';
   clubsShowing = true;
+
+  windInputCV.value = 0;
+  ballPowerCV.value = 0;
+  distanceInputCV.value = 100;
+  distanceSliderCV.value = 100;
+  elevationCV.value = 10;
 }
+
+
 
 /* ---------- 4. Minimal Interface ---------- */
 const minIntModeBtn = document.getElementById("btn_min_interface")

@@ -886,6 +886,13 @@ input[type=number],select,input[list]{
 	/* height: 71%; */
 	text-align: center;
 }
+
+.elevBtn{
+	margin-left: 0.12rem;
+	margin-right: 0.12rem;
+}
+
+
 input[type=range]{
 	/* border-radius:0.375rem; */
 	/* border:0.0625rem solid var(--border); */
