@@ -230,7 +230,7 @@
 				<div class="sa_row">
 					<label for="clubDistance" style="margin-left:5px;margin-right:0.5rem;width:28%">Club Distance</label>
 					<div class="tooltip-wrapper" style="width:57%">
-						<input id="clubDistance" type="range" style="width: 95%; margin-left:2px" min="1" max="100" value="100">
+						<input id="clubDistance" type="range" class="slider" min="1" max="100" value="100">
 						<div class="tooltip" role="status" aria-hidden="true">
 							Club distance can be set by the slider or entering a value between 0 - 100 in the input box beside the slider.
 						</div>
@@ -400,10 +400,14 @@
 
 			<!-- SHORTCUT BUTTONS -->
 			<div class="shortcut-bar" id="shortcutBar">
-				<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
-					<img src="info_icon.png" class="info-icon" style="margin-right: 3px;" id="sc-info-btn">
-					<div class="tooltip" role="status" aria-hidden="true">
-						Click here for more info about the Shortcut Buttons.
+				<div class="shortcut-col">
+					<div class="tooltip-wrapper" style="height: var(--mainPanelsHdrHeight);">
+						<img src="info_icon.png" class="info-icon" style="margin-right:3px; align-content:start;" id="sc-info-btn">
+						<div class="tooltip" role="status" aria-hidden="true">
+							Click here for more info about the Shortcut Buttons.
+						</div>
+					</div>
+					<div class="shortcut-txt"> <br><br><br>
 					</div>
 				</div>
 			</div>

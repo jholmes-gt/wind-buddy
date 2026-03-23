@@ -4429,7 +4429,7 @@ for (const [cat, clubs] of Object.entries(clubCats)) {
     btn.addEventListener('click', () => {
 	  selectClub(cat,club);   
     if (!loadingGolfBag){
-      updateSaveButtons()
+      updateSaveButtons();
       updateClubInfoTable();
     }
     });
@@ -4979,7 +4979,7 @@ function triggerCalcIfReady(category){
 		    wind: wind,
 		    elevation: elevation, 
 		    ballPower: ballPower, 
-		    club_distance: pct, 
+		    clubDistance: pct, 
 		    category: category, 
 		    wind_per_ring: wind_per_ring 
 		  });
@@ -4995,10 +4995,10 @@ function triggerCalcIfReady(category){
     const wind = parseFloat(minIntWindInputCV.value);
     const elevation = parseFloat(minIntElevationCV.value);
     const ballPower = parseInt(minIntBallPowerCV.value);
-	  const club_distance = 100;
+	  const clubDistance = 100;
     if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
       const wind_per_ring = catData[sel.club][sel.level];
-       const res = calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring });
+       const res = calculateRings_JS({ wind, elevation, ballPower, clubDistance, category, wind_per_ring });
        setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
 	     return;
     }
@@ -5006,27 +5006,53 @@ function triggerCalcIfReady(category){
         setRingsDisplay('--','--','--','--','--','--','--','--');
     return
   }
-  else{
-    const wind = parseFloat(windInputCV.value) || 0;
-    const elevation = parseFloat(elevationCV.value) || 0;
-    const ballPower = parseInt(ballPowerCV.value)
-    const club_distance = parseFloat(distanceSliderCV.value) || 100;
-    if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
-        const wind_per_ring = catData[sel.club][sel.level];
-        const res = calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring });
-        setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
-	       return;
-    }
-    else
-         setRingsDisplay('--','--','--','--','--','--','--','--');
-    return
-  };
-}
+    
+  const wind = parseFloat(windInputCV.value) || 0;
+  const elevation = parseFloat(elevationCV.value) || 0;
+  const ballPower = parseInt(ballPowerCV.value)
+  const clubDistance = parseFloat(distanceSliderCV.value) || 100;
+  if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
+    const wind_per_ring = catData[sel.club][sel.level];
+    
+    console.log(club + " " + level + " " + wind_per_ring)
+    console.dir(wind_per_ring);
+
+    const res = calculateRings_JS({ wind, elevation, ballPower, clubDistance, category, wind_per_ring });
+    setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
+    setTextOtherRingCalcs(category, 'Max: ' + res.max_rings + '<br>Mid: ' + res.mid_rings + '<br>Min: ' + res.min_rings);
+  }
+  else
+  {
+    setRingsDisplay('--','--','--','--','--','--','--','--');
+    setTextOtherRingCalcs(category, 'Max: 0<br>Mid: 0<br>Min: 0');
+  }
+
+  // boogerbutt
+  Object.keys(clubCats).forEach(catOther=>{
+    if (catOther !== category) {
+      const btn = document.getElementById(catOther + '-shortcut-btn');
+      const btnText = btn.textContent;
+      if (!btnText.includes('(') ){
+        setTextOtherRingCalcs(catOther, 'Max: 0<br>Mid: 0<br>Min: 0');
+      }
+      else {
+        const parts = btnText.split('(');
+        const clubOther = parts[0].trim(); // "Big Dawg"
+        const levelOther = parts[1].replace('Level', '').replace(')', '').trim(); // "10"
+        const resOther = calculateOtherRings(wind, elevation, ballPower, clubDistance, catOther, clubOther, levelOther);
+        setTextOtherRingCalcs(catOther, 'Max: ' + resOther.max_rings + '<br>Mid: ' + resOther.mid_rings + '<br>Min: ' + resOther.min_rings);
+      };
+    };
+  });
+
+  return;
+};
+
 
 function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 
 /* Calculation logic translated from AHK */
-function calculateRings_JS({ wind, elevation, ballPower, club_distance, category, wind_per_ring }) {
+function calculateRings_JS({ wind, elevation, ballPower, clubDistance, category, wind_per_ring }) {
   let adj;
   if (ballPower === 0){
     ballPower = 0.1;
@@ -5035,6 +5061,7 @@ function calculateRings_JS({ wind, elevation, ballPower, club_distance, category
   else if (ballPower === 6) adj = 1;
        else adj = 1 + (0.0119 * (ballPower - 6));
 
+  console.log('Value of wind_per_ring: ', wind_per_ring); 
   const arr = wind_per_ring.split('|').map(parseFloat); // arr[0]=max, arr[1]=mid, arr[2]=min
   const multiplier = (1 + elevation/100) * adj;
 
@@ -5052,11 +5079,53 @@ function calculateRings_JS({ wind, elevation, ballPower, club_distance, category
   const rings75p = round(min_rings + ((max_rings - min_rings) * 0.75),1);
     
   // const max_min_diff = max_rings - min_rings; 
-  // const true_club_rings = round(min_rings + (max_min_diff * (club_distance/100)), 1); 
-  const true_club_rings = round(min_rings + ((max_rings - min_rings) * (club_distance/100)), 1);
-  // const true_club_rings = min_rings + ((max_rings - min_rings) * (club_distance/100)); 
+  // const true_club_rings = round(min_rings + (max_min_diff * (clubDistance/100)), 1); 
+  const true_club_rings = round(min_rings + ((max_rings - min_rings) * (clubDistance/100)), 1);
+  // const true_club_rings = min_rings + ((max_rings - min_rings) * (clubDistance/100)); 
   return { true_club_rings, max_rings, mid_rings, min_rings, rings25p, rings75p };
 }
+
+function calculateOtherRings(wind, elevation, ballPower, clubDistance, category, club, level) {
+  console.log(category + " " + club + " " + level);
+  const catData = windData[category];
+  let max_rings;
+  let mid_rings;
+  let min_rings;
+
+   if (catData && catData[club] && catData[club][level]) {
+    const this_wind_per_ring = catData[club][level];
+    const arr = this_wind_per_ring.split('|').map(parseFloat); // arr[0]=max, arr[1]=mid, arr[2]=min
+    const maxEl = arr[0];
+    const midEl = arr[1];
+    const minEl = arr[2];
+
+    let adj;
+    if (ballPower === 0){
+      ballPower = 0.1;
+    }
+    if (ballPower < 6) adj = 1 - (0.0119 * (6 - ballPower));
+    else if (ballPower === 6) adj = 1;
+        else adj = 1 + (0.0119 * (ballPower - 6));
+
+    const multiplier = (1 + elevation/100) * adj;
+
+    max_rings = round(((wind/maxEl) * multiplier),1);
+    mid_rings = round(((wind/midEl) * multiplier),1);
+    
+    if ((category === "Wedges") || (category === "Rough_Irons") || (category === "Sand_Wedges")) 
+      min_rings = 0.0;
+    else	
+      min_rings = round(((wind/minEl) * multiplier),1);
+  }
+  else {
+    max_rings = 0;
+    mid_rings = 0;
+    min_rings = 0;
+  };
+    
+  return { max_rings, mid_rings, min_rings };
+}
+
 
 function round(n,d){ const f = Math.pow(10,d); return Math.round(n*f)/f; }
 
@@ -5143,7 +5212,11 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
   }
 }
 
-
+function setTextOtherRingCalcs(cat, string) {
+  const text=document.getElementById(cat + '-shortcut-txt');
+  text.innerHTML = string;
+  return;
+};
 
 
 
@@ -5151,16 +5224,6 @@ function setRingsDisplay(main,max,mid,min,p25,p75,club,level){
 // ----------------------------
 // 			WIRE EVENTS
 // ----------------------------
-/*
-ballPowerCV.addEventListener("change", () => {
-    const value = Number(ballPowerCV.value);
-    const user = auth.currentUser;
-
-    if (user) {
-        saveBallPower(user.uid, value);
-    }
-});
-*/
 
 ballPowerCV.addEventListener("change", async () => {
     const user = auth.currentUser;
@@ -5536,6 +5599,9 @@ let ebsElevationDefaultValue = ebsElevationCV.value;
 /* ==========================================================*/
 
 Object.keys(clubCats).forEach(cat=>{
+  const col=document.createElement('div');
+  col.className='shortcut-col';
+
   const btn=document.createElement('div');
   btn.id=cat + '-shortcut-btn';
   btn.className='shortcut-btn';
@@ -5550,7 +5616,15 @@ Object.keys(clubCats).forEach(cat=>{
 	  windInputCV.focus();
 	  windInputCV.select();
   });
-  shortcutBar.appendChild(btn);
+// boogerbutt  
+  const txt=document.createElement('div');
+  txt.id=cat + '-shortcut-txt';
+  txt.className='shortcut-txt';
+  const txtString="Max: 0<br>Mid: 0<br>Min: 0";
+  txt.innerHTML=txtString;
+  col.appendChild(btn);
+  col.appendChild(txt);
+  shortcutBar.appendChild(col);
 });
 
 
@@ -5955,6 +6029,10 @@ function resetClubs() {
   distanceInputCV.value = 100;
   distanceSliderCV.value = 100;
   elevationCV.value = 10;
+
+  Object.keys(clubCats).forEach(catOther=>{
+    setTextOtherRingCalcs(catOther, 'Max: 0<br>Mid: 0<br>Min: 0');
+  });
 }
 
 
