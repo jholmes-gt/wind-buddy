@@ -60,20 +60,51 @@
 		<div class="modal-content">
 			<span id="loginClose" class="close">&times;</span>
 			<h2>Sign in to Wind-Buddy</h2>
-			<label>Email</label>
-			<input type="email" id="loginEmail" class="auth-input">
-			<label>Password</label>
-			<input type="password" id="loginPassword" class="auth-input">
-				<button id="emailLoginBtn" class="auth-action">Sign In</button>
-				<button id="emailSignupBtn" class="auth-action">Create New Account</button>
-				<span id="loginModalForgotPassword">Forgot Password?</span>	
-			<div class="divider"><span>OR</span></div>
-			<button id="googleLoginBtn" class="google-btn">
-				<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
-				Sign In with Google
-			</button>
+			<div class="loginModalRow">	
+				<div class="loginModalColumn">
+					<label>Email</label>
+					<input type="email" id="loginEmail" class="auth-input">
+					<label>Password</label>
+					<input type="password" id="loginPassword" class="auth-input">
+						<button id="emailLoginBtn" class="auth-action">Sign In</button>
+						<!-- <button id="emailSignupBtn" class="auth-action">Create New Account</button> -->
+						<span id="loginModalForgotPassword">Forgot Password?</span>	
+				</div>
+				<div class="loginModalDividerColumn"><span>OR</span></div>
+				<button id="googleLoginButton" class="google-btn">
+					<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+					Sign In with Google
+				</button>
+			</div>
+			<div class="newUserLinkInfo"><span>New to Wind-Buddy? To create a free user account, either click the Sign In with Google button above or click the 'Create User Account' button below to register your email address and choose a password.</span></div>
+			<br>
+			<button id="emailSignupBtn" class="auth-action">Create User Account</button>
 		</div>
 	</div>
+
+
+	<!-- CHOOSE PASSWORD MODAL -->
+	<div id="choosePasswordModal" class="modal hidden">
+		<div class="modal-content">
+			<h2>Create New User Account</h2>
+			<span>To create an account, please enter a valid email address and your chosen password in the fields below. An email with a verification link will be sent to the email address you enter below. You will not be able to login to your new account until your email address has been verified by clicking the link in that email message.<br><br></span>
+			<div class="loginModalRow">	
+				<div class="loginModalColumn" style="width: 100%;">
+					<label>Email address</label>
+					<input type="email" id="newUserEmail" class="auth-input">
+					<label>Password</label>
+					<input type="password" id="newUserPassword" class="auth-input">
+					<label>Confirm Password</label>
+					<input type="password" id="newUserPasswordConfirm" class="auth-input">
+				</div>
+			</div>
+			<div class="loginModalRow">	
+				<button id="sendEmailVerBtn" class="auth-action" style="width:70%;">Send Verification Email</button>
+				<button id="cancelNewUserReg" class="cancelBtn">Cancel</button>
+			</div>
+		</div>
+	</div>
+
 
 	<!-- EMAIL VERIFICATION MODAL -->
 	<div id="verifyModal" class="hidden modal">
@@ -86,28 +117,30 @@
 	</div>
 
 
-	<!-- Forgot Password MODAL -->
+	<!-- FORGOT PASSWORD MODAL -->
 	<div id="forgotPasswordModal" class="hidden modal">
 	<div class="modal-content">
 		<h2>Reset Password</h2>
 		<p>Please enter the email address associated with the account and then click OK. A password reset link will be sent to your email.</p>
 		<label>Email</label>
 		<input type="email" id="forgotPasswordEmail" class="auth-input">
-		<button id="forgotPasswordSubmitBtn" class="auth-action">OK</button>
-		<button id="forgotPasswordGoBackBtn" class="google-btn" style="background:#d4d4d4 ;">GO BACK</button>
+		<div class="loginModalRow">
+			<button id="forgotPasswordSubmitBtn" class="auth-action">OK</button>
+			<button id="forgotPasswordGoBackBtn" class="cancelBtn" >Cancel</button>
+		</div>
 	</div>
 	</div>
 
 
-	<!-- small modal for reauthentication info -->
+	<!-- SMALL MODAL FOR REAUTHENTICATION INFO -->
 	<div id="reauthModal" class="modal hidden">
-		<div class="modal-content">
+		<div class="modal-content" style="max-width:max-content;">
 			<h2>Reauthentication Required</h2>
 			<p>For security reasons, please enter your account password to proceed.</p>
 			<input type="password" id="reauthPassword" class="auth-input">
 			<div id="reauthBtnsRow" class="reauth-btns-row">
-				<button id="reauthCancelBtn" class="auth-action">Cancel</button>
 				<button id="reauthSubmitBtn" class="auth-action">Submit</button>
+				<button id="reauthCancelBtn" class="cancelBtn">Cancel</button>
 			</div>
 		</div>
 	</div>

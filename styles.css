@@ -270,10 +270,11 @@ color: black
 .modal-content {
 	background: #fff;
 	padding: 1.5625rem;
-	width: 31.25rem;
+	/* width: 31.25rem; */
 	border-radius: 0.75rem;
 	border: 0.0625rem solid var(--border);
 	box-shadow: 0 0.375rem 0.875rem rgba(0,0,0,0.22);
+	width:31%;
 }
 
 .modal-content h2 {
@@ -296,6 +297,59 @@ color: black
 	padding: 0;
 }
 
+
+.loginModalRow {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.loginModalColumn {
+	display: flex;
+	flex-direction: column;
+	width: 40%;
+}
+
+.loginModalDividerColumn {
+	display: flex;
+	flex-direction: column;
+	width: 7%;
+	text-align:center;
+	font-size: larger;
+	font-weight: bold;
+	justify-content: center;
+	align-content: center;
+	color: #111;
+}
+
+.loginModalDividerColumn span {
+	padding:0 0.5rem;
+	background:#fff;
+	margin-left: 0.25rem;
+}
+
+.google-btn {
+	width: 38%;
+	padding:0.5rem;
+	border:0.2rem solid var(--border);
+	background:#fff;
+	border-radius:0.375rem;
+	cursor:pointer;
+	display:flex;
+	flex-direction: column;
+	align-items:center;
+	gap: 0.325rem;
+	justify-content:center;
+	align-self: center;
+	height: 3.4rem;
+}
+.google-btn img {
+	width: 1.95rem;
+	height: 1.95rem;
+}
+
+
 /* INPUTS */
 .auth-input {
 	width:100%;
@@ -311,54 +365,46 @@ color: black
 	background: var(--accent);
 	color:#fff;
 	border:none;
-	padding:0.5rem;
-	margin-bottom:0.625rem;
+	padding: 0.5rem;
+	margin: 4px;
+	margin-top: 0;
 	border-radius:0.375rem;
 	cursor:pointer;
 	background: var(--gradientTopColor);
 	font-size: var(--normalFontSize);
-
 }
 
 #loginModalForgotPassword {
 	color: rgb(0, 0, 238);
 	cursor: pointer;
-	font-size: 0.75*var(--normalFontSize);
+	font-size: 0.35*var(--normalFontSize);
 	text-align: left;
 	display: block;
 	margin-top: 0rem;
 	margin-bottom: 0rem;
 }
 
-/* Divider */
-.divider {
-	text-align:center;
-	color:#666;
-	margin:0.875rem 0;
+.newUserLinkInfo {
+	margin-top: 1.35rem;
+	margin-bottom: -0.65rem;
 }
-.divider span {
-	padding:0 0.5rem;
-	background:#fff;
+
+.cancelBtn {
+	width: 28%;
+	height: auto;
+	/* padding: revert; */
+	margin: 4px;
+	margin-top: 0;
+	border-radius:0.25rem;
+	/* border:0.0625rem solid #777676; */
+	background:#b8b9bd;
+	color:#000000;
+	cursor:pointer;
+	font-size:var(--normalFontSize);
+	white-space: nowrap;
 }
 
 /* Google Button */
-.google-btn {
-	width:100%;
-	padding:0.5rem;
-	border:0.0625rem solid var(--border);
-	background:#fff;
-	border-radius:0.375rem;
-	cursor:pointer;
-	display:flex;
-	align-items:center;
-	gap:0.625rem;
-	justify-content:center;
-}
-.google-btn img {
-	width:1.25rem;
-	height:1.25rem;
-}
-
 header{
 	font-size:var(--hdrFontSize);
 	font-weight:700;

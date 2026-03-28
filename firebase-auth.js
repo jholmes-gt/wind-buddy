@@ -27,14 +27,20 @@ const loginBtn = document.getElementById("loginBtn");
 const menuSignOut = document.getElementById("menuSignOut");
 const loginModal = document.getElementById("loginModal");
 const loginClose = document.getElementById("loginClose");
+const choosePasswordModal = document.getElementById("choosePasswordModal");
 
 const emailLoginBtn = document.getElementById("emailLoginBtn");
 const emailSignupBtn = document.getElementById("emailSignupBtn");
-const googleLoginBtn = document.getElementById("googleLoginBtn");
+const googleLoginBtn = document.getElementById("googleLoginButton");
 
 const emailField = document.getElementById("loginEmail");
 const passwordField = document.getElementById("loginPassword");
 const loginModalForgotPassword = document.getElementById("loginModalForgotPassword");
+const cancelNewUserReg = document.getElementById("cancelNewUserReg");
+const sendEmailVerBtn = document.getElementById("sendEmailVerBtn");
+const newUserEmail = document.getElementById("newUserEmail");
+const newUserPassword = document.getElementById("newUserPassword");
+const newUserPasswordConfirm = document.getElementById("newUserPasswordConfirm");
 
 // ----------------------------------------
 // Modal show/hide
@@ -48,23 +54,41 @@ loginClose.onclick = () => loginModal.classList.add("hidden");
 // FIREBASE EMAIL/PASSWORD SIGNUP
 // ------------------------------
 
-emailSignupBtn.onclick = async () => {
-  try {
-    const userCred = await createUserWithEmailAndPassword(
-      auth,
-      emailField.value,
-      passwordField.value
-    );
+emailSignupBtn.onclick = () => {
+  loginModal.classList.add("hidden");
+  choosePasswordModal.classList.remove("hidden");
+  return;
+}
 
-    // Send verification email
-    await sendEmailVerification(userCred.user);
-    loginModal.classList.add("hidden");
-    alert("Account created! Please check your email and verify your account before signing in.");
-    await auth.signOut();
-  } catch (error) {
-    console.error("Create account with user/password error:", error);
-    alert("There was an error creating your account. Please try again.");
+sendEmailVerBtn.onclick = async () => {
+  if (newUserPasswordConfirm.value === newUserPassword.value) {
+    try {
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        newUserEmail.value,
+        newUserPassword.value
+      );
+
+      // Send verification email
+      await sendEmailVerification(userCred.user);
+      choosePasswordModal.classList.add("hidden");
+      alert("Account created! Please check your email and click the provided link to verify your account before signing in.");
+      await auth.signOut();
+    } catch (error) {
+      console.error("Create account with user/password error:", error);
+      alert("There was an error creating your account. Please try again.");
+    };
+  }
+  else {
+    alert("The passwords entered do not match. Please try again.");
+    return;
   };
+} ;
+
+cancelNewUserReg.onclick = () => {
+  choosePasswordModal.classList.add("hidden");
+  loginModal.classList.remove("hidden");
+  return;
 };
 
 // ------------------------------
@@ -87,10 +111,12 @@ emailLoginBtn.onclick = async () => {
       resendVerificationEmail();
       await auth.signOut();
       showVerifyModal();
+      document.getElementById("accountMenuTrigger").classList.add("hidden");
       return;
     }
     window.scroll(0,0)
     showToast("Signed in!", 5000);
+    document.getElementById("accountMenuTrigger").classList.remove("hidden");
 
   } catch (err) {
     window.scroll(0,0)
@@ -139,7 +165,7 @@ document.getElementById("forgotPasswordSubmitBtn").onclick = async () => {
   try {
     await sendPasswordResetEmail(auth, forgotPasswordEmail.value);
     document.getElementById("forgotPasswordModal").classList.add("hidden");
-    showToast("Password reset email sent!", 5000);
+    showToast("Password reset email sent!", 15000);
   } catch (err) {
     showToast(err.message, 5000);
   }
@@ -185,6 +211,7 @@ onAuthStateChanged(auth, async () => {
 // ----------------------------------------
 
 googleLoginBtn.onclick = async () => {
+  showToast("WTF", 5000);
     try {
         await signInWithPopup(auth, googleProvider);
         loginModal.classList.add("hidden");
