@@ -119,7 +119,6 @@ async function loadLastBag(uid) {
         if (snap.exists()) {
             const value = snap.data().lastBag ?? 0;
             if (value !== 0){
-               // console.log("Loading bag" + value);
                 loadBagFromFirestore(value);
             }
         }
@@ -405,7 +404,6 @@ async function resetUserDataAsyncHandler(user) {
         alert("An error occurred while resetting app data.");
       };
       await new Promise(resolve => setTimeout(resolve, 500));
-      console.log("Reset App Data Handler finished.");
 };
 
 
@@ -4377,8 +4375,6 @@ for (let i = 1; i <= 3; i++) {
 
 let clientWidth = document.documentElement.clientWidth;
 let clientHeight = document.documentElement.clientHeight;
-console.log("Viewport width " + clientWidth)
-console.log("Viewport height " + clientHeight)
 
 
 let endbringerMode = false;
@@ -5014,9 +5010,6 @@ function triggerCalcIfReady(category){
   if (catData && catData[sel.club] && catData[sel.club][sel.level]) {
     const wind_per_ring = catData[sel.club][sel.level];
     
-    console.log(club + " " + level + " " + wind_per_ring)
-    console.dir(wind_per_ring);
-
     const res = calculateRings_JS({ wind, elevation, ballPower, clubDistance, category, wind_per_ring });
     setRingsDisplay(res.true_club_rings, res.max_rings, res.mid_rings, res.min_rings, res.rings25p, res.rings75p,sel.club,sel.level);
     setTextOtherRingCalcs(category, 'Max: ' + res.max_rings + '<br>Mid: ' + res.mid_rings + '<br>Min: ' + res.min_rings);
@@ -5061,7 +5054,6 @@ function calculateRings_JS({ wind, elevation, ballPower, clubDistance, category,
   else if (ballPower === 6) adj = 1;
        else adj = 1 + (0.0119 * (ballPower - 6));
 
-  console.log('Value of wind_per_ring: ', wind_per_ring); 
   const arr = wind_per_ring.split('|').map(parseFloat); // arr[0]=max, arr[1]=mid, arr[2]=min
   const multiplier = (1 + elevation/100) * adj;
 
@@ -5086,7 +5078,6 @@ function calculateRings_JS({ wind, elevation, ballPower, clubDistance, category,
 }
 
 function calculateOtherRings(wind, elevation, ballPower, clubDistance, category, club, level) {
-  console.log(category + " " + club + " " + level);
   const catData = windData[category];
   let max_rings;
   let mid_rings;
@@ -5792,7 +5783,6 @@ function enableEndbringerSchool() {
     
   const club = state.selected[category].club;
   const level = state.selected[category].level;
-  console.log(`Enabling Endbringer School with club: ${club}, level: ${level}`);
 
   state.selected[category] = { club, level };
   
