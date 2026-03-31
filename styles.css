@@ -1050,7 +1050,10 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
-	/* height:25%; */
+	min-width: 5rem;
+	height: 0.9rem;
+	align-items: center;
+	justify-items: center;
 }
 .shortcut-txt{
 	display:flex;
