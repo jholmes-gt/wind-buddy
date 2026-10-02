@@ -2026,3 +2026,153 @@ h4 {
     }
 }
 
+
+
+/* PRISM BALL COMPARER */
+.prism-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.prism-card {
+  width: min(100%, 70rem);
+  margin: auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  box-sizing: border-box;
+  color: var(--text, #111);
+  background: var(--card, #fff);
+  border: 1px solid var(--border, #c9c9c9);
+  border-radius: 0.75rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
+}
+
+.prism-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.prism-header h2 {
+  flex: 1;
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  color: var(--card, #fff);
+  background: var(--gradientTopColor, #075c91);
+  border-radius: 0.5rem;
+  font-size: clamp(1rem, 1.9vw, 1.4rem);
+  text-align: center;
+}
+
+.prism-close {
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border, #c9c9c9);
+  border-radius: 0.4rem;
+  background: #f3f4f6;
+  font-size: 1.7rem;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.prism-description {
+  margin: 0.55rem 0 0.85rem;
+  text-align: center;
+  font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+}
+
+.prism-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.prism-ball-card {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border, #c9c9c9);
+  border-radius: 0.5rem;
+  background: var(--bg, #f8fafc);
+}
+
+.prism-ball-card > label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}
+
+.prism-ball-card select {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.35rem;
+  font: inherit;
+}
+
+.prism-ball-card h3 {
+  min-height: 1.5em;
+  margin: 0.65rem 0 0.4rem;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.prism-table-wrap {
+  overflow-x: auto;
+}
+
+.prism-ball-card table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.prism-ball-card th,
+.prism-ball-card td {
+  padding: 0.4rem 0.35rem;
+  border-top: 1px solid var(--border, #d1d5db);
+  vertical-align: top;
+}
+
+.prism-ball-card th {
+  width: 65%;
+  font-weight: 600;
+}
+
+.prism-ball-card td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 850px) {
+  .prism-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.prism-panel:not(.hidden) {
+  display: flex;
+}
+
+#prismBallSelect1 {
+  font-size: clamp(0.8rem, 1.29vw, 1.2rem);
+  font-weight: 700;
+}
+
+#prismBallSelect2 {
+  font-size: clamp(0.8rem, 1.29vw, 1.2rem);
+  font-weight: 700;
+}
+
+#prismBallSelect3 {
+  font-size: clamp(0.8rem, 1.29vw, 1.2rem);
+  font-weight: 700;
+}

@@ -221,6 +221,7 @@
         			<button id="btn_tourn3" class="btn">Tournament 3 Notes</button>
         			<button id="btn_reset" class="btn">CPC Mode/Reset</button>
         			<button id="btn_min_interface" class="btn">Minimal Interface</button>
+        			<button id="btn_prism_ball_tool" class="btn">Prism Ball Comparer</button>
         		</div>
       		</div>
 	  
@@ -295,6 +296,7 @@
 				</div>
 			</div>
 
+			
 			<!-- Endbringer School panel (hidden initially) -->
 			<div id="ebs-panel-root" class="ebsPanelWrapper hidden">
 				<div class="ebsPanelHeader">
@@ -366,6 +368,41 @@
 				  </div>
 				</div>
 			</div>
+
+
+
+			<!-- Prism Ball Comparer (hidden until opened from Tools) -->
+			<div id="prismBallPanel" class="prism-panel hidden" role="dialog" aria-modal="true" aria-labelledby="prismBallTitle">
+				<div class="prism-card">
+					<div class="prism-header">
+						<h2 id="prismBallTitle">PRISM BALL COMPARER</h2>
+						<button type="button" id="prismBallClose" class="prism-close" aria-label="Close Prism Ball Comparer">&times;</button>
+					</div>
+					<p class="prism-description">Choose up to three balls to compare their attributes. The tables below will display the stats for each selected ball.</p>
+					<div class="prism-columns">
+						<div class="prism-ball-card" aria-label="First ball">
+							<label for="prismBallSelect1">Ball 1</label>
+							<select id="prismBallSelect1"><option value="">Choose a ball</option></select>
+							<!-- <h3 id="prismBallName1">No ball selected</h3> -->
+							<div class="prism-table-wrap"><table><tbody id="prismBallStats1"></tbody></table></div>
+						</div>
+						<div class="prism-ball-card" aria-label="Second ball">
+							<label for="prismBallSelect2">Ball 2</label>
+							<select id="prismBallSelect2"><option value="">Choose a ball</option></select>
+							<!-- <h3 id="prismBallName2">No ball selected</h3> -->
+							<div class="prism-table-wrap"><table><tbody id="prismBallStats2"></tbody></table></div>
+						</div>
+						<div class="prism-ball-card" aria-label="Third ball">
+							<label for="prismBallSelect3">Ball 3</label>
+							<select id="prismBallSelect3"><option value="">Choose a ball</option></select>
+							<!-- <h3 id="prismBallName3">No ball selected</h3> -->
+							<div class="prism-table-wrap"><table><tbody id="prismBallStats3"></tbody></table></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
 
 			<!-- MINIMAL INTERFACE PANEL (hidden initially)-->
 			<div id="minIntPanelCont" class="hidden">
@@ -441,8 +478,6 @@
 					</div>
 				</div>
 			</div>
-
-
 	</div>   <!-- end of Main Panel -->
 
 
