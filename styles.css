@@ -871,7 +871,7 @@ tool-row{
 	align-items: center;
 	padding: 0.7rem;
 	justify-content: space-evenly;
-	/* height:98%; */
+	height:98%;
 	/* width: 98%; */
 }
 .club-info-row{
@@ -897,29 +897,35 @@ tool-row{
 	/* height:100%; */
 	border-radius:0.5rem;
 	border:0.0625rem solid var(--border);
-	row-gap:1vh;
-	padding-bottom: 1vh;
+	row-gap: inherit;
+	/* padding-bottom: 1vh; */
 	/* width: clamp(250px,95vw,400px); */
 	flex-grow: 0.1;
 	font-size: calc(1.2*var(--normalFontSize));
+	max-width: fit-content;
 }
 .sa_row{
 	display:flex;
 	flex-direction:row;
 	background:var(--card);
-	justify-content:center;
+	justify-content: center;
+	align-items: stretch;
+	/* gap: 0.125rem; */
 	width: 100%;
-	padding:0.0625rem;
+	height: 16%;
+	/* padding:0.0625rem; */
 	padding-top:0.0625rem;
-	margin-top:0.125rem;
-	margin-bottom:0.125rem;
+	/* margin-top:0.125rem; */
+	margin-bottom: 0.45rem;
 	margin-left:0.125rem;
 	margin-right:0.125rem;
+	border-bottom: medium solid #012c42;
+	padding-bottom: 3px;
 }
 .sa_row label{
 	margin-right:0.125rem;
-	font-size:calc(1.05*var(--normalFontSize));
-	text-align:center;
+	font-size: medium;
+	text-align: end;
 	align-content: center;
 	text-wrap: nowrap;
 }
@@ -927,11 +933,12 @@ tool-row{
 input[type=number],select,input[list]{
 	border-radius:0.375rem;
 	border:0.0625rem solid var(--border);
-	/* font-size: clamp(2rem,5vw,6rem); */
+	font-size: medium;
 	padding: 0.25rem;
 	/* max-width: 34%; */
 	/* height: 71%; */
 	text-align: center;
+	align-self: flex-start;
 }
 
 .elevBtn{
@@ -959,10 +966,11 @@ input[type=range]{
 
 /* style the input as you already have */
 #windInput {
-	padding: 0.375rem 0.5rem;
+	padding: 0.25rem 0.25rem;
 	border-radius: 0.375rem;
 	border: 0.0625rem solid var(--border);
 	width: clamp(2rem, 6vw, 3.7rem);
+	font-size: medium;
 }
 
 

@@ -220,8 +220,8 @@
         			<button id="btn_tourn2" class="btn">Tournament 2 Notes</button>
         			<button id="btn_tourn3" class="btn">Tournament 3 Notes</button>
         			<button id="btn_reset" class="btn">CPC Mode/Reset</button>
-        			<button id="btn_min_interface" class="btn">Minimal Interface</button>
         			<button id="btn_prism_ball_tool" class="btn">Prism Ball Comparer</button>
+        			<button id="btn_min_interface" class="btn">Minimal Interface</button>
         		</div>
       		</div>
 	  
@@ -259,7 +259,7 @@
 				</div>
 				<!-- CLUB DISTANCE -->
 				<div class="sa_row">
-					<label for="clubDistance" style="margin-left:5px;margin-right:0.5rem;width:28%">Club Distance</label>
+					<label for="clubDistance" style="margin-right:0.5rem;width:22%">Club Distance</label>
 					<div class="tooltip-wrapper" style="width:57%">
 						<input id="clubDistance" type="range" class="slider" min="1" max="100" value="100">
 						<div class="tooltip" role="status" aria-hidden="true">
@@ -269,7 +269,7 @@
 					<input id="clubDistanceVal" type="number" step="1" value="100" style="margin-right:2px;width:9%">
 				</div>
 				<!-- ELEVATION -->
-				<div class="sa_row">
+				<div class="sa_row" style="border-bottom-style: none">
 					<label for="elevation">Elevation (%)</label>
 			        <button id="btn_elev-5" class="elevBtn">-5</button>
 					<input list="elevList" id="elevation" type="number" value="10" step="5" style="width:82px">
@@ -499,6 +499,9 @@
 
 			<p><strong>CPC Mode / Reset</strong><br>
 			Clears all selected clubs and levels, and returns the interface to a clean state. This can be utilized before starting a Checkpoint Challenge match.</p>
+
+			<p><strong>Prism Ball Comparer</strong><br>
+			The latest tool added to Wind Buddy is the Prism Ball Comparer.  This tool allows players to analyze and compare golf balls based on their attributes so they can make informed decisions on which ball to choose in the daily prism after they have maxed out all of their clubs.  Updates to the balls available in the list are made regularly (at least once per season).</p>
 
 			<p><strong>Minimal Interface</strong><br>
 			Switches to a 'bare bones' minimal interface version of the app, which may be useful when viewing the app using a small mobile screen.  The minimal interface mode is best utilized on mobile devices with the screen in portrait orientation (where screen width is less than screen height). You cannot make new club selections in minimal interface mode, but you can choose among your active selections (current driver, current wood, etc) and you can alternate between saved golf bags.  Ring calculations are displayed for max club distance through min club distance in increments of 25%.</p>
