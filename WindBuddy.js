@@ -6110,12 +6110,19 @@ function formatPrismBallValue(value) {
 
 function getPrismBallOptionLabel(ball) {
   if (prismBallCounts.get(ball.name) < 2) return ball.name;
-  return `(Power ${formatPrismBallValue(ball.power)}, Side Spin ${formatPrismBallValue(ball.sideSpin)}, Wind Resistance ${formatPrismBallValue(ball.windResistance)})`;
+  return `${ball.name} (Power ${formatPrismBallValue(ball.power)}, Side Spin ${formatPrismBallValue(ball.sideSpin)}, Wind Resistance ${formatPrismBallValue(ball.windResistance)})`;
 }
 
 for (const slot of [1, 2, 3]) {
-  const select = document.getElementById(`prismBallSelect${slot}`);
-  const statsBody = document.getElementById(`prismBallStats${slot}`);
+  const combo = document.getElementById('prismBallCombo' + slot);
+  const input = document.getElementById('prismBallSearch' + slot);
+  const toggleButton = document.getElementById('prismBallToggle' + slot);
+  const suggestionList = document.getElementById('prismBallSuggestions' + slot);
+  const statsBody = document.getElementById('prismBallStats' + slot);
+  let activeOptionIndex = -1;
+  let showingAllOptions = false;
+  let visibleMatches = [];
+
   for (const [label, key] of prismBallAttributes) {
     const row = document.createElement('tr');
     const heading = document.createElement('th');
@@ -6123,25 +6130,146 @@ for (const slot of [1, 2, 3]) {
     heading.textContent = label;
     const value = document.createElement('td');
     value.dataset.attribute = key;
-    value.textContent = '—';
+    value.textContent = '';
     row.append(heading, value);
     statsBody.appendChild(row);
   }
-  for (let index = 0; index < prismBallData.length; index += 1) {
-    const option = document.createElement('option');
-    option.value = String(index);
-    option.textContent = getPrismBallOptionLabel(prismBallData[index]);
-    select.appendChild(option);
+
+  function closeSuggestions() {
+    suggestionList.hidden = true;
+    showingAllOptions = false;
+    input.setAttribute('aria-expanded', 'false');
+    toggleButton.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    activeOptionIndex = -1;
   }
-  select.addEventListener('change', () => {
-    const selected = select.value === '' ? null : prismBallData[Number(select.value)];
-    // document.getElementById(`prismBallName${slot}`).textContent = selected ? selected.name : 'No ball selected';
+
+  function clearStats() {
     for (const [, key] of prismBallAttributes) {
-      statsBody.querySelector(`[data-attribute="${key}"]`).textContent = selected ? formatPrismBallValue(selected[key]) : '—';
+      statsBody.querySelector('[data-attribute="' + key + '"]').textContent = '';
+    }
+  }
+
+  function chooseBall(ball) {
+    input.value = getPrismBallOptionLabel(ball);
+    for (const [, key] of prismBallAttributes) {
+      statsBody.querySelector('[data-attribute="' + key + '"]').textContent = formatPrismBallValue(ball[key]);
+    }
+    closeSuggestions();
+  }
+
+  function updateActiveOption() {
+    const options = suggestionList.querySelectorAll('[data-ball-index]');
+    options.forEach((option, index) => {
+      const active = index === activeOptionIndex;
+      option.classList.toggle('active', active);
+      option.setAttribute('aria-selected', String(active));
+    });
+    const activeOption = options[activeOptionIndex];
+    if (activeOption) {
+      input.setAttribute('aria-activedescendant', activeOption.id);
+      activeOption.scrollIntoView({ block: 'nearest' });
+    } else {
+      input.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function renderSuggestions(showAll = false) {
+    suggestionList.replaceChildren();
+    visibleMatches = [];
+    activeOptionIndex = -1;
+    const query = input.value.trim().toLocaleLowerCase();
+    const matchQuery = showAll ? '' : query;
+    if (!matchQuery && !showAll) {
+      closeSuggestions();
+      return;
+    }
+
+    visibleMatches = prismBallData
+      .map((ball, index) => ({ ball, index }))
+      .filter(({ ball }) => !matchQuery || ball.name.toLocaleLowerCase().includes(matchQuery));
+
+    if (visibleMatches.length === 0) {
+      const emptyMessage = document.createElement('li');
+      emptyMessage.className = 'prism-no-matches';
+      emptyMessage.setAttribute('role', 'option');
+      emptyMessage.setAttribute('aria-selected', 'false');
+      emptyMessage.textContent = 'No matching balls';
+      suggestionList.appendChild(emptyMessage);
+    } else {
+      visibleMatches.forEach(({ ball, index }, optionIndex) => {
+        const option = document.createElement('li');
+        option.id = 'prismBallOption' + slot + '-' + optionIndex;
+        option.className = 'prism-suggestion';
+        option.dataset.ballIndex = String(index);
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.textContent = getPrismBallOptionLabel(ball);
+        suggestionList.appendChild(option);
+      });
+    }
+    showingAllOptions = showAll || !matchQuery;
+    suggestionList.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    toggleButton.setAttribute('aria-expanded', 'true');
+  }
+
+  input.addEventListener('input', () => {
+    clearStats();
+    renderSuggestions();
+  });
+
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) renderSuggestions();
+  });
+
+  toggleButton.addEventListener('click', () => {
+    if (!suggestionList.hidden && showingAllOptions) {
+      closeSuggestions();
+      return;
+    }
+    input.focus();
+    renderSuggestions(true);
+  });
+
+  input.addEventListener('keydown', event => {
+    const options = suggestionList.querySelectorAll('[data-ball-index]');
+    if (event.key === 'ArrowDown' && suggestionList.hidden) {
+      event.preventDefault();
+      renderSuggestions(input.value.trim().length === 0);
+      const firstOptions = suggestionList.querySelectorAll('[data-ball-index]');
+      if (firstOptions.length) {
+        activeOptionIndex = 0;
+        updateActiveOption();
+      }
+    } else if (event.key === 'ArrowDown' && !suggestionList.hidden && options.length) {
+      event.preventDefault();
+      activeOptionIndex = Math.min(activeOptionIndex + 1, options.length - 1);
+      updateActiveOption();
+    } else if (event.key === 'ArrowUp' && !suggestionList.hidden && options.length) {
+      event.preventDefault();
+      activeOptionIndex = Math.max(activeOptionIndex - 1, 0);
+      updateActiveOption();
+    } else if (event.key === 'Enter' && !suggestionList.hidden && options.length) {
+      event.preventDefault();
+      const optionIndex = activeOptionIndex < 0 ? 0 : activeOptionIndex;
+      chooseBall(prismBallData[Number(options[optionIndex].dataset.ballIndex)]);
+    } else if (event.key === 'Escape' && !suggestionList.hidden) {
+      event.stopPropagation();
+      closeSuggestions();
     }
   });
-}
 
+  suggestionList.addEventListener('click', event => {
+    const option = event.target.closest('[data-ball-index]');
+    if (!option) return;
+    chooseBall(prismBallData[Number(option.dataset.ballIndex)]);
+  });
+
+  document.addEventListener('click', event => {
+    if (!combo.contains(event.target)) closeSuggestions();
+  });
+}
 function closePrismBallComparer() {
   prismBallPanel.classList.add('hidden');
   prismBallButton.classList.remove('selected');
@@ -6150,7 +6278,7 @@ function closePrismBallComparer() {
 prismBallButton.addEventListener('click', () => {
   prismBallPanel.classList.remove('hidden');
   prismBallButton.classList.add('selected');
-  document.getElementById('prismBallSelect1').focus();
+  document.getElementById('prismBallSearch1').focus();
 });
 prismBallClose.addEventListener('click', closePrismBallComparer);
 prismBallPanel.addEventListener('click', event => {

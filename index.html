@@ -381,20 +381,29 @@
 					<p class="prism-description">Choose up to three balls to compare their attributes. The tables below will display the stats for each selected ball.</p>
 					<div class="prism-columns">
 						<div class="prism-ball-card" aria-label="First ball">
-							<label for="prismBallSelect1">Ball 1</label>
-							<select id="prismBallSelect1"><option value="">Choose a ball</option></select>
+							<label for="prismBallSearch1">Ball 1</label>
+							<div class="prism-combo-wrap" id="prismBallCombo1">
+                                <div class="prism-combo-input-row"><input id="prismBallSearch1" class="prism-ball-search" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="prismBallSuggestions1" placeholder="Type to search balls" autocomplete="off"><button id="prismBallToggle1" type="button" class="prism-combo-toggle" aria-label="Show ball list" aria-expanded="false" aria-controls="prismBallSuggestions1">&#9662;</button></div>
+                                <ul id="prismBallSuggestions1" class="prism-suggestions" role="listbox" hidden></ul>
+                            </div>
 							<!-- <h3 id="prismBallName1">No ball selected</h3> -->
 							<div class="prism-table-wrap"><table><tbody id="prismBallStats1"></tbody></table></div>
 						</div>
 						<div class="prism-ball-card" aria-label="Second ball">
-							<label for="prismBallSelect2">Ball 2</label>
-							<select id="prismBallSelect2"><option value="">Choose a ball</option></select>
+							<label for="prismBallSearch2">Ball 2</label>
+							<div class="prism-combo-wrap" id="prismBallCombo2">
+                                <div class="prism-combo-input-row"><input id="prismBallSearch2" class="prism-ball-search" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="prismBallSuggestions2" placeholder="Type to search balls" autocomplete="off"><button id="prismBallToggle2" type="button" class="prism-combo-toggle" aria-label="Show ball list" aria-expanded="false" aria-controls="prismBallSuggestions2">&#9662;</button></div>
+                                <ul id="prismBallSuggestions2" class="prism-suggestions" role="listbox" hidden></ul>
+                            </div>
 							<!-- <h3 id="prismBallName2">No ball selected</h3> -->
 							<div class="prism-table-wrap"><table><tbody id="prismBallStats2"></tbody></table></div>
 						</div>
 						<div class="prism-ball-card" aria-label="Third ball">
-							<label for="prismBallSelect3">Ball 3</label>
-							<select id="prismBallSelect3"><option value="">Choose a ball</option></select>
+							<label for="prismBallSearch3">Ball 3</label>
+							<div class="prism-combo-wrap" id="prismBallCombo3">
+                                <div class="prism-combo-input-row"><input id="prismBallSearch3" class="prism-ball-search" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="prismBallSuggestions3" placeholder="Type to search balls" autocomplete="off"><button id="prismBallToggle3" type="button" class="prism-combo-toggle" aria-label="Show ball list" aria-expanded="false" aria-controls="prismBallSuggestions3">&#9662;</button></div>
+                                <ul id="prismBallSuggestions3" class="prism-suggestions" role="listbox" hidden></ul>
+                            </div>
 							<!-- <h3 id="prismBallName3">No ball selected</h3> -->
 							<div class="prism-table-wrap"><table><tbody id="prismBallStats3"></tbody></table></div>
 						</div>
@@ -566,5 +575,6 @@
 
 </body>
 </html>
+
 
 

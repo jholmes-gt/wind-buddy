@@ -2183,17 +2183,98 @@ h4 {
   display: flex;
 }
 
-#prismBallSelect1 {
+/* Searchable Prism Ball selectors */
+.prism-combo-wrap {
+  position: relative;
+  z-index: 5;
+}
+
+.prism-ball-search {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.55rem;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.prism-suggestions {
+  position: absolute;
+  inset: 100% 0 auto;
+  z-index: 20;
+  max-height: min(18rem, 45vh);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  border: 1px solid var(--border, #c9c9c9);
+  border-radius: 0 0 0.45rem 0.45rem;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 0.35rem 0.75rem rgba(0, 0, 0, 0.2);
+}
+
+.prism-suggestions[hidden] {
+  display: none;
+}
+
+.prism-suggestion,
+.prism-no-matches {
+  padding: 0.5rem 0.65rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.prism-suggestion {
+  cursor: pointer;
+}
+
+.prism-suggestion:hover,
+.prism-suggestion.active {
+  color: #fff;
+  background: var(--gradientTopColor, #075c91);
+}
+
+.prism-no-matches {
+  color: #555;
+  font-style: italic;
+}
+
+
+/* Search field plus a conventional dropdown arrow */
+.prism-combo-input-row {
+  display: flex;
+  width: 100%;
+}
+
+.prism-combo-input-row .prism-ball-search {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  border-radius: 0.25rem 0 0 0.25rem;
   font-size: clamp(0.8rem, 1.29vw, 1.2rem);
   font-weight: 700;
 }
 
-#prismBallSelect2 {
-  font-size: clamp(0.8rem, 1.29vw, 1.2rem);
-  font-weight: 700;
+.prism-combo-toggle {
+  flex: 0 0 2.6rem;
+  min-height: 2.5rem;
+  padding: 0 0.4rem;
+  border: 1px solid var(--border, #c9c9c9);
+  border-left: 0;
+  border-radius: 0 0.25rem 0.25rem 0;
+  color: #111;
+  background: #f3f4f6;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
-#prismBallSelect3 {
-  font-size: clamp(0.8rem, 1.29vw, 1.2rem);
-  font-weight: 700;
+.prism-combo-toggle:hover,
+.prism-combo-toggle[aria-expanded="true"] {
+  background: #e2e8f0;
+}
+
+.prism-combo-toggle:focus-visible {
+  outline: 2px solid var(--gradientTopColor, #075c91);
+  outline-offset: 2px;
 }
