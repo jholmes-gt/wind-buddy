@@ -2052,11 +2052,14 @@ h4 {
 .prism-card {
   width: min(100%, 70rem);
   margin: auto;
-  padding: clamp(0.75rem, 2vw, 1.5rem);
+  padding-top: 0px;
+  padding-bottom: 2vh;
+  /* padding-left: 0.5vw; */
+  /* padding-right: 0.5vw; */
   box-sizing: border-box;
   color: var(--text, #111);
   background: var(--card, #fff);
-  border: 1px solid var(--border, #c9c9c9);
+  /* border: 1px solid var(--border, #c9c9c9); */
   border-radius: 0.75rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
 }
@@ -2065,7 +2068,8 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0px;
+  border-radius: 0.75rem;
 }
 
 .prism-header h2 {
@@ -2074,7 +2078,10 @@ h4 {
   padding: 0.4rem 0.75rem;
   color: var(--card, #fff);
   background: var(--gradientTopColor, #075c91);
-  border-radius: 0.5rem;
+  /* border-radius: 0.5rem; */
+  border-top-left-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+  /* border-top-right-radius: 0.75rem; */
   font-size: clamp(1rem, 1.9vw, 1.4rem);
   text-align: center;
 }
@@ -2084,12 +2091,16 @@ h4 {
   width: 2.25rem;
   height: 2.25rem;
   border: 1px solid var(--border, #c9c9c9);
-  border-radius: 0.4rem;
+  border-top-right-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  /* border-radius: 0.4rem; */
   background: #f3f4f6;
   font-size: 1.7rem;
   font-weight: bold;
   line-height: 1;
   cursor: pointer;
+  background-color: #012c42;
+  color: white;
 }
 
 .prism-description {
@@ -2102,6 +2113,8 @@ h4 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .prism-ball-card {
