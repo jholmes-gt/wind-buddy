@@ -5560,7 +5560,25 @@ let elevationDefaultValue = elevationCV.value;
   });
 
 
-//EBS Version of above
+ //EBS Version of above
+ const ebsElevBtnMinus5 = document.getElementById("ebsBtn_elev-5")
+ebsElevBtnMinus5.addEventListener('click', ()=>{
+  const cat = state.activeCategory;
+  ebsElevationCV.value = ebsElevationCV.value - 5;
+  ebsElevationCV.dispatchEvent(new Event('input', { bubbles: true }));
+  triggerCalcIfReady(cat);
+});
+
+const ebsElevBtnPlus5 = document.getElementById("ebsBtn_elev+5")
+ebsElevBtnPlus5.addEventListener('click', ()=>{
+  const cat = state.activeCategory;
+  ebsElevationCV.value = (+ebsElevationCV.value) + 5;
+  ebsElevationCV.dispatchEvent(new Event('input', { bubbles: true }));
+  triggerCalcIfReady(cat);
+});
+
+
+/*
 let ebsElevationDefaultValue = ebsElevationCV.value;
   // Save the default value to a placeholder on focus
   ebsElevationCV.addEventListener('focus', () => {
@@ -5581,7 +5599,7 @@ let ebsElevationDefaultValue = ebsElevationCV.value;
     ebsElevationDefaultValue = ebsElevationCV.value;
   });
 
-
+ */
 
 
 
@@ -5729,7 +5747,7 @@ infoModal.addEventListener("click", (e) => {
     ebsWindInputCV.value = windInputCV.value;
     ebsBallPowerCV.value = ballPowerCV.value;
     ebsElevationCV.value = 20; // default elevation for Endbringer School
-    ebsElevationDefaultValue = 20;
+    // ebsElevationDefaultValue = 20;
 
     ebspanel.classList.remove('hidden');
 

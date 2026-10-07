@@ -938,12 +938,22 @@ input[type=number],select,input[list]{
 	/* max-width: 34%; */
 	/* height: 71%; */
 	text-align: center;
-	align-self: flex-start;
+	/* align-self: flex-start; */
 }
 
 .elevBtn{
 	margin-left: 0.12rem;
 	margin-right: 0.12rem;
+	margin-top: 0.12rem;
+	margin-bottom: 0.12rem;
+	align-self: center;
+	justify-self: center;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	height: 63%;
+	/* width: 100%; */
 }
 
 
@@ -1206,7 +1216,7 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	width: 31%;
+	width: 25%;
 	height: 100%;
 }
 
@@ -1243,6 +1253,14 @@ input[type=number] { appearance: textfield; -moz-appearance: textfield; }
     text-align: left;
     text-wrap-mode: nowrap;
     margin-right: 12%;
+}
+
+.ebsElevInputWrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
 }
 
 .ebsInputsContainer {
@@ -1372,15 +1390,15 @@ footer{
 /* wrapper must be positioned so tooltip can be absolutely positioned relative to it */
 .tooltip-wrapper {
     position: relative;
-    display: inline-block;  /* DO NOT use display: contents */
-    align-items: center;   /* keeps icon vertically aligned */
+    display: -webkit-inline-box;  /* DO NOT use display: contents */
+    justify-items: center;   /* keeps icon vertically aligned */
 }
 
 
 /* tooltip box (hidden by default) */
 .tooltip {
 	position: absolute;
-	left: 0;
+	left: 25%;
 	bottom: calc(100% + 0.5rem); /* place above the input */
 	transform-origin: bottom left;
 	white-space: nowrap;
