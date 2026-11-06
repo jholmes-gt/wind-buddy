@@ -6111,7 +6111,7 @@ export {
 let prismBallData = [];
 
 // 2. Paste your published Google Sheet CSV URL here
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4vMKFs7vz10-sgMdjaoEACzyQufJtnukJI4DY19ulEJc6o4QLZUfypt6MZhHmgpWDPXnyPZrnp2aS/pub?gid=0&single=true&output=csv";
+const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJsVQEn1cit2wOtSqbk3KhEaUTOjKcfZEqS1m6iLV2gQqU9f3uCKzj3jdrwAthdg/pub?gid=1972576098&single=true&output=csv";
 
 const prismBallAttributes = [
   ['Power', 'power'],
@@ -6138,7 +6138,9 @@ async function fetchPrismBallData() {
       dynamicTyping: true,  // Automatically converts strings to numbers
       skipEmptyLines: true, // Ignores blank trailing rows
       complete: function(results) {
-        prismBallData = results.data;
+        // Ignore blank or malformed rows before sorting and building suggestions.
+        prismBallData = (Array.isArray(results.data) ? results.data : [])
+          .filter(ball => ball && typeof ball.name === 'string' && ball.name.trim().length > 0);
 
         // Double check our console to make sure data arrived
         console.log("Raw parsed data payload:", results);
@@ -6255,7 +6257,10 @@ for (const slot of [1, 2, 3]) {
 
     visibleMatches = prismBallData
       .map((ball, index) => ({ ball, index }))
-      .filter(({ ball }) => !matchQuery || ball.name.toLocaleLowerCase().includes(matchQuery));
+      .filter(({ ball }) => {
+        if (!ball || typeof ball.name !== 'string') return false;
+        return !matchQuery || ball.name.toLocaleLowerCase().includes(matchQuery);
+      });
 
     if (visibleMatches.length === 0) {
       const emptyMessage = document.createElement('li');
